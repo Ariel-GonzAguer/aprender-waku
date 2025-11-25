@@ -8,14 +8,18 @@ import type { getConfig as File_About_getConfig } from './pages/about';
 // prettier-ignore
 import type { getConfig as File_Index_getConfig } from './pages/index';
 // prettier-ignore
+import type { getConfig as File_PostsNotFound_getConfig } from './pages/posts/[...notFound]';
+// prettier-ignore
+import type { getConfig as File_PostsSlug_getConfig } from './pages/posts/[slug]';
+// prettier-ignore
 import type { getConfig as File_Root_getConfig } from './pages/_root';
 
 // prettier-ignore
 type Page =
 | ({ path: '/about' } & GetConfigResponse<typeof File_About_getConfig>)
 | ({ path: '/' } & GetConfigResponse<typeof File_Index_getConfig>)
-| { path: '/posts/[...notFound]'; render: 'dynamic' }
-| { path: '/posts/[slug]'; render: 'dynamic' }
+| ({ path: '/posts/[...notFound]' } & GetConfigResponse<typeof File_PostsNotFound_getConfig>)
+| ({ path: '/posts/[slug]' } & GetConfigResponse<typeof File_PostsSlug_getConfig>)
 | ({ path: '/_root' } & GetConfigResponse<typeof File_Root_getConfig>);
 
 // prettier-ignore
