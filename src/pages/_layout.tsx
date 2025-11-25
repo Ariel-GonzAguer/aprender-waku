@@ -2,12 +2,14 @@ import Header from '../components/Header.server'
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <section className='flex flex-col justify-center items-center max-h-dvh'>
+    <section className="flex flex-col h-full w-full">
       <Header />
-      <main className='flex-1'>
+
+      <main className="flex-1 w-full">
         {children}
       </main>
-      <footer style={{ backgroundColor: '#f0f0f0', padding: '1rem', marginTop: '2rem', textAlign: 'center' }}>
+
+      <footer className='bg-gray-400 text-black w-full'>
         <p>© 2025 DevBlog. Hecho con Waku.</p>
       </footer>
     </section>
