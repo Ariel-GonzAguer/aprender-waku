@@ -63,7 +63,7 @@ DevBlog es un blog de artículos técnicos con:
 
 2. **Crear proyecto Waku**
    ```bash
-   pnpm create waku@latest devblog
+   pnpm create waku@latest
    cd devblog
    pnpm install
    ```
@@ -79,15 +79,25 @@ DevBlog es un blog de artículos técnicos con:
        posts/
          [slug].tsx               # Ruta dinámica para posts individuales
          [...notFound].tsx        # Catch-all 404
+       _slices/                   # Componentes reutilizables composables
+         author-bio.tsx
+         related-posts.tsx
+         newsletter-signup.tsx
        api/
          likes.ts                 # Endpoint para guardar likes
          comments.ts              # Endpoint para comentarios
      components/
        Header.server.tsx          # Navegación renderizada servidor
+       Navigation.client.tsx      # Menú interactivo (Weaving Pattern)
        PostCard.client.tsx        # Card interactiva con like button
        SearchBar.client.tsx       # Búsqueda client-side
+       ThemeProvider.client.tsx   # Context provider (Weaving Pattern)
+       ThemeToggle.client.tsx     # Botón de tema
+       Modal.client.tsx           # Modal reutilizable
+       Providers.client.tsx       # Aggregador de providers globales
      lib/
        posts.ts                   # Carga y parseo de posts en Markdown
+       actions.ts                 # Server Actions
        utils.ts                   # Helpers (slug, formatDate, etc.)
      posts/                       # Archivos .md con artículos
        hello-world.md
@@ -110,7 +120,7 @@ DevBlog es un blog de artículos técnicos con:
 | 1 | Fundamentos RSC + estructura | Layout, setup básico |
 | 2 | Server Components async | Sistema de posts con Markdown, Suspense |
 | 3 | Client Components + interactividad | Búsqueda, comentarios con JSONPlaceholder, dark mode |
-| 4 | Routing + APIs edge | File-based routing, rutas dinámicas `/posts/[slug]`, APIs handlers |
+| 4 | Routing, APIs, Weaving Patterns y Slices | File-based routing, rutas dinámicas `/posts/[slug]`, APIs handlers, Server-Client composition patterns, slices reutilizables (estáticos y lazy) |
 | 5 | Optimización + deploy | QA, audits (Lighthouse), build estático, deploy CDN |
 
 ---
@@ -1771,12 +1781,983 @@ export async function updateProfile(userId: string, data: UserProfileData) {
 - [ ] **Server Action (Bloque C):** Like button alternativo funciona sin fetch.
 - [ ] Comparación: Ambas opciones funcionan, entiendes cuándo usar cada una.
 - [ ] Rutas 404 se manejan gracefully.
+- [ ] **Weaving Patterns (Bloque E):**
+  - [ ] Entiendes que Server puede importar Client, pero no al revés
+  - [ ] Has creado `ThemeProvider.client.tsx` y lo usas en `_layout.tsx`
+  - [ ] `Modal.client.tsx` recibe Server Component como children (sin errores)
+  - [ ] `useTheme()` hook funciona en múltiples Client Components
+  - [ ] Build sin warnings sobre límites server-client
+  - [ ] ThemeProvider se aplica a todo el DevBlog (header, pages, slices)
 
 #### Errores frecuentes
 
 - ❌ `defineEntries` tarda mucho → Si hay 1000 posts, prerenderar todos es lento. Limita o usa fallback.
 - ❌ API retorna 404 → Asegúrate que el archivo está en `api/likes.ts` (no `api/likes/index.ts`).
 - ❌ Ruta dinámica no renderiza → ¿Olvidaste `export const entries`?
+
+---
+
+## Día 4 Bloque D (45 min) – Weaving Patterns: Integrando Server y Client Components
+
+**Meta:** Dominar los patrones de integración entre Server Components y Client Components, la base de una arquitectura RSC moderna.
+
+### ¿Qué son Weaving Patterns?
+
+**Weaving Patterns** (patrones de tejido) describe cómo Server Components y Client Components se entrelazan en una aplicación Waku. Es el concepto fundamental para entender:
+- ✅ Dónde y cuándo usar cada tipo de componente
+- ✅ Cómo fluye la información entre capas
+- ✅ Qué límites existen en la composición
+
+**La regla de oro:**
+```
+┌──────────────────────────────────────┐
+│ Server Component (tú aquí)           │
+├──────────────────────────────────────┤
+│ ✅ Puede importar Client Components  │
+│ ❌ No puede recibir Client Components│
+│    como imports directos             │
+└──────────────────────────────────────┘
+                   ↓
+        (CREA UN LÍMITE SERVIDOR)
+                   ↓
+┌──────────────────────────────────────┐
+│ Client Component (aquí abajo)        │
+├──────────────────────────────────────┤
+│ ❌ No puede importar Server Components│
+│    directamente como imports          │
+│ ✅ PERO puede recibir Server Components│
+│    como props (children, etc.)       │
+└──────────────────────────────────────┘
+```
+
+**En palabras simples:**
+- Server Component importa Client Component → ✅ Crea un límite (`use client`)
+- Client Component importa Server Component → ❌ NO PERMITIDO
+- Client Component recibe Server Component como prop (children) → ✅ PERMITIDO (server islands)
+
+### Bloque D.1 (15 min) – Patrón básico: Server → Client
+
+**Caso 1: Server importa Client directamente**
+
+```tsx
+// src/components/Header.server.tsx
+import Navigation from './Navigation.client'  // ← Import directo
+
+export default function Header() {
+  return (
+    <header>
+      <h1>DevBlog</h1>
+      <Navigation />  {/* ← Se renderiza como Client Component */}
+    </header>
+  )
+}
+```
+
+```tsx
+// src/components/Navigation.client.tsx
+'use client'  // ← Marca el límite servidor-cliente
+
+import { useState } from 'react'
+
+export default function Navigation() {
+  const [open, setOpen] = useState(false)
+
+  return (
+    <nav>
+      <button onClick={() => setOpen(!open)}>
+        {open ? 'Cerrar' : 'Menú'}
+      </button>
+      {open && (
+        <ul>
+          <li><a href="/">Home</a></li>
+          <li><a href="/about">About</a></li>
+        </ul>
+      )}
+    </nav>
+  )
+}
+```
+
+**¿Qué sucede en Waku?**
+
+1. Waku renderiza `Header.server.tsx` en el servidor
+2. Encuentra que importa `Navigation.client.tsx`
+3. Incluye `'use client'` en el bundle del cliente
+4. Al renderizar, reemplaza `Navigation` con un componente hidratado en el navegador
+5. Usuario puede usar `setState`, `onClick`, etc. en `Navigation`
+
+---
+
+### Bloque D.2 (15 min) – El patrón clave: Providers + Children
+
+**El problema:** ¿Cómo agregar un Context provider (Client Component) a toda tu app sin "contaminar" todo con `'use client'`?
+
+**La solución: Composición con children**
+
+Server Component puede recibir Client Components como props (especialmente `children`):
+
+```tsx
+// src/components/Providers.client.tsx
+'use client'
+
+import { createContext, ReactNode } from 'react'
+import { Provider } from 'jotai'
+
+export const ThemeContext = createContext({})
+
+export function Providers({ children }: { children: ReactNode }) {
+  return (
+    <Provider>
+      <div>{children}</div>
+    </Provider>
+  )
+}
+```
+
+```tsx
+// src/pages/_layout.tsx (Server Component)
+import { Providers } from '../components/Providers.client'
+
+export default async function RootLayout({ children }: { children: ReactNode }) {
+  return (
+    <html>
+      <head>
+        <title>DevBlog</title>
+      </head>
+      <body>
+        {/* Providers es Client Component, pero se pasa como composición */}
+        <Providers>
+          {children}
+        </Providers>
+      </body>
+    </html>
+  )
+}
+
+export const getConfig = async () => {
+  return {
+    render: 'static',
+  } as const
+}
+```
+
+**Ventaja:**
+- ✅ Layout está en servidor (lógica de datos rápida)
+- ✅ Providers (context, hooks) están en cliente
+- ✅ `children` fluyen desde servidor → cliente sin problemas
+- ✅ NO necesitas `'use client'` en el layout
+
+**Flujo:**
+```
+RootLayout (Server)
+  ↓
+  Providers (Client, recibe children como prop)
+    ↓
+    {children} (puede ser Server o Client)
+      ↓
+      Pages + Components
+```
+
+---
+
+### Bloque D.3 (15 min) – Patrón avanzado: Server Components como children
+
+**El caso de uso:** Necesitas un Client Component "wrapper" (botón, modal, etc.) pero querés que el contenido sea Server Component (para data fetching).
+
+```tsx
+// src/components/Modal.client.tsx
+'use client'
+
+import { useState, ReactNode } from 'react'
+
+export function Modal({ children, title }: { children: ReactNode; title: string }) {
+  const [open, setOpen] = useState(false)
+
+  return (
+    <>
+      <button onClick={() => setOpen(!open)}>Abrir: {title}</button>
+      {open && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0,0,0,0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
+          <div style={{
+            backgroundColor: 'white',
+            padding: '2rem',
+            borderRadius: '8px',
+            minWidth: '300px',
+          }}>
+            <h2>{title}</h2>
+            {children}  {/* ← Children pueden ser Server Component */}
+            <button onClick={() => setOpen(false)}>Cerrar</button>
+          </div>
+        </div>
+      )}
+    </>
+  )
+}
+```
+
+```tsx
+// src/components/RelatedPostsList.server.tsx (Server Component)
+import { getPosts } from '../lib/posts'
+
+export async function RelatedPostsList() {
+  const posts = await getPosts()  // ← Server-side data fetching
+
+  return (
+    <ul>
+      {posts.map((post) => (
+        <li key={post.slug}>
+          <a href={`/posts/${post.slug}`}>{post.title}</a>
+        </li>
+      ))}
+    </ul>
+  )
+}
+```
+
+```tsx
+// src/pages/posts/[slug].tsx (Server Component)
+import { Modal } from '../../components/Modal.client'
+import { RelatedPostsList } from '../../components/RelatedPostsList.server'
+
+export default async function PostDetail() {
+  return (
+    <article>
+      <h1>Mi Post</h1>
+      <p>Contenido...</p>
+
+      {/* Modal es Client (interactividad), 
+          pero children es Server Component (data fetching) */}
+      <Modal title="Posts Relacionados">
+        <RelatedPostsList />
+      </Modal>
+    </article>
+  )
+}
+```
+
+**Ventaja clave:**
+- ✅ Modal maneja estado de UI (open/closed)
+- ✅ RelatedPostsList fetcha posts en servidor sin exponer datos
+- ✅ No necesitas API call desde cliente
+- ✅ Máxima seguridad y eficiencia
+
+---
+
+### Bloque D.4 (Práctica DevBlog - 10 min) – Implementar Weaving en DevBlog
+
+**Escenario:** Mejorar el componente `ThemeToggle` usando un Provider con Weaving Pattern.
+
+**Paso 1: Crear Provider personalizado** (`src/components/ThemeProvider.client.tsx`)
+
+```tsx
+'use client'
+
+import { createContext, useContext, useEffect, useState, ReactNode } from 'react'
+
+interface ThemeContextType {
+  isDark: boolean
+  setIsDark: (dark: boolean) => void
+}
+
+const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
+
+export function ThemeProvider({ children }: { children: ReactNode }) {
+  const [isDark, setIsDark] = useState(false)
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+    const saved = localStorage.getItem('theme')
+    if (saved) {
+      setIsDark(JSON.parse(saved))
+    }
+  }, [])
+
+  useEffect(() => {
+    if (mounted) {
+      localStorage.setItem('theme', JSON.stringify(isDark))
+      document.documentElement.style.colorScheme = isDark ? 'dark' : 'light'
+    }
+  }, [isDark, mounted])
+
+  if (!mounted) return <>{children}</>
+
+  return (
+    <ThemeContext.Provider value={{ isDark, setIsDark }}>
+      {children}
+    </ThemeContext.Provider>
+  )
+}
+
+export function useTheme() {
+  const context = useContext(ThemeContext)
+  if (!context) {
+    throw new Error('useTheme debe usarse dentro de ThemeProvider')
+  }
+  return context
+}
+```
+
+**Paso 2: Actualizar layout** (`src/pages/_layout.tsx`)
+
+```tsx
+import { ThemeProvider } from '../components/ThemeProvider.client'
+import Header from '../components/Header.server'
+
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <ThemeProvider>  {/* ← Client Component, maneja contexto */}
+      <Header />     {/* ← Server Component, lógica rápida */}
+      <main>{children}</main>
+    </ThemeProvider>
+  )
+}
+
+export const getConfig = async () => {
+  return {
+    render: 'static',
+  } as const
+}
+```
+
+**Paso 3: Usar contexto en componentes cliente** (`src/components/ThemeToggle.client.tsx` actualizado)
+
+```tsx
+'use client'
+
+import { useTheme } from './ThemeProvider.client'
+
+export default function ThemeToggle() {
+  const { isDark, setIsDark } = useTheme()
+
+  return (
+    <button
+      onClick={() => setIsDark(!isDark)}
+      style={{
+        background: 'none',
+        border: 'none',
+        fontSize: '1.5rem',
+        cursor: 'pointer',
+      }}
+    >
+      {isDark ? '☀️' : '🌙'}
+    </button>
+  )
+}
+```
+
+**Beneficio Weaving Pattern:**
+- ✅ `RootLayout` permanece como Server Component (puedes usar `await`, data fetching, etc.)
+- ✅ `ThemeProvider` inyecta context sin contaminar layout
+- ✅ `Header` sigue siendo Server Component puro
+- ✅ Máxima composabilidad
+
+---
+
+### Bloque D.5 – Visualización del flujo Weaving en DevBlog
+
+```
+_layout.tsx (SERVER)
+  ├─ ThemeProvider (CLIENT - crea límite)
+  │   ├─ Header.server.tsx (SERVER - vía children)
+  │   │   └─ Navigation.client.tsx (CLIENT)
+  │   ├─ main (SERVER - vía children)
+  │   │   ├─ Pages (SERVER)
+  │   │   └─ Modal.client.tsx (CLIENT - vía composition)
+  │   │       └─ RelatedPostsList.server.tsx (SERVER - vía children!)
+  │   └─ Footer.server.tsx (SERVER)
+  └─ (Todos los children fluyen a través de ThemeProvider)
+```
+
+**Puntos clave:**
+- `_layout.tsx` es Server, pero usa Client Component (`ThemeProvider`) para inyectar contexto
+- Server Components pueden fluir como `children` a través de Client Components
+- No hay límite de "profundidad" — puedes anidar Server-Client-Server-Client
+- El flujo es siempre: Server renderiza → encuentra Client import → hidrata cliente
+
+---
+
+### Bloque D.6 – Errores frecuentes con Weaving Patterns
+
+- ❌ **Intentar importar Server Component en Client Component**
+  ```tsx
+  // ❌ MALO
+  'use client'
+  import { ServerComponent } from './ServerComponent.server'  // ❌ Error!
+
+  // ✅ BUENO: Pasar como prop
+  export function ClientWrapper({ children }) {
+    return <div>{children}</div>
+  }
+  // Luego: <ClientWrapper><ServerComponent /></ClientWrapper>
+  ```
+
+- ❌ **Olvidar `'use client'` en componentes que usan hooks**
+  ```tsx
+  // ❌ MALO
+  import { useState } from 'react'
+
+  export function Counter() {  // ← ¿Dónde está 'use client'?
+    const [count, setState] = useState(0)
+    return <button>{count}</button>
+  }
+
+  // ✅ BUENO
+  'use client'
+  import { useState } from 'react'
+
+  export function Counter() {
+    const [count, setState] = useState(0)
+    return <button>{count}</button>
+  }
+  ```
+
+- ❌ **Pasar funciones como props desde Server a Client**
+  ```tsx
+  // ❌ MALO
+  export default async function Page() {
+    const handleClick = () => console.log('clicked')
+    return <ClientComponent onClick={handleClick} />  // ❌ No serializable
+  }
+
+  // ✅ BUENO
+  'use client'
+  export function ClientComponent() {
+    const handleClick = () => console.log('clicked')
+    return <button onClick={handleClick}>Click me</button>
+  }
+  ```
+
+---
+
+### Checklist Día 4 Bloque D
+
+- [ ] Entiendes la diferencia: Server puede importar Client, pero no al revés
+- [ ] Has creado un `Providers` Client Component que envuelve Server layout
+- [ ] Has usado `useContext` en un Client Component para acceder a datos
+- [ ] Modal.client.tsx contiene Server Component como children (sin errores)
+- [ ] `ThemeProvider` se aplica a todo DevBlog y funciona correctamente
+- [ ] Build (`pnpm build`) sin warnings sobre `'use client'`
+
+---
+
+## Día 4 Bloque E (60 min) – Slices: Componentes Reutilizables y Composables
+
+**Meta:** Entender Slices como unidad fundamental de composición en Waku, diferente de páginas y layouts.
+
+### ¿Qué son Slices?
+
+En Waku, un **Slice** es un componente reutilizable que vive en `src/pages/_slices/` y puede ser **compuesto dentro de páginas y otros slices**. A diferencia de:
+- **Páginas:** Representan rutas (generan URLs)
+- **Layouts:** Envuelven otras páginas (estructuras globales)
+- **Slices:** Unidades de renderizado independientes que se reutilizan en múltiples contextos
+
+**Ventaja clave:** Slices permiten tener **componentes estáticos dentro de una página dinámica** — un patrón llamado "server islands" o "partial prerendering".
+
+**Ejemplo arquitectónico:**
+```
+/posts/hello-world (Página - DINÁMICA)
+├── Layout (ESTÁTICO)
+├── Post content (ESTÁTICO)
+├── AuthorBio Slice (ESTÁTICO)
+├── RelatedPosts Slice (ESTÁTICO)
+└── NewsletterSignup Slice (DINÁMICO - carga independientemente)
+```
+
+El resultado: **Página mayormente estática, partes selectas dinámicas, máxima eficiencia.**
+
+---
+
+### Bloque E.1 (15 min) – Crear tu primer Slice
+
+1. **Crear slice simple** (`src/pages/_slices/author-bio.tsx`)
+   ```tsx
+   export default function AuthorBio() {
+     return (
+       <aside style={{
+         padding: '1.5rem',
+         backgroundColor: '#f5f5f5',
+         borderRadius: '8px',
+         marginTop: '2rem',
+         borderLeft: '4px solid #0066cc',
+       }}>
+         <h3>✍️ Sobre el autor</h3>
+         <p>
+           <strong>Ariel</strong> es un desarrollador Full Stack especializado en React Server Components 
+           y arquitecturas modernas. Apasionado por enseñar conceptos complejos de forma simple.
+         </p>
+         <p style={{ marginTop: '0.5rem', color: '#666', fontSize: '0.9rem' }}>
+           📧 <a href="mailto:ariel@example.com">Contactame</a>
+         </p>
+       </aside>
+     )
+   }
+
+   // ⚠️ CRÍTICO: Slices necesitan getConfig
+   export const getConfig = async () => {
+     return {
+       render: 'static', // Por defecto, renderizar estáticamente
+     } as const
+   }
+   ```
+
+2. **Crear slice con props** (`src/pages/_slices/related-posts.tsx`)
+   ```tsx
+   interface RelatedPost {
+     slug: string
+     title: string
+   }
+
+   export default function RelatedPosts({ posts }: { posts: RelatedPost[] }) {
+     return (
+       <aside style={{
+         padding: '1.5rem',
+         backgroundColor: '#f9f9f9',
+         borderRadius: '8px',
+         marginTop: '2rem',
+       }}>
+         <h3>📚 Posts relacionados</h3>
+         {posts.length === 0 ? (
+           <p style={{ color: '#666' }}>No hay posts relacionados.</p>
+         ) : (
+           <ul style={{ listStyle: 'none', padding: 0 }}>
+             {posts.map((post) => (
+               <li key={post.slug} style={{ marginBottom: '0.75rem' }}>
+                 <a href={`/posts/${post.slug}`} style={{ color: '#0066cc', textDecoration: 'underline' }}>
+                   {post.title}
+                 </a>
+               </li>
+             ))}
+           </ul>
+         )}
+       </aside>
+     )
+   }
+
+   export const getConfig = async () => {
+     return {
+       render: 'static',
+     } as const
+   }
+   ```
+
+3. **Integrar slices en página de post** (`src/pages/posts/[slug].tsx`)
+   ```tsx
+   import { Slice } from 'waku'  // ← Importar componente Slice
+   import { getPostBySlug, getPosts } from '../../lib/posts'
+   import Layout from '../../components/Layout.server'
+   import CommentsList from '../../components/CommentsList.client'
+   import { defineEntries } from 'waku/server'
+
+   export const entries = defineEntries(async () => {
+     const posts = await getPosts()
+     return posts.map((post) => `/posts/${post.slug}`)
+   })
+
+   interface Params {
+     slug: string
+   }
+
+   export default async function PostDetail({ params }: { params: Params }) {
+     const post = await getPostBySlug(params.slug)
+
+     if (!post) {
+       return (
+         <Layout>
+           <h1>Post no encontrado</h1>
+           <p><a href="/">Volver al inicio</a></p>
+         </Layout>
+       )
+     }
+
+     // Ejemplo: posts relacionados (en prod, buscar por tags/categoría)
+     const allPosts = await getPosts()
+     const relatedPosts = allPosts
+       .filter((p) => p.slug !== post.slug)
+       .slice(0, 3)
+       .map((p) => ({ slug: p.slug, title: p.title }))
+
+     const postId = Math.abs(
+       post.slug.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0)
+     ) % 100 + 1
+
+     return (
+       <Layout>
+         <article>
+           <h1>{post.title}</h1>
+           <p style={{ color: '#666', fontSize: '0.9rem' }}>
+             📅 {new Date(post.date).toLocaleDateString('es-ES')}
+           </p>
+
+           <div
+             style={{ marginTop: '2rem', lineHeight: '1.8' }}
+             dangerouslySetInnerHTML={{
+               __html: post.content.replace(/^# .+$/gm, ''),
+             }}
+           />
+
+           {/* 🟢 USAR SLICES */}
+           <Slice id="author-bio" />
+           <Slice id="related-posts" posts={relatedPosts} />
+
+           <CommentsList postId={postId} />
+
+           <nav style={{ marginTop: '2rem', paddingTop: '2rem', borderTop: '1px solid #ddd' }}>
+             <a href="/">← Volver a posts</a>
+           </nav>
+         </article>
+       </Layout>
+     )
+   }
+
+   // ⚠️ CRÍTICO: Declarar qué slices se usan en esta página
+   export const getConfig = async () => {
+     return {
+       render: 'static',
+       slices: ['author-bio', 'related-posts'],  // ← LISTA TODOS LOS SLICES
+     } as const
+   }
+   ```
+
+---
+
+### Bloque E.2 (20 min) – Slices Lazy (Server Islands)
+
+**¿Qué son Lazy Slices?**
+
+Un **lazy slice** es un slice que se renderiza **independientemente** del rest de la página. Mientras la página estática se sirve inmediatamente, el slice lazy se carga en un request separado. Perfecto para:
+- Componentes que son lentos (consultas DB pesadas)
+- Contenido dinámico (contador actualizado cada 5 min)
+- Interactividad pesada (formularios con validación compleja)
+
+**Ejemplo:**
+```
+/posts/hello-world carga 50ms ← HTML estático
+  Pero NewsletterSignup (lazy) carga 300ms ← Request separado
+
+Resultado: Usuario ve post inmediatamente, signup aparece después (con fallback)
+```
+
+1. **Crear slice lazy dinámico** (`src/pages/_slices/newsletter-signup.tsx`)
+   ```tsx
+   'use client'  // ← Este slice es interactivo, necesita hidratación
+
+   import { useState } from 'react'
+
+   export default function NewsletterSignup() {
+     const [email, setEmail] = useState('')
+     const [submitted, setSubmitted] = useState(false)
+     const [loading, setLoading] = useState(false)
+
+     const handleSubmit = async (e: React.FormEvent) => {
+       e.preventDefault()
+       setLoading(true)
+
+       try {
+         // Simular envío (en prod: guardar en BD)
+         await new Promise((resolve) => setTimeout(resolve, 500))
+         setSubmitted(true)
+         setEmail('')
+       } finally {
+         setLoading(false)
+       }
+     }
+
+     if (submitted) {
+       return (
+         <div style={{
+           padding: '1rem',
+           backgroundColor: '#d4edda',
+           borderRadius: '4px',
+           color: '#155724',
+           textAlign: 'center',
+         }}>
+           ✅ ¡Gracias por suscribirte!
+         </div>
+       )
+     }
+
+     return (
+       <form onSubmit={handleSubmit} style={{
+         padding: '1.5rem',
+         backgroundColor: '#f0f8ff',
+         borderRadius: '8px',
+         marginTop: '2rem',
+       }}>
+         <h3>📬 Suscríbete a las novedades</h3>
+         <p style={{ color: '#666', marginBottom: '1rem' }}>
+           Recibe notificaciones cuando publique nuevos posts.
+         </p>
+         <div style={{ display: 'flex', gap: '0.5rem' }}>
+           <input
+             type="email"
+             placeholder="tu@email.com"
+             value={email}
+             onChange={(e) => setEmail(e.target.value)}
+             required
+             style={{
+               flex: 1,
+               padding: '0.5rem',
+               borderRadius: '4px',
+               border: '1px solid #ccc',
+             }}
+           />
+           <button
+             type="submit"
+             disabled={loading}
+             style={{
+               padding: '0.5rem 1rem',
+               backgroundColor: '#0066cc',
+               color: 'white',
+               border: 'none',
+               borderRadius: '4px',
+               cursor: loading ? 'not-allowed' : 'pointer',
+               opacity: loading ? 0.7 : 1,
+             }}
+           >
+             {loading ? '⏳' : '✉️ Suscribir'}
+           </button>
+         </div>
+       </form>
+     )
+   }
+
+   export const getConfig = async () => {
+     return {
+       render: 'dynamic',  // ← DINÁMICO: Renderizar on-demand
+     } as const
+   }
+   ```
+
+2. **Usar lazy slice en página** (`src/pages/posts/[slug].tsx` actualizado)
+   ```tsx
+   export default async function PostDetail({ params }: { params: Params }) {
+     // ... código anterior ...
+
+     return (
+       <Layout>
+         <article>
+           {/* Slices estáticos */}
+           <Slice id="author-bio" />
+           <Slice id="related-posts" posts={relatedPosts} />
+
+           {/* Slice dinámico: carga con fallback */}
+           <Slice 
+             id="newsletter-signup" 
+             lazy 
+             fallback={<p style={{ padding: '1rem', textAlign: 'center' }}>⏳ Cargando formulario de suscripción...</p>} 
+           />
+
+           <CommentsList postId={postId} />
+         </article>
+       </Layout>
+     )
+   }
+
+   export const getConfig = async () => {
+     return {
+       render: 'static',
+       slices: ['author-bio', 'related-posts'],  // ⚠️ Nota: newsletter-signup NO va aquí
+       // porque es lazy, se carga independientemente
+     } as const
+   }
+   ```
+
+3. **Flujo de renderizado con lazy slices**
+   ```
+   1. Usuario abre /posts/hello-world
+                          ↓
+   2. Waku sirve HTML estático (header, post, author-bio, related-posts)
+      con fallback para newsletter-signup: "⏳ Cargando..."
+                          ↓
+   3. Browser recibe HTML, renderiza inmediatamente
+      Usuario ve post, author-bio, related-posts al instante
+                          ↓
+   4. En paralelo: Browser hace request al servidor por newsletter-signup
+                          ↓
+   5. Servidor renderiza NewsletterSignup.tsx (Cliente Component hidratado)
+                          ↓
+   6. HTML de newsletter-signup se reemplaza en la página
+      Usuario ve formulario interactivo
+   ```
+
+   **Ventaja visual:** Percepción de velocidad mejorada. La página es usable inmediatamente.
+
+---
+
+### Bloque E.3 (15 min) – Slices anidados
+
+**¿Slices dentro de slices?**
+
+Sí, puedes anidar slices en carpetas:
+```
+src/pages/_slices/
+├── author-bio.tsx              → ID: "author-bio"
+├── related-posts.tsx           → ID: "related-posts"
+├── newsletter-signup.tsx       → ID: "newsletter-signup"
+└── sidebar/
+    ├── ad-slot.tsx             → ID: "sidebar/ad-slot"
+    └── social-links.tsx        → ID: "sidebar/social-links"
+```
+
+Uso:
+```tsx
+<Slice id="sidebar/ad-slot" />
+<Slice id="sidebar/social-links" />
+```
+
+**Patrón común:** Organizar por feature o sección.
+
+---
+
+### Bloque E.4 (10 min) – Actualizar estructura del proyecto
+
+Actualiza el diagrama de carpetas en tu mente:
+
+```
+src/
+  pages/
+    _root.tsx                  # Customizar <html>, <head>, <body>
+    _layout.tsx                # Root layout (Header, Footer)
+    index.tsx                  # Página home
+    about.tsx                  # Página about
+    posts/
+      [slug].tsx               # Ruta dinámica para posts individuales
+      [...notFound].tsx        # Catch-all 404
+    _slices/                   # 🟢 NUEVA SECCIÓN: Slices reutilizables
+      author-bio.tsx
+      related-posts.tsx
+      newsletter-signup.tsx
+      sidebar/
+        ad-slot.tsx
+        social-links.tsx
+    api/
+      likes.ts                 # Endpoint para likes
+      comments.ts              # Endpoint para comentarios
+  components/
+    Header.server.tsx
+    SearchBar.client.tsx
+    CommentsList.client.tsx
+    LikeButton.client.tsx
+  lib/
+    posts.ts                   # Carga y parseo de posts Markdown
+    actions.ts                 # Server Actions (opcional)
+  posts/                       # Archivos .md
+    hello-world.md
+    waku-rsc-guide.md
+```
+
+---
+
+### Bloque E.5 (Checklist Slices)
+
+- [ ] Folder `src/pages/_slices/` existe
+- [ ] Slice `author-bio.tsx` renderiza en página de post
+- [ ] Props se pasan correctamente a `related-posts`
+- [ ] `getConfig` declara `slices: ['author-bio', 'related-posts']`
+- [ ] ✅ Lazy slice: `newsletter-signup` tiene `render: 'dynamic'`
+- [ ] ✅ Lazy slice: Usa `fallback` en `<Slice lazy fallback={...} />`
+- [ ] Build: `pnpm build` genera slices correctamente
+- [ ] Test: Abre `/posts/hello-world`, todos los slices se renderizan
+
+---
+
+### Ventajas pedagógicas de Slices en DevBlog
+
+1. **Reutilización:** `author-bio` se usa en TODOS los posts sin duplicar código
+2. **Composición:** Página se arma combinando componentes independientes
+3. **Performance:** Slices estáticos no regeneran si post no cambia
+4. **Server Islands:** Lazy slices demuestran renderizado parcial (concepto moderno)
+5. **Escalabilidad:** Puedes agregar `sidebar/trending-tags.tsx` sin tocar páginas existentes
+
+---
+
+### Errores frecuentes con Slices
+
+- ❌ **Olvidar `getConfig` en slice** → Waku no sabe si es estático o dinámico
+- ❌ **No declarar slices en `getConfig.slices`** → Página se prerenderea sin esperar slice estático
+- ❌ **Usar lazy slice con props** → Props no se serializan en lazy slices (solo valores simples)
+  ```tsx
+  // ❌ MALO
+  <Slice id="my-slice" lazy complex={{ nested: { obj: true } }} />
+  
+  // ✅ BUENO: Solo props simples
+  <Slice id="my-slice" lazy postId={123} />
+  ```
+- ❌ **Circular slices** → Un slice A no puede usar Slice B si B usa Slice A
+
+---
+
+### Patrón real en DevBlog (Post detail completo)
+
+```tsx
+// src/pages/posts/[slug].tsx
+import { Slice } from 'waku'
+import { getPostBySlug, getPosts } from '../../lib/posts'
+import Layout from '../../components/Layout.server'
+import CommentsList from '../../components/CommentsList.client'
+
+export default async function PostDetail({ params }: { params: Params }) {
+  const post = await getPostBySlug(params.slug)
+  const relatedPosts = await getPosts().then((posts) =>
+    posts.filter((p) => p.slug !== post.slug).slice(0, 3)
+  )
+
+  return (
+    <Layout>
+      <article>
+        <h1>{post.title}</h1>
+        {/* Post content */}
+        <div>{post.content}</div>
+
+        {/* Slices estáticos */}
+        <Slice id="author-bio" />
+        <Slice id="related-posts" posts={relatedPosts} />
+        <Slice id="sidebar/ad-slot" />
+
+        {/* Slice dinámico */}
+        <Slice
+          id="newsletter-signup"
+          lazy
+          fallback={<p>⏳ Newsletter cargando...</p>}
+        />
+
+        {/* Cliente component */}
+        <CommentsList postId={postId} />
+      </article>
+    </Layout>
+  )
+}
+
+export const getConfig = async () => {
+  return {
+    render: 'static',
+    slices: [
+      'author-bio',
+      'related-posts',
+      'sidebar/ad-slot',
+      // newsletter-signup NO va aquí porque es lazy
+    ],
+  } as const
+}
+```
+
+**Resultado:**
+- 📄 HTML estático (header + post + author + related + ad)
+- ⏳ Newsletter se carga lazy (formulario interactivo)
+- 💬 Comentarios se cargan lazy (Client Component)
+- ⚡ Página usable en <100ms
+- 🎯 SEO friendly (contenido en HTML inicial)
 
 ---
 
@@ -1883,7 +2864,540 @@ export async function updateProfile(userId: string, data: UserProfileData) {
 
 ---
 
-## 7. Conceptos clave a dominar
+## 7. API Endpoints en Waku (Referencia)
+
+### ¿Qué son API Endpoints?
+
+En Waku, los endpoints de API son funciones que viven en `src/pages/api/` y manejan requests HTTP directamente. Son útiles para:
+- ✅ Mutaciones que necesitan ser llamadas desde múltiples clientes externos
+- ✅ Webhooks de terceros (GitHub, Stripe, etc.)
+- ✅ Datos que requieren validación antes de procesarse
+- ✅ Recursos estáticos generados (RSS, sitemap XML)
+
+### Crear un API Endpoint para DevBlog
+
+**Ejemplo: Guardar likes en un archivo JSON** (`src/pages/api/likes.ts`)
+
+```tsx
+import { readFileSync, writeFileSync } from 'fs'
+import { join } from 'path'
+
+// Tipo para likes
+interface LikesData {
+  [slug: string]: number
+}
+
+// Archivo donde guardamos likes
+const likesFile = join(process.cwd(), '.data', 'likes.json')
+
+// Función auxiliar para leer likes
+function getLikes(): LikesData {
+  try {
+    const data = readFileSync(likesFile, 'utf-8')
+    return JSON.parse(data)
+  } catch {
+    return {}
+  }
+}
+
+// Función auxiliar para guardar likes
+function saveLikes(data: LikesData) {
+  writeFileSync(likesFile, JSON.stringify(data, null, 2))
+}
+
+// GET /api/likes?slug=hello-world → Obtener likes de un post
+export const GET = async (request: Request) => {
+  try {
+    const url = new URL(request.url)
+    const slug = url.searchParams.get('slug')
+
+    if (!slug) {
+      return new Response(JSON.stringify({ error: 'slug es requerido' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      })
+    }
+
+    const likes = getLikes()
+    const postLikes = likes[slug] || 0
+
+    return new Response(JSON.stringify({ slug, likes: postLikes }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+    })
+  } catch (error: any) {
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    })
+  }
+}
+
+// POST /api/likes → Incrementar likes
+export const POST = async (request: Request) => {
+  try {
+    const body = await request.json()
+    const { slug } = body
+
+    if (!slug) {
+      return new Response(JSON.stringify({ error: 'slug es requerido' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      })
+    }
+
+    const likes = getLikes()
+    likes[slug] = (likes[slug] || 0) + 1
+
+    saveLikes(likes)
+
+    return new Response(JSON.stringify({ slug, likes: likes[slug] }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+    })
+  } catch (error: any) {
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    })
+  }
+}
+```
+
+### Llamar API Endpoint desde Cliente (DevBlog)
+
+```tsx
+// src/components/LikeButton.client.tsx
+'use client'
+
+import { useState } from 'react'
+
+export function LikeButton({ postSlug }: { postSlug: string }) {
+  const [likes, setLikes] = useState(0)
+  const [loading, setLoading] = useState(false)
+
+  const handleLike = async () => {
+    setLoading(true)
+    try {
+      const response = await fetch('/api/likes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ slug: postSlug }),
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        setLikes(data.likes)
+      }
+    } catch (error) {
+      console.error('Error liking post:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <button onClick={handleLike} disabled={loading}>
+      ❤️ {likes} Likes {loading && '...'}
+    </button>
+  )
+}
+```
+
+### Diferencia: API Endpoint vs Server Action
+
+| Aspecto | API Endpoint | Server Action |
+|---------|--------------|----------------|
+| **Ubicación** | `api/*.ts` | Cualquier archivo con `'use server'` |
+| **HTTP Methods** | GET, POST, PUT, DELETE, etc. | Solo POST (internamente) |
+| **Reutilizable** | Desde cualquier cliente (fetch, curl, etc.) | Solo desde componentes React |
+| **Ideal para** | Webhooks, APIs públicas, RSS | Mutaciones internas de la app |
+
+---
+
+## 8. Data Fetching en Waku (Referencia)
+
+### Server-Side Data Fetching (Recomendado)
+
+**Ventaja:** Los datos se cargan en build time (SSG) o request time (SSR), sin exponer lógica al cliente.
+
+**Ejemplo: Fetchar comentarios en Server Component**
+
+```tsx
+// src/components/PostComments.server.tsx
+interface Comment {
+  id: number
+  postId: number
+  name: string
+  body: string
+}
+
+export async function PostComments({ postId }: { postId: number }) {
+  // Fetch ocurre en servidor (NO llega al cliente)
+  const response = await fetch(
+    `https://jsonplaceholder.typicode.com/posts/${postId}/comments`
+  )
+  const comments: Comment[] = await response.json()
+
+  return (
+    <section>
+      <h2>Comentarios ({comments.length})</h2>
+      <ul>
+        {comments.map((comment) => (
+          <li key={comment.id}>
+            <h4>{comment.name}</h4>
+            <p>{comment.body}</p>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )
+}
+```
+
+**Uso en página de post (DevBlog)**
+
+```tsx
+// src/pages/posts/[slug].tsx
+import PostComments from '../../components/PostComments.server'
+
+export default async function PostDetail({ params }: { params: { slug: string } }) {
+  return (
+    <article>
+      <h1>{title}</h1>
+      <div>{content}</div>
+      
+      {/* Componente servidor que fetcha comentarios */}
+      <PostComments postId={1} />
+    </article>
+  )
+}
+```
+
+### Client-Side Data Fetching
+
+**Uso:** Cuando necesitas datos dinámicos en Client Components (búsqueda, filtrado en tiempo real).
+
+```tsx
+// src/components/DynamicPostSearch.client.tsx
+'use client'
+
+import { useState, useEffect } from 'react'
+
+interface Post {
+  id: number
+  title: string
+  body: string
+}
+
+export function DynamicPostSearch() {
+  const [posts, setPosts] = useState<Post[]>([])
+  const [query, setQuery] = useState('')
+  const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    if (query.length < 2) return
+
+    setLoading(true)
+    fetch(`https://jsonplaceholder.typicode.com/posts?q=${query}`)
+      .then((res) => res.json())
+      .then((data) => {
+        // Filtrar por título (JSONPlaceholder no soporta búsqueda real)
+        const filtered = data.filter((post: Post) =>
+          post.title.toLowerCase().includes(query.toLowerCase())
+        )
+        setPosts(filtered)
+      })
+      .finally(() => setLoading(false))
+  }, [query])
+
+  return (
+    <div>
+      <input
+        type="text"
+        placeholder="Buscar posts..."
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+      />
+      {loading && <p>Cargando...</p>}
+      <ul>
+        {posts.map((post) => (
+          <li key={post.id}>
+            <h3>{post.title}</h3>
+            <p>{post.body.substring(0, 100)}...</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+```
+
+### Configuración de Data Fetching en getConfig
+
+```tsx
+// Datos que cambian con cada request → render: 'dynamic'
+export const getConfig = async () => {
+  return {
+    render: 'dynamic', // Request time rendering
+  } as const
+}
+
+// Datos que no cambian → render: 'static'
+export const getConfig = async () => {
+  return {
+    render: 'static',  // Build time rendering
+    staticPaths: ['post-1', 'post-2'], // Si es ruta dinámica
+  } as const
+}
+```
+
+---
+
+## 9. Environment Variables en Waku (Referencia)
+
+### Variables Privadas vs Públicas
+
+**Variables Privadas (secretos):**
+- ✅ Accesibles solo en Server Components
+- ✅ Nunca se exponen al cliente
+- ✅ Ejemplos: API keys, database URLs
+
+**Variables Públicas:**
+- ✅ Accesibles en Client y Server
+- ✅ Se envían al navegador en el bundle JS
+- ✅ Requieren prefijo `WAKU_PUBLIC_`
+
+### Configurar .env.local
+
+```bash
+# .env.local
+# Privadas (no en el bundle)
+DATABASE_URL=postgres://user:pass@localhost/db
+API_SECRET=sk_live_abc123xyz789
+
+# Públicas (SÍ en el bundle - úsalo solo para configuración no sensible)
+WAKU_PUBLIC_SITE_NAME=DevBlog
+WAKU_PUBLIC_API_URL=https://api.example.com
+```
+
+### Acceder a Variables en DevBlog
+
+**Server Component (acceso a privadas):**
+
+```tsx
+// src/pages/index.tsx
+import { getEnv } from 'waku'
+
+export default async function HomePage() {
+  // Acceso a variable privada (SOLO en servidor)
+  const databaseUrl = getEnv('DATABASE_URL')
+
+  // Acceso a variable pública
+  const siteName = getEnv('WAKU_PUBLIC_SITE_NAME')
+
+  // Usar databaseUrl para conectar DB, etc.
+
+  return (
+    <h1>{siteName}</h1>
+  )
+}
+```
+
+**Client Component (solo públicas):**
+
+```tsx
+// src/components/ApiUrl.client.tsx
+'use client'
+
+export function ApiUrl() {
+  // ✅ Funciona (pública)
+  const apiUrl = import.meta.env.WAKU_PUBLIC_API_URL
+
+  // ❌ NO funciona (privada, sería undefined)
+  // const secret = import.meta.env.API_SECRET  // undefined
+
+  return <p>API: {apiUrl}</p>
+}
+```
+
+### Acceso Compatible (Node.js)
+
+```tsx
+// También soportado en Server Components
+const secret = process.env.API_SECRET
+const publicSite = process.env.WAKU_PUBLIC_SITE_NAME
+```
+
+### Checklist Environment Variables
+
+- [ ] `.env.local` creado en raíz del proyecto
+- [ ] Variables privadas NO tienen prefijo `WAKU_PUBLIC_`
+- [ ] Variables públicas tienen prefijo `WAKU_PUBLIC_`
+- [ ] Server Components usan `getEnv()` o `process.env`
+- [ ] Client Components usan `import.meta.env`
+- [ ] `.env.local` está en `.gitignore`
+- [ ] `.env.example` documentado para otros devs
+
+---
+
+## 10. Deployment en Netlify (Paso a Paso)
+
+### ¿Por qué Netlify?
+
+- ✅ Despliegue automático desde Git
+- ✅ Builds incremental (rápido)
+- ✅ CDN global gratuito
+- ✅ Environment variables fáciles
+- ✅ Perfecto para DevBlog estático
+
+### Paso 1: Preparar el Proyecto
+
+```bash
+# Asegurate que el build es estático
+pnpm build
+
+# Verifica que dist/ tiene todos los archivos
+ls dist/
+```
+
+### Paso 2: Instalar Netlify CLI
+
+```bash
+npm install -g netlify-cli
+# o
+pnpm add -D netlify-cli
+```
+
+### Paso 3: Conectar con Netlify
+
+```bash
+# Opción A: Via CLI (recomendado)
+netlify login
+netlify init
+
+# Opción B: Dashboard en https://netlify.com
+# (Autorizar con GitHub, conectar repo)
+```
+
+### Paso 4: Configurar netlify.toml
+
+```toml
+# netlify.toml (raíz del proyecto)
+
+[build]
+  command = "NETLIFY=1 pnpm build"
+  publish = "dist"
+
+[functions]
+  # Si usas API endpoints, esta es la carpeta de functions
+  directory = "dist/functions"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200  # SPA fallback (opcional)
+
+# Environment variables en deploy
+[context.production.environment]
+  WAKU_PUBLIC_SITE_NAME = "DevBlog Production"
+
+[context.deploy-preview.environment]
+  WAKU_PUBLIC_SITE_NAME = "DevBlog Preview"
+```
+
+### Paso 5: Deploy desde CLI
+
+```bash
+# Deploy manual
+netlify deploy --prod
+
+# Output
+# Deploy site: https://your-site-id.netlify.app
+# Live URL: https://your-site.com (si tiene dominio)
+```
+
+### Paso 6: Deploy Automático (Recomendado)
+
+1. Push código a GitHub/GitLab/Bitbucket
+2. Netlify detecta cambios automáticamente
+3. Corre `pnpm build`
+4. Publica a `dist/`
+5. Tu sitio está vivo
+
+### Agregar Dominio Personalizado
+
+1. Ir a **Site Settings** → **Domain management**
+2. Agregar dominio personalizado
+3. Actualizar DNS en tu registrador
+
+### Variables de Entorno en Netlify
+
+1. **Site Settings** → **Build & Deploy** → **Environment**
+2. Agregar variables:
+   ```
+   DATABASE_URL = postgres://...
+   WAKU_PUBLIC_SITE_NAME = DevBlog
+   ```
+
+### Monitoreo
+
+```bash
+# Ver logs en tiempo real
+netlify logs
+
+# Ver último deploy
+netlify status
+
+# Rollback a versión anterior
+netlify deploy --prod --build=false
+```
+
+### Checklist Deployment Netlify
+
+- [ ] Proyecto local builds sin errores (`pnpm build`)
+- [ ] Código está en GitHub/GitLab
+- [ ] Cuenta en netlify.com creada
+- [ ] Repo conectado a Netlify
+- [ ] `netlify.toml` configurado en raíz
+- [ ] Environment variables seteadas en Netlify UI
+- [ ] Primer deploy exitoso (`netlify deploy --prod`)
+- [ ] Sitio accesible en `https://your-site.netlify.app`
+- [ ] Dominio personalizado apuntando (si aplica)
+- [ ] CI/CD automático funcionando (push → auto-deploy)
+
+### Troubleshooting Netlify
+
+| Problema | Solución |
+|----------|----------|
+| Build falla | Chequea logs: `netlify logs` |
+| Variables no cargan | Verifica prefijo `WAKU_PUBLIC_` en Netlify UI |
+| Sitio retorna 404 | Agrega `[[redirects]]` en netlify.toml |
+| Dominio no funciona | Espera 24h para DNS, verifica CNAME en registrador |
+| Despliegue muy lento | Habilita "Incremental Builds" en Netlify settings |
+
+### Ejemplo Completo: DevBlog en Netlify
+
+```bash
+# 1. Build local
+pnpm build
+
+# 2. Verificar build
+ls dist/ | head -20
+
+# 3. Deploy
+netlify deploy --prod
+
+# 4. Verificar
+curl https://your-devblog.netlify.app
+
+# 5. Monitorear
+netlify open
+```
+
+---
+
+## 11. Conceptos clave a dominar
 
 | Concepto | Explicación | Ejemplo |
 | --- | --- | --- |
@@ -1896,7 +3410,7 @@ export async function updateProfile(userId: string, data: UserProfileData) {
 
 ---
 
-## 8. Próximos pasos después de esta semana
+## 12. Próximos pasos después de esta semana
 
 1. **Comentarios mejorados** — Actualmente JSONPlaceholder es de solo lectura. Integra un formulario para que usuarios creen comentarios (POST a tu propio `api/comments.ts`)
 2. **Persistencia real** — Reemplaza comentarios JSON con Supabase, Firebase, o tu propia DB
@@ -1909,7 +3423,7 @@ export async function updateProfile(userId: string, data: UserProfileData) {
 
 ---
 
-## 9. Patrón mental: Cuándo usar Server vs Client
+## 13. Patrón mental: Cuándo usar Server vs Client
 
 **Usa Server Components cuando:**
 - ✅ Necesitas leer archivos del sistema
@@ -1934,7 +3448,7 @@ App (Server)
 
 ---
 
-## 10. Resultado esperado
+## 14. Resultado esperado
 
 Tras 5 días tendrás:
 
