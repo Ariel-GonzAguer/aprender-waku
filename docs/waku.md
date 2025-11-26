@@ -385,9 +385,446 @@ export const getConfig = async () => {
 
 ## 4. Routing: Sistema de Rutas en Waku
 
-### 4.1. Fundamentos del File-Based Routing
+### 4.1. Conceptos Fundamentales
 
-1. **Crear barra de búsqueda** (`src/components/SearchBar.client.tsx`)
+El **file-based routing** de Waku mapea automáticamente archivos en `./src/pages` a rutas de tu aplicación. No necesitas configurar rutas manualmente ni usar librerías como React Router.
+
+#### Principios Básicos
+
+**Directorio de routing:**  
+`./src/pages`
+
+**Estructura de archivos:**  
+Cada página exporta dos elementos:
+1. **Componente React** (export default) - Define el contenido de la página
+2. **Función `getConfig`** (export named) - Especifica el modo de renderizado
+
+**Modos de renderizado disponibles:**
+- `'static'` → Static Site Generation (SSG) - Prerenderizado en build time
+- `'dynamic'` → Server-Side Rendering (SSR) - Renderizado en request time
+
+**Valores por defecto:**
+- Layouts, pages, y slices: `'static'`
+- API handlers: `'dynamic'`
+
+#### Ejemplo Básico
+
+```tsx
+// ./src/pages/_layout.tsx
+import '../styles.css'
+import { Header } from '../components/header'
+import { Footer } from '../components/footer'
+
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <>
+      <Header />
+      <main>{children}</main>
+      <Footer />
+    </>
+  )
+}
+
+export const getConfig = async () => {
+  return {
+    render: 'static',
+  } as const
+}
+```
+
+```tsx
+// ./src/pages/index.tsx
+export default async function HomePage() {
+  const data = await getData()
+
+  return (
+    <>
+      <title>{data.title}</title>
+      <h1>{data.title}</h1>
+      <div>{data.content}</div>
+    </>
+  )
+}
+
+const getData = async () => {
+  /* ... */
+}
+
+export const getConfig = async () => {
+  return {
+    render: 'dynamic',
+  } as const
+}
+```
+
+---
+
+### 4.2. Tipos de Páginas
+
+#### Single Routes (Rutas Simples)
+
+Páginas con rutas fijas como `/about` o `/blog`.
+
+**Convención:**
+- `about.tsx` → `/about`
+- `blog/index.tsx` → `/blog`
+
+**Ejemplo:**
+
+```tsx
+// ./src/pages/about.tsx
+export default async function AboutPage() {
+  return (
+    <>
+      <title>Acerca de</title>
+      <h1>Sobre Nosotros</h1>
+      <p>Contenido de la página...</p>
+    </>
+  )
+}
+
+export const getConfig = async () => {
+  return {
+    render: 'static',
+  } as const
+}
+```
+
+#### Segment Routes (Rutas Dinámicas)
+
+Rutas con parámetros variables marcados con corchetes `[param]`.
+
+**Convención:**
+- `[slug].tsx` → `/hello-world`, `/react-guide`, etc.
+- `blog/[category].tsx` → `/blog/tech`, `/blog/design`, etc.
+
+**Características:**
+- El componente recibe automáticamente el parámetro como prop
+- Usa `PageProps<'/ruta/[param]'>` para type-safety
+- Para `render: 'static'`, debes proporcionar `staticPaths`
+
+**Ejemplo con SSG:**
+
+```tsx
+// ./src/pages/blog/[slug].tsx
+import type { PageProps } from 'waku/router'
+
+export default async function BlogArticlePage({
+  slug,
+}: PageProps<'/blog/[slug]'>) {
+  const data = await getData(slug)
+
+  return (
+    <>
+      <title>{data.title}</title>
+      <h1>{data.title}</h1>
+      <div>{data.content}</div>
+    </>
+  )
+}
+
+const getData = async (slug: string) => {
+  /* ... */
+}
+
+export const getConfig = async () => {
+  return {
+    render: 'static',
+    staticPaths: ['introducing-waku', 'react-server-components'],
+  } as const
+}
+```
+
+**Ejemplo con SSR:**
+
+```tsx
+// ./src/pages/shop/[category].tsx
+import type { PageProps } from 'waku/router'
+
+export default async function ProductCategoryPage({
+  category,
+}: PageProps<'/shop/[category]'>) {
+  const data = await getData(category)
+
+  return (
+    <>
+      <title>{data.name}</title>
+      <h1>{data.name}</h1>
+      <div>Productos en esta categoría...</div>
+    </>
+  )
+}
+
+const getData = async (category: string) => {
+  /* ... */
+}
+
+export const getConfig = async () => {
+  return {
+    render: 'dynamic',
+  } as const
+}
+```
+
+**staticPaths programáticos:**
+
+```tsx
+export const getConfig = async () => {
+  const staticPaths = await getStaticPaths()
+
+  return {
+    render: 'static',
+    staticPaths,
+  } as const
+}
+
+const getStaticPaths = async () => {
+  // Generar paths desde base de datos, archivos, etc.
+  const posts = await getAllPosts()
+  return posts.map(post => post.slug)
+}
+```
+
+#### Nested Segment Routes (Rutas con Múltiples Parámetros)
+
+Rutas con varios segmentos dinámicos como `/shop/[category]/[product]`.
+
+**Convención:**
+- Crear carpetas con corchetes: `[category]/[product].tsx`
+
+**Ejemplo SSR:**
+
+```tsx
+// ./src/pages/shop/[category]/[product].tsx
+import type { PageProps } from 'waku/router'
+
+export default async function ProductDetailPage({
+  category,
+  product,
+}: PageProps<'/shop/[category]/[product]'>) {
+  return (
+    <>
+      <title>{product} en {category}</title>
+      <h1>Producto: {product}</h1>
+      <p>Categoría: {category}</p>
+    </>
+  )
+}
+
+export const getConfig = async () => {
+  return {
+    render: 'dynamic',
+  } as const
+}
+```
+
+**Ejemplo SSG con arrays anidados:**
+
+```tsx
+export const getConfig = async () => {
+  return {
+    render: 'static',
+    staticPaths: [
+      ['electronics', 'laptop'],
+      ['electronics', 'phone'],
+      ['books', 'react-guide'],
+    ],
+  } as const
+}
+```
+
+#### Catch-All Routes (Rutas Comodín)
+
+Capturan cualquier número de segmentos con `[...param]`.
+
+**Convención:**
+- `[...catchAll].tsx` → Captura `/app/profile`, `/app/profile/settings`, etc.
+
+**Características:**
+- El parámetro es un array de strings
+- Útil para dashboards, rutas 404 personalizadas, etc.
+
+**Ejemplo:**
+
+```tsx
+// ./src/pages/app/[...catchAll].tsx
+import type { PageProps } from 'waku/router'
+
+export default async function DashboardPage({
+  catchAll,
+}: PageProps<'/app/[...catchAll]'>) {
+  const path = catchAll?.join('/') || ''
+  
+  return (
+    <>
+      <title>Dashboard - {path}</title>
+      <h1>Ruta: /app/{path}</h1>
+      <nav>
+        {/* Renderizar según segments */}
+      </nav>
+    </>
+  )
+}
+
+export const getConfig = async () => {
+  return {
+    render: 'dynamic',
+  } as const
+}
+```
+
+**Ejemplo 404 personalizado:**
+
+```tsx
+// ./src/pages/[...notFound].tsx
+import type { PageProps } from 'waku/router'
+
+export default function NotFoundPage({
+  notFound,
+}: PageProps<'/[...notFound]'>) {
+  const path = notFound?.join('/') || ''
+  
+  return (
+    <html>
+      <head>
+        <title>404 - Página no encontrada</title>
+      </head>
+      <body style={{ textAlign: 'center', padding: '4rem' }}>
+        <h1>🔍 404</h1>
+        <p>No encontramos: <code>/{path}</code></p>
+        <p><a href="/">Volver al inicio</a></p>
+      </body>
+    </html>
+  )
+}
+
+export const getConfig = async () => {
+  return {
+    render: 'dynamic',
+  } as const
+}
+```
+
+#### Group Routes (Agrupación de Rutas)
+
+Organiza rutas en grupos lógicos sin afectar la URL usando `(nombre)`.
+
+**Convención:**
+- Carpetas con paréntesis: `(main)`, `(admin)`, etc.
+- No aparecen en la URL final
+
+**Ejemplo de estructura:**
+
+```
+pages/
+├── (main)/
+│   ├── _layout.tsx       # Layout compartido para /about y /contact
+│   ├── about.tsx         # → /about
+│   └── contact.tsx       # → /contact
+└── index.tsx             # → / (sin layout de main)
+```
+
+**Layout del grupo:**
+
+```tsx
+// ./src/pages/(main)/_layout.tsx
+import { Header } from '../../components/header'
+import { Footer } from '../../components/footer'
+
+export default async function MainLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <>
+      <Header />
+      <main>{children}</main>
+      <Footer />
+    </>
+  )
+}
+
+export const getConfig = async () => {
+  return {
+    render: 'static',
+  } as const
+}
+```
+
+**Grupos anidados:**
+
+```
+(main)/
+├── (dynamic)/
+│   ├── _layout.tsx      # Dynamic layout
+│   ├── dashboard.tsx
+│   └── profile.tsx
+└── _layout.tsx          # Static layout
+```
+
+```tsx
+// ./src/pages/(main)/_layout.tsx (Static)
+export default async function MainLayout({ children }: { children: React.ReactNode }) {
+  return <div className="main-container">{children}</div>
+}
+
+export const getConfig = async () => {
+  return { render: 'static' } as const
+}
+```
+
+```tsx
+// ./src/pages/(main)/(dynamic)/_layout.tsx (Dynamic)
+export default async function DynamicLayout({ children }: { children: React.ReactNode }) {
+  const userData = await fetchUserData()
+
+  return (
+    <div className="dynamic-container">
+      <UserContext.Provider value={userData}>
+        {children}
+      </UserContext.Provider>
+    </div>
+  )
+}
+
+export const getConfig = async () => {
+  return { render: 'dynamic' } as const
+}
+```
+
+#### Ignored Routes (Rutas Ignoradas)
+
+Directorios especiales que el router ignora automáticamente:
+
+- `_components/` - Para componentes locales a páginas
+- `_hooks/` - Para hooks personalizados
+
+**Ejemplo:**
+
+```
+pages/
+├── about.tsx             # → /about
+├── _components/
+│   ├── header.tsx        # ❌ No genera ruta
+│   └── footer.tsx        # ❌ No genera ruta
+└── _hooks/
+    └── useAuth.ts        # ❌ No genera ruta
+```
+
+---
+
+### 4.3. Layouts
+
+Los layouts envuelven páginas y sus descendientes. Se crean con el archivo especial `_layout.tsx`.
+
+#### Root Layout
+
+Ubicación: `./src/pages/_layout.tsx`
+
+**Propósito:**
+- Estilos globales
+- Metadata global
+- Providers globales (contexto, state management)
+- Componentes globales (header, footer)
+
+**Ejemplo:
    ```tsx
    'use client'
 
@@ -823,40 +1260,427 @@ pnpm dev
 - ❌ Comentarios no cargan → Revisa Network tab, ¿CORS error? JSONPlaceholder debería permitir
 - ❌ "postId no es válido" → El slug mapea fuera de 1-100. Ajusta la lógica de hash en PostDetail
 
-### 4.3. Sistemas de Rutas en Detalle (Concepto + Práctica)
+---
 
-**¿Cómo Waku maneja las rutas?**
+### 4.4. Layouts Anidados
 
-Waku usa **file-based routing**: los archivos en `src/pages/` determinan automáticamente las rutas. No necesitas un `react-router` ni configuración manual.
+Los layouts se pueden colocar en subdirectorios para aplicar estilos/estructura a secciones específicas.
 
-**Convención de archivos:**
+**Ejemplo: Layout para blog**
 
-| Archivo | Ruta generada | Tipo | Prerendering |
-| --- | --- | --- | --- |
-| `src/pages/index.tsx` | `/` (home) | Estática | Build time |
-| `src/pages/about.tsx` | `/about` | Estática | Build time |
-| `src/pages/blog/index.tsx` | `/blog` | Estática | Build time |
-| `src/pages/posts/[slug].tsx` | `/posts/hello-world`, `/posts/faq` | Dinámica | Con `render: 'dynamic'` |
-| `src/pages/posts/[slug]/comments.tsx` | `/posts/hello-world/comments` | Dinámica anidada | Con `render: 'dynamic'` |
-| `src/pages/[...notFound].tsx` | Cualquier ruta no encontrada | Catch-all 404 | Build time |
+```tsx
+// ./src/pages/blog/_layout.tsx
+import { Sidebar } from '../../components/sidebar'
+
+export default async function BlogLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="flex">
+      <div className="flex-1">{children}</div>
+      <Sidebar />
+    </div>
+  )
+}
+
+export const getConfig = async () => {
+  return {
+    render: 'static',
+  } as const
+}
+```
+
+Ahora todas las páginas en `blog/` (como `blog/index.tsx`, `blog/[slug].tsx`) tendrán este layout automáticamente.
 
 ---
 
-##### 1️⃣ Rutas estáticas simples
+### 4.5. Root Element
 
-**Caso:** Crear páginas fijas (home, about, contacto).
+Permite personalizar los elementos `<html>`, `<head>`, y `<body>`.
+
+**Archivo especial:** `./src/pages/_root.tsx`
+
+**Ejemplo:**
 
 ```tsx
-// src/pages/about.tsx
-export default function About() {
+// ./src/pages/_root.tsx
+export default async function RootElement({ children }: { children: React.ReactNode }) {
   return (
-    <html>
-      <head><title>Sobre mí</title></head>
-      <body>
-        <h1>Sobre DevBlog</h1>
-        <p>Un blog técnico hecho con Waku.</p>
+    <html lang="es">
+      <head>
+        <meta charSet="UTF-8" />
+      </head>
+      <body data-theme="light">
+        {children}
       </body>
     </html>
+  )
+}
+
+export const getConfig = async () => {
+  return {
+    render: 'static',
+  } as const
+}
+```
+
+---
+
+### 4.6. Slices (Componentes Reutilizables con Render Modes)
+
+Los **slices** son componentes reutilizables que se definen en `src/pages/_slices/` y pueden tener diferentes modos de renderizado.
+
+#### Creando Slices
+
+**Estructura:**
+
+```
+src/pages/
+ ├── _slices/
+ │   ├── one.tsx
+ │   ├── two.tsx
+ │   └── nested/
+ │       └── three.tsx
+ └── some-page.tsx
+```
+
+**Ejemplo de slice:**
+
+```tsx
+// ./src/pages/_slices/one.tsx
+export default function SliceOne() {
+  return <p>🍕 Slice One</p>
+}
+
+export const getConfig = () => {
+  return {
+    render: 'static',
+  }
+}
+```
+
+```tsx
+// ./src/pages/_slices/nested/three.tsx
+export default function SliceThree() {
+  return <p>🍰 Slice Three</p>
+}
+
+export const getConfig = () => {
+  return {
+    render: 'dynamic',
+  }
+}
+```
+
+#### Usando Slices
+
+Importa el componente `Slice` de Waku y especifica el ID del slice.
+
+```tsx
+// ./src/pages/some-page.tsx
+import { Slice } from 'waku'
+
+export default function SomePage() {
+  return (
+    <div>
+      <Slice id="one" />
+      <Slice id="two" />
+      <Slice id="nested/three" />
+    </div>
+  )
+}
+
+export const getConfig = () => {
+  return {
+    render: 'static',
+    slices: ['one', 'two', 'nested/three'],
+  }
+}
+```
+
+#### Lazy Slices
+
+Los **lazy slices** se cargan de forma independiente, útil para componentes dinámicos en páginas estáticas (similar a server islands de Astro).
+
+**Características:**
+- Se marcan con prop `lazy`
+- Pueden tener `fallback` mientras cargan
+- No se incluyen en el array `slices` del config
+
+**Ejemplo:**
+
+```tsx
+// ./src/pages/some-page.tsx
+import { Slice } from 'waku'
+
+export default function SomePage() {
+  return (
+    <div>
+      <Slice id="one" />
+      <Slice 
+        id="two" 
+        lazy 
+        fallback={<p>Cargando slice dinámico...</p>} 
+      />
+    </div>
+  )
+}
+
+export const getConfig = () => {
+  return {
+    render: 'static',
+    slices: ['one'], // 'two' no se incluye porque es lazy
+  }
+}
+```
+
+---
+
+### 4.7. Resumen de Convenciones de Routing
+
+| Convención | Descripción | Ejemplo |
+|------------|-------------|---------|
+| `index.tsx` | Página de índice para la ruta | `pages/index.tsx` → `/` |
+| `about.tsx` | Ruta simple | `pages/about.tsx` → `/about` |
+| `[slug].tsx` | Segmento dinámico | `pages/blog/[slug].tsx` → `/blog/hello` |
+| `[...catchAll].tsx` | Catch-all/wildcard | `pages/app/[...catchAll].tsx` → `/app/any/path` |
+| `(group)/` | Agrupación (no afecta URL) | `pages/(main)/about.tsx` → `/about` |
+| `_layout.tsx` | Layout para rutas descendientes | `pages/blog/_layout.tsx` |
+| `_root.tsx` | Elemento raíz HTML | `pages/_root.tsx` |
+| `_slices/` | Componentes slice reutilizables | `pages/_slices/header.tsx` |
+| `_components/` | Ignorado por router | `pages/_components/helper.tsx` |
+| `_hooks/` | Ignorado por router | `pages/_hooks/useAuth.ts` |
+
+---
+
+### 4.8. Props Automáticas en Páginas
+
+Todas las páginas reciben automáticamente dos props:
+
+- **`path`** (string) - La ruta actual
+- **`query`** (string) - La query string actual
+
+**Ejemplo:**
+
+```tsx
+export default function MyPage({ path, query }: { path: string; query: string }) {
+  return (
+    <>
+      <p>Ruta actual: {path}</p>
+      <p>Query: {query}</p>
+    </>
+  )
+}
+```
+
+---
+
+### 4.9. Ejemplo Completo: Blog con Routing
+
+**Estructura de archivos:**
+
+```
+src/pages/
+├── _root.tsx              # HTML root element
+├── _layout.tsx            # Layout global
+├── index.tsx              # Home page (/)
+├── about.tsx              # About page (/about)
+├── blog/
+│   ├── _layout.tsx        # Blog layout
+│   ├── index.tsx          # Blog index (/blog)
+│   └── [slug].tsx         # Blog posts (/blog/hello-world)
+└── [...notFound].tsx      # 404 page
+```
+
+**Implementación:**
+
+```tsx
+// ./src/pages/_root.tsx
+export default async function RootElement({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="es">
+      <head><meta charSet="UTF-8" /></head>
+      <body>{children}</body>
+    </html>
+  )
+}
+
+export const getConfig = async () => {
+  return { render: 'static' } as const
+}
+```
+
+```tsx
+// ./src/pages/_layout.tsx
+import '../styles.css'
+
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <>
+      <header>
+        <nav>
+          <a href="/">Home</a>
+          <a href="/blog">Blog</a>
+          <a href="/about">About</a>
+        </nav>
+      </header>
+      <main>{children}</main>
+      <footer>© 2025</footer>
+    </>
+  )
+}
+
+export const getConfig = async () => {
+  return { render: 'static' } as const
+}
+```
+
+```tsx
+// ./src/pages/index.tsx
+export default async function HomePage() {
+  return (
+    <>
+      <title>Home</title>
+      <h1>Bienvenido</h1>
+    </>
+  )
+}
+
+export const getConfig = async () => {
+  return { render: 'static' } as const
+}
+```
+
+```tsx
+// ./src/pages/blog/[slug].tsx
+import type { PageProps } from 'waku/router'
+
+export default async function BlogPost({
+  slug,
+}: PageProps<'/blog/[slug]'>) {
+  const post = await getPost(slug)
+
+  return (
+    <>
+      <title>{post.title}</title>
+      <article>
+        <h1>{post.title}</h1>
+        <div dangerouslySetInnerHTML={{ __html: post.content }} />
+      </article>
+    </>
+  )
+}
+
+const getPost = async (slug: string) => {
+  /* fetch post data */
+  return { title: '', content: '' }
+}
+
+export const getConfig = async () => {
+  return {
+    render: 'static',
+    staticPaths: ['hello-world', 'react-guide'],
+  } as const
+}
+```
+
+```tsx
+// ./src/pages/[...notFound].tsx
+import type { PageProps } from 'waku/router'
+
+export default function NotFoundPage({
+  notFound,
+}: PageProps<'/[...notFound]'>) {
+  const path = notFound?.join('/') || ''
+  
+  return (
+    <>
+      <title>404 - No encontrado</title>
+      <h1>404</h1>
+      <p>No encontramos: /{path}</p>
+      <a href="/">Volver al inicio</a>
+    </>
+  )
+}
+
+export const getConfig = async () => {
+  return { render: 'dynamic' } as const
+}
+```
+
+---
+
+### 4.10. Checklist de Routing
+
+- [ ] Entiendo la diferencia entre `render: 'static'` y `render: 'dynamic'`
+- [ ] Sé crear rutas simples (about.tsx → /about)
+- [ ] Sé crear rutas dinámicas ([slug].tsx) con PageProps
+- [ ] Conozco cómo usar staticPaths para SSG
+- [ ] Puedo crear layouts con _layout.tsx
+- [ ] Entiendo los group routes (group)/
+- [ ] Sé crear catch-all routes con [...param]
+- [ ] Puedo personalizar el root element con _root.tsx
+- [ ] Conozco la diferencia entre slices normales y lazy slices
+- [ ] Sé qué carpetas ignora el router (_components, _hooks)
+
+---
+
+## 5. Navegación
+
+### 5.1. Componente Link
+
+El componente `<Link />` debe usarse para navegación interna. Incluye prefetch automático de la ruta destino.
+
+**Características:**
+- Prefetch automático al hacer hover
+- Navegación client-side sin reload
+- Compatible con atributos HTML estándar
+
+**Ejemplo básico:**
+
+```tsx
+// ./src/pages/index.tsx
+import { Link } from 'waku'
+
+export default async function HomePage() {
+  return (
+    <>
+      <h1>Home</h1>
+      <nav>
+        <Link to="/about">Sobre Nosotros</Link>
+        <Link to="/blog">Blog</Link>
+        <Link to="/contact">Contacto</Link>
+      </nav>
+    </>
+  )
+}
+
+export const getConfig = async () => {
+  return {
+    render: 'static',
+  } as const
+}
+```
+
+**Con estilos:**
+
+```tsx
+import { Link } from 'waku'
+
+export default function Navigation() {
+  return (
+    <nav className="flex gap-4">
+      <Link 
+        to="/" 
+        className="text-blue-600 hover:underline"
+      >
+        Home
+      </Link>
+      <Link 
+        to="/posts" 
+        className="text-blue-600 hover:underline"
+      >
+        Posts
+      </Link>
+    </nav>
   )
 }
 ```
@@ -1274,9 +2098,917 @@ export const getConfig = async () => {
 
 ---
 
-## 5. Navegación en Waku
+---
 
-### 5.1. Componente Link y Navegación Básica
+### 5.2. Hook useRouter
+
+El hook `useRouter` permite navegación programática e inspección de la ruta actual.
+
+**Solo disponible en Client Components** (requiere `'use client'`)
+
+#### Propiedades del Router
+
+```tsx
+'use client'
+
+import { useRouter } from 'waku'
+
+export const Component = () => {
+  const { path, query } = useRouter()
+
+  return (
+    <>
+      <div>Ruta actual: {path}</div>
+      <div>Query string: {query}</div>
+    </>
+  )
+}
+```
+
+#### Métodos de Navegación
+
+El objeto `router` proporciona varios métodos:
+
+- **`router.push(to: string)`** - Navegar a una ruta
+- **`router.prefetch(to: string)`** - Prefetch de una ruta
+- **`router.replace(to: string)`** - Reemplazar entrada en historial
+- **`router.reload()`** - Recargar ruta actual
+- **`router.back()`** - Retroceder en historial
+- **`router.forward()`** - Avanzar en historial
+
+**Ejemplo completo:**
+
+```tsx
+'use client'
+
+import { useRouter } from 'waku'
+import { useState } from 'react'
+
+export const SearchForm = () => {
+  const router = useRouter()
+  const [query, setQuery] = useState('')
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault()
+    // Navegar programáticamente
+    router.push(`/search?q=${encodeURIComponent(query)}`)
+  }
+
+  return (
+    <form onSubmit={handleSearch}>
+      <input
+        type="text"
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        placeholder="Buscar..."
+      />
+      <button type="submit">Buscar</button>
+      <button type="button" onClick={() => router.back()}>
+        Volver
+      </button>
+    </form>
+  )
+}
+```
+
+**Navegación condicional:**
+
+```tsx
+'use client'
+
+import { useRouter } from 'waku'
+
+export const LoginButton = ({ isAuthenticated }: { isAuthenticated: boolean }) => {
+  const router = useRouter()
+
+  const handleClick = () => {
+    if (isAuthenticated) {
+      router.push('/dashboard')
+    } else {
+      router.push('/login')
+    }
+  }
+
+  return (
+    <button onClick={handleClick}>
+      {isAuthenticated ? 'Ir al Dashboard' : 'Iniciar Sesión'}
+    </button>
+  )
+}
+```
+
+---
+
+### 5.3. Resumen de Navegación
+
+| Método | Cuándo Usar | Ejemplo |
+|--------|-------------|----------|
+| `<Link to="/path">` | Navegación declarativa (preferido) | Links en menú, botones |
+| `router.push()` | Navegación programática | Después de submit, redirecciones |
+| `router.replace()` | Navegación sin historial | Redirecciones after login |
+| `router.back()` | Volver atrás | Botón "Cancelar" |
+| `router.reload()` | Refrescar datos | Después de mutación |
+
+**Best Practices:**
+
+✅ Usar `<Link>` para navegación estándar  
+✅ Usar `router.push()` solo cuando sea necesario (forms, lógica)  
+✅ Prefetch rutas críticas con `router.prefetch()`  
+❌ No usar `window.location.href` (rompe client-side navigation)  
+❌ No mezclar `<a>` tags con rutas internas
+
+---
+
+## 6. Mutations: API Endpoints y Server Actions
+
+### 6.1. API Endpoints
+
+Crea endpoints REST colocando archivos en `./src/pages/api/`. Cada archivo exporta funciones nombradas según métodos HTTP.
+
+**Métodos soportados:**  
+`GET`, `HEAD`, `POST`, `PUT`, `DELETE`, `CONNECT`, `OPTIONS`, `TRACE`, `PATCH`
+
+**Cada función recibe:**  
+- `Request` - Objeto Request estándar de Web API
+- **Retorna:** `Response` - Objeto Response estándar
+
+#### Ejemplo Básico
+
+```ts
+// ./src/pages/api/contact.ts
+import emailClient from 'some-email'
+
+const client = new emailClient(process.env.EMAIL_API_TOKEN!)
+
+export const POST = async (request: Request): Promise<Response> => {
+  const body = await request.json()
+
+  if (!body.message) {
+    return Response.json({ message: 'Invalid' }, { status: 400 })
+  }
+
+  try {
+    await client.sendEmail({
+      From: 'noreply@example.com',
+      To: 'someone@example.com',
+      Subject: 'Contact form submission',
+      Body: body.message,
+    })
+
+    return Response.json({ message: 'Success' }, { status: 200 })
+  } catch (error) {
+    return Response.json({ message: 'Failure' }, { status: 500 })
+  }
+}
+```
+
+**Handler catch-all (alternativa):**
+
+```ts
+// ./src/pages/api/other-endpoint.ts
+export default function handler(request: Request): Response {
+  return Response.json(
+    { message: 'Default handler ' + request.method },
+    { status: 200 },
+  )
+}
+```
+
+#### Llamando API Routes desde Client
+
+```tsx
+'use client'
+
+import { useState } from 'react'
+
+export const ContactForm = () => {
+  const [message, setMessage] = useState('')
+  const [status, setStatus] = useState('idle')
+
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault()
+    setStatus('sending')
+
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ message }),
+      })
+
+      const data = await response.json()
+
+      if (response.status === 200) {
+        setStatus('success')
+        setMessage('')
+      } else {
+        setStatus('error')
+        console.error('Error:', data.message)
+      }
+    } catch (error) {
+      setStatus('error')
+      console.error('Error:', error)
+    }
+  }
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <textarea
+        value={message}
+        onChange={(event) => setMessage(event.target.value)}
+        placeholder="Tu mensaje..."
+        required
+      />
+      <button type="submit" disabled={status === 'sending'}>
+        {status === 'sending' ? 'Enviando...' : 'Enviar Mensaje'}
+      </button>
+      {status === 'success' && <p>¡Mensaje enviado!</p>}
+      {status === 'error' && <p>Error. Intenta de nuevo.</p>}
+    </form>
+  )
+}
+```
+
+#### Configurar API Routes como Estáticos
+
+Por defecto, los API routes son dinámicos. Para crear recursos estáticos (RSS, sitemap):
+
+```ts
+// ./src/pages/api/rss.xml.ts
+
+export const GET = async () => {
+  const rssFeed = generateRSSFeed(items)
+
+  return new Response(rssFeed, {
+    headers: {
+      'Content-Type': 'application/rss+xml',
+    },
+  })
+}
+
+export const getConfig = async () => {
+  return {
+    render: 'static',
+  } as const
+}
+
+const items = [
+  {
+    title: `Announcing API routes`,
+    description: `Easily add public API endpoints to your Waku projects.`,
+    pubDate: `Tue, 1 Apr 2025 00:00:00 GMT`,
+    link: `https://waku.gg/blog/api-routes`,
+  },
+  // ...
+]
+
+const generateRSSFeed = (items: any[]) => {
+  const itemsXML = items
+    .map(
+      (item) => `
+        <item>
+          <title>${item.title}</title>
+          <link>${item.link}</link>
+          <pubDate>${item.pubDate}</pubDate>
+          <description>${item.description}</description>
+        </item>
+      `,
+    )
+    .join('')
+
+  return `
+    <?xml version="1.0" encoding="UTF-8" ?>
+    <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+      <atom:link href="https://waku.gg/api/rss.xml" rel="self" type="application/rss+xml" />
+      <title>Waku</title>
+      <link>https://waku.gg</link>
+      <description>The minimal React framework</description>
+      ${itemsXML}
+    </channel>
+    </rss>
+  `
+}
+```
+
+---
+
+### 6.2. Server Actions
+
+Los Server Actions permiten ejecutar lógica server-side directamente desde componentes, sin crear endpoints manuales.
+
+**Ventajas:**
+- Sin necesidad de `fetch` manual
+- Type-safety automático
+- Menos boilerplate
+- Seguro por defecto
+
+#### Definiendo Server Actions
+
+**Directiva `'use server'`:**
+- Al inicio de una función → marca esa función como action
+- Al inicio de un archivo → marca todas las exports como actions
+
+⚠️ **Importante:** Asegura que la lógica sensible solo se ejecute en servidor
+
+**Ejemplo - Función inline:**
+
+```tsx
+// ./src/pages/contact.tsx
+import db from 'some-db'
+
+export default async function ContactPage() {
+  const sendMessage = async (message: string) => {
+    'use server'
+    await db.messages.create(message)
+  }
+
+  return <ContactForm sendMessage={sendMessage} />
+}
+```
+
+**Ejemplo - Archivo separado:**
+
+```ts
+// ./src/actions/send-message.ts
+'use server'
+
+import db from 'some-db'
+
+export async function sendMessage(message: string) {
+  await db.messages.create(message)
+}
+```
+
+#### Usando Server Actions en Client Components
+
+**Opción 1: Event handlers**
+
+```tsx
+// ./src/components/contact-button.tsx
+'use client'
+
+import { sendMessage } from '../actions/send-message'
+
+export const ContactButton = () => {
+  const message = `Hello world!`
+
+  return (
+    <button onClick={() => sendMessage(message)}>
+      Send message
+    </button>
+  )
+}
+```
+
+**Opción 2: Form actions**
+
+```tsx
+// ./src/actions/send-message.ts
+'use server'
+
+import db from 'some-db'
+
+export async function sendMessage(formData: FormData) {
+  const message = formData.get('message')
+  await db.messages.create(message)
+}
+```
+
+```tsx
+// ./src/components/contact-form.tsx
+'use client'
+
+import { sendMessage } from '../actions/send-message'
+
+export const ContactForm = () => {
+  return (
+    <form action={sendMessage}>
+      <textarea name="message" rows={4} />
+      <input type="hidden" name="secret-message" value="This too!" />
+      <button type="submit">Send message</button>
+    </form>
+  )
+}
+```
+
+**Con argumentos adicionales (bind):**
+
+```tsx
+'use client'
+
+import { sendMessage } from '../actions/send-message'
+
+export const ContactForm = ({ author = 'guest' }) => {
+  const sendMessageWithAuthor = sendMessage.bind(null, author)
+
+  return (
+    <form action={sendMessageWithAuthor}>
+      <textarea name="message" rows={4} />
+      <button type="submit">Send message</button>
+    </form>
+  )
+}
+```
+
+#### Integrando con React APIs
+
+Server Actions funcionan con:
+- **`useTransition`** - Para estados de carga
+- **`useActionState`** - Para acceder a valores retornados  
+- **`useOptimistic`** - Para updates optimistas en UI
+
+**Ejemplo con useTransition:**
+
+```tsx
+'use client'
+
+import { useTransition } from 'react'
+import { sendMessage } from '../actions/send-message'
+
+export const ContactButton = () => {
+  const [isPending, startTransition] = useTransition()
+
+  const handleClick = () => {
+    startTransition(async () => {
+      await sendMessage('Hello')
+    })
+  }
+
+  return (
+    <button onClick={handleClick} disabled={isPending}>
+      {isPending ? 'Enviando...' : 'Enviar'}
+    </button>
+  )
+}
+```
+
+#### Seguridad en Server Actions
+
+⚠️ **Critical:** Los endpoints creados por Server Actions **no están protegidos** automáticamente. Debes añadir:
+- Autenticación
+- Autorización  
+- Validación de entrada
+
+```ts
+'use server'
+
+import { getSession } from '../lib/auth'
+
+export async function deletePost(postId: string) {
+  // 1. Verificar autenticación
+  const session = await getSession()
+  if (!session) {
+    throw new Error('Unauthorized')
+  }
+
+  // 2. Verificar autorización
+  const post = await db.posts.findById(postId)
+  if (post.authorId !== session.userId) {
+    throw new Error('Forbidden')
+  }
+
+  // 3. Ejecutar acción
+  await db.posts.delete(postId)
+}
+```
+
+---
+
+### 6.3. API Routes vs Server Actions
+
+| Aspecto | API Routes | Server Actions |
+|---------|------------|----------------|
+| **Ubicación** | `src/pages/api/` | Cualquier archivo |
+| **Invocación** | `fetch('/api/endpoint')` | Llamada directa de función |
+| **Type Safety** | Manual | Automático (TypeScript) |
+| **Boilerplate** | Más código | Mínimo |
+| **Casos de uso** | APIs públicas, webhooks | Mutaciones internas |
+| **Reutilización externa** | ✅ Sí | ❌ Solo React |
+
+**Recomendación:**
+- Usa **Server Actions** para mutaciones internas (forms, botones)
+- Usa **API Routes** para APIs públicas, webhooks, o integraciones externas
+
+---
+
+## 7. Metadata
+
+Waku automáticamente mueve tags `<title>`, `<meta>`, y `<link>` al `<head>` del documento.
+
+### Metadata Estática
+
+```tsx
+// ./src/pages/_layout.tsx
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <>
+      <link rel="icon" type="image/png" href="/images/favicon.png" />
+      <meta property="og:image" content="/images/opengraph.png" />
+      {children}
+    </>
+  )
+}
+
+export const getConfig = async () => {
+  return {
+    render: 'static',
+  } as const
+}
+```
+
+```tsx
+// ./src/pages/index.tsx
+export default async function HomePage() {
+  return (
+    <>
+      <title>Waku</title>
+      <meta name="description" content="The minimal React framework" />
+      <h1>Waku</h1>
+      <div>Hello world!</div>
+    </>
+  )
+}
+
+export const getConfig = async () => {
+  return {
+    render: 'static',
+  } as const
+}
+```
+
+### Metadata Dinámica
+
+```tsx
+// ./src/pages/index.tsx
+export default async function HomePage() {
+  return (
+    <>
+      <Head />
+      <div>{/* ... */}</div>
+    </>
+  )
+}
+
+const Head = async () => {
+  const metadata = await getMetadata()
+
+  return (
+    <>
+      <title>{metadata.title}</title>
+      <meta name="description" content={metadata.description} />
+    </>
+  )
+}
+
+const getMetadata = async () => {
+  /* ... */
+  return { title: '', description: '' }
+}
+
+export const getConfig = async () => {
+  return {
+    render: 'static',
+  } as const
+}
+```
+
+---
+
+## 8. Environment Variables
+
+### 8.1. Variables Privadas vs Públicas
+
+**Por defecto:** Todas las variables son **privadas** (solo accesibles en server components)
+
+**Públicas:** Usar prefijo `WAKU_PUBLIC_` para exponer al cliente
+
+⚠️ **Advertencia:** Variables públicas estarán en el bundle JavaScript visible a usuarios
+
+### 8.2. Runtime Agnostic (Recomendado)
+
+```tsx
+// Server components - acceso a privadas y públicas
+import { getEnv } from 'waku'
+
+export const ServerComponent = async () => {
+  const secretKey = getEnv('SECRET_KEY')
+
+  return <>{/* ... */}</>
+}
+```
+
+```tsx
+// Client components - solo públicas
+'use client'
+
+export const ClientComponent = () => {
+  const publicStatement = import.meta.env.WAKU_PUBLIC_HELLO
+
+  return <>{/* ... */}</>
+}
+```
+
+### 8.3. Node.js (Compatibilidad)
+
+```tsx
+// Server components
+export const ServerComponent = async () => {
+  const secretKey = process.env.SECRET_KEY
+
+  return <>{/* ... */}</>
+}
+```
+
+```tsx
+// Client components
+'use client'
+
+export const ClientComponent = () => {
+  const publicStatement = process.env.WAKU_PUBLIC_HELLO
+
+  return <>{/* ... */}</>
+}
+```
+
+### 8.4. Configurar .env
+
+```bash
+# .env.local
+SECRET_KEY=mi_secreto_super_secreto
+WAKU_PUBLIC_HELLO=Hola Mundo
+```
+
+---
+
+## 9. Deployment
+
+### 9.1. Vercel
+
+Despliegue automático con Vercel CLI:
+
+```bash
+vercel
+```
+
+**Pure SSG (sin functions):**
+
+```ts
+// ./src/server-entry.ts
+/// <reference types="vite/client" />
+import { fsRouter } from 'waku'
+import adapter from 'waku/adapters/vercel'
+
+export default adapter(
+  fsRouter(import.meta.glob('./**/*.{tsx,ts}', { base: './pages' })),
+  { static: true },
+)
+```
+
+### 9.2. Netlify
+
+```bash
+NETLIFY=1 npm run build
+netlify deploy
+```
+
+**Pure SSG:**
+
+```ts
+// ./src/server-entry.ts
+/// <reference types="vite/client" />
+import { fsRouter } from 'waku'
+import adapter from 'waku/adapters/netlify'
+
+export default adapter(
+  fsRouter(import.meta.glob('./**/*.{tsx,ts}', { base: './pages' })),
+  { static: true },
+)
+```
+
+### 9.3. Cloudflare (Experimental)
+
+```ts
+// ./src/server-entry.ts
+/// <reference types="vite/client" />
+import { fsRouter } from 'waku'
+import adapter from 'waku/adapters/cloudflare'
+
+export default adapter(
+  fsRouter(import.meta.glob('./**/*.{tsx,ts}', { base: './pages' })),
+)
+```
+
+```bash
+npm run build
+npx wrangler dev # o deploy
+```
+
+### 9.4. Otras Plataformas
+
+**Deno Deploy, AWS Lambda, Edge adapter** - Ver documentación oficial en https://waku.gg/#deployment
+
+---
+
+## 10. Error Handling
+
+Waku configura un error boundary por defecto en la raíz. Puedes añadir error boundaries personalizados con [react-error-boundary](https://www.npmjs.com/package/react-error-boundary).
+
+```tsx
+// ./src/pages/index.tsx
+import { ErrorBoundary } from 'react-error-boundary'
+
+export default async function HomePage() {
+  return (
+    <>
+      <ErrorBoundary fallback={<div>Error en server component!</div>}>
+        <ThrowComponent />
+      </ErrorBoundary>
+      <ErrorBoundary fallback={<div>Error en server function!</div>}>
+        <form
+          action={async () => {
+            'use server'
+            throw new Error('Oops!')
+          }}
+        >
+          <button>Crash</button>
+        </form>
+      </ErrorBoundary>
+    </>
+  )
+}
+
+const ThrowComponent = async () => {
+  throw new Error('Oops!')
+  return <>...</>
+}
+```
+
+**Características:**
+- Errores de server components/functions se replican automáticamente en el cliente
+- Error boundaries pueden capturarlos aunque se originen en servidor
+- En producción, errores de servidor se ofuscan automáticamente (seguridad)
+- En desarrollo, ves mensajes y stack traces completos
+
+---
+
+## 11. Styling
+
+### Global Styles
+
+1. Instalar dependencias: `npm i -D tailwindcss @tailwindcss/vite`
+2. Configurar `waku.config.ts`
+3. Importar styles en root layout
+
+```tsx
+// ./src/pages/_layout.tsx
+import '../styles.css'
+
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  return <>{children}</>
+}
+
+export const getConfig = async () => {
+  return {
+    render: 'static',
+  } as const
+}
+```
+
+```css
+/* ./src/styles.css */
+@import 'tailwindcss';
+```
+
+```ts
+// ./waku.config.ts
+import { defineConfig } from 'waku/config'
+import tailwindcss from '@tailwindcss/vite'
+
+export default defineConfig({
+  vite: {
+    plugins: [tailwindcss()],
+  },
+})
+```
+
+---
+
+## 12. Static Assets
+
+Archivos en `./public` se sirven desde `/`
+
+```tsx
+// suponiendo imagen en `/public/images/logo.svg`
+
+export const Logo = () => {
+  return (
+    <>
+      <img src="/images/logo.svg" alt="Logo" />
+    </>
+  )
+}
+```
+
+---
+
+## 13. File System
+
+Archivos en `./private` pueden accederse de forma segura en server components
+
+```tsx
+import { readFileSync } from 'fs'
+
+export default async function HomePage() {
+  const file = readFileSync('./private/README.md', 'utf8')
+
+  return <>{/* ... */}</>
+}
+
+export const getConfig = async () => {
+  return {
+    render: 'static',
+  } as const
+}
+```
+
+---
+
+## 14. Data Fetching
+
+### Server-Side (Recomendado)
+
+Todos los patrones de React Server Components están soportados:
+
+```tsx
+// ./src/pages/blog/[slug].tsx
+import type { PageProps } from 'waku/router'
+import { MDX } from '../../components/mdx'
+import { getArticle, getStaticPaths } from '../../lib/blog'
+
+export default async function BlogArticlePage({
+  slug,
+}: PageProps<'/blog/[slug]'>) {
+  const article = await getArticle(slug)
+
+  return (
+    <>
+      <title>{article.frontmatter.title}</title>
+      <h1>{article.frontmatter.title}</h1>
+      <MDX>{article.content}</MDX>
+    </>
+  )
+}
+
+export const getConfig = async () => {
+  const staticPaths = await getStaticPaths()
+
+  return {
+    render: 'static',
+    staticPaths,
+  } as const
+}
+```
+
+### Client-Side
+
+Todas las librerías de data fetching (React Query, SWR, etc.) son compatibles
+
+---
+
+## 15. State Management
+
+Waku es compatible con todas las librerías de state management React:
+- [Jotai](https://jotai.org/) (recomendado)
+- Zustand
+- Valtio
+- Redux Toolkit
+- etc.
+
+---
+
+## 16. Recursos y Referencias
+
+### Documentación Oficial
+- https://waku.gg - Documentación completa
+- https://github.com/wakujs/waku - Repositorio GitHub
+
+### Comunidad
+- [Discord](https://discord.gg/MrQdmzd)
+- [GitHub Discussions](https://github.com/wakujs/waku/discussions)
+
+### Recursos React Server Components
+- [Making Sense of React Server Components](https://www.joshwcomeau.com/react/server-components/)
+- [The Two Reacts](https://overreacted.io/the-two-reacts/)
+- [RFC: React Server Components](https://github.com/reactjs/rfcs/blob/main/text/0188-server-components.md)
+
+---
+
+## 5. Navegación en Waku (Sección Antigua - Para Referencia)
+
+### 5.1. Componente Link y Navegación Básica (Contenido Antiguo)
 
 1. **Crear API para likes** (`api/likes.ts`)
    ```ts

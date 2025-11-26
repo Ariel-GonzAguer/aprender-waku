@@ -3,12 +3,7 @@ export default function Header() {
 
   return (
     <header className="bg-black text-white h-10 flex items-center justify-center">
-      <nav className="flex gap-8 items-center justify-center">
-        <h1 className="m-0">
-          <Link to="/" className="no-underline text-white">
-            📝 DevBlog
-          </Link>
-        </h1>
+      <nav className="w-full flex items-center justify-between gap-10 px-4 max-w-4xl mx-auto">
         <Link to="/">Posts</Link>
         <Link to="/about">About</Link>
       </nav>
