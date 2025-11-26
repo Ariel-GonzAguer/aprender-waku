@@ -380,7 +380,6 @@ export const getConfig = async () => {
 
 - ❌ "ENOENT: no such file or directory" → Ruta `src/posts` no existe. Créala.
 - ❌ Markdown no parsea correctamente → Regex incorrecto. Añade console.log para debuggear.
-- ❌ Suspense no funciona → ¿Olvidaste `@ts-expect-error`? Waku espera ese comment.
 
 ---
 
