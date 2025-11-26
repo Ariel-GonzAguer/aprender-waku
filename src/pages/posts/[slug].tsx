@@ -1,19 +1,44 @@
-export default async function PostDetail({ params }: { params: { slug: string } }) {
-	const { slug } = params;
+import type { PageProps } from 'waku/router';
+import { getPostBySlug } from '../../lib/posts';
+
+export default async function PostDetail({ slug }: PageProps<'/posts/[slug]'>) {
+	const post = await getPostBySlug(slug);
+
+	if (!post) {
+		return (
+			<>
+				<head>
+					<title>Post no encontrado</title>
+				</head>
+				<div className="p-8">
+					<h1>Post no encontrado</h1>
+					<p>El post <code>{slug}</code> no existe.</p>
+					<p>
+						<a href="/" className="text-blue-600 underline">Volver al inicio</a>
+					</p>
+				</div>
+			</>
+		);
+	}
 
 	return (
-		<html>
+		<>
 			<head>
-				<title>Post: {slug}</title>
+				<title>{post.title}</title>
 			</head>
-			<body style={{ padding: '2rem', fontFamily: 'system-ui, sans-serif' }}>
-				<h1>Post: {slug}</h1>
-				<p>Esta es una página de ejemplo para el post <code>{slug}</code>.</p>
-				<p>
-					<a href="/posts">Volver a posts</a>
+			<article className="max-w-4xl mx-auto">
+				<h1 className="text-3xl font-bold mb-4">{post.title}</h1>
+				<p className="text-gray-600 text-sm mb-8">
+					📅 {new Date(post.date).toLocaleDateString('es-ES')}
 				</p>
-			</body>
-		</html>
+				<div className="prose max-w-none leading-relaxed">
+					{post.content}
+				</div>
+				<p className="mt-8 pt-8 border-t border-gray-300">
+					<a href="/" className="text-blue-600 underline">← Volver a posts</a>
+				</p>
+			</article>
+		</>
 	);
 }
 

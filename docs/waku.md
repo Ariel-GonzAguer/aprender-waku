@@ -1,4 +1,4 @@
-🟧 PLAN ULTRA DIDÁCTICO PARA APRENDER WAKU EN 5 DÍAS (2 H/DÍA)
+🟧 GUÍA COMPLETA PARA APRENDER WAKU
 
 Guía paso a paso para dominar **Waku**: el framework minimalista basado en React Server Components (RSC) pensado para aplicaciones JAMStack ultrarápidas. A través del proyecto **DevBlog**, aprenderás a construir un blog moderno con renderizado estático, rutas dinámicas y componentes interactivos.
 
@@ -6,17 +6,15 @@ Guía paso a paso para dominar **Waku**: el framework minimalista basado en Reac
 
 ## 0. Cómo usar este manual
 
-1. **Lee la sección completa del día antes de iniciar.** Cada bloque incluye tiempo estimado, pasos con comandos y explicaciones de diseño.
-2. **Sigue los pasos en orden** y marca los checklists. Son tu Definition of Done diaria.
+1. **Lee cada sección antes de iniciar.** Cada bloque incluye tiempo estimado, pasos con comandos y explicaciones de diseño.
+2. **Sigue los pasos en orden** y marca los checklists. Son tu Definition of Done.
 3. **Anota hallazgos en `notes/waku.md`** (crea la carpeta si no existe). Registrarás decisiones y problemas.
 4. **Entiende los términos RSC:** Server Components vs Client Components. Consulta tablas cuando sea necesario.
-5. **Completa los retos opcionales** si te sobra tiempo; consolidan el aprendizaje.
-
-Duración total: **10 horas efectivas** (6 a 7 días, 2 horas por día).
+5. **Completa los retos opcionales** si tienes tiempo; consolidan el aprendizaje.
 
 ---
 
-## 1. ¿Qué es Waku y por qué te conviene?
+## 1. Introducción: ¿Qué es Waku y por qué te conviene?
 
 | Aspecto | Descripción |
 | --- | --- |
@@ -24,7 +22,7 @@ Duración total: **10 horas efectivas** (6 a 7 días, 2 horas por día).
 | **Infra necesaria** | CDN estático puro (Vercel, Netlify, Cloudflare) |
 | **Tamaño inicial** | ~40 kB bundle |
 | **Data fetching** | Server Components async, cero waterfalls |
-| **Rutas dinámicas** | File-based routing desde `src/pages/` con `defineEntries` |
+| **Rutas dinámicas** | File-based routing desde `src/pages/` con `PageProps` y `render: 'dynamic'` |
 | **APIs** | Edge handlers simples en `src/pages/api/` |
 
 **Mentalidad Waku:**
@@ -34,7 +32,7 @@ Duración total: **10 horas efectivas** (6 a 7 días, 2 horas por día).
 
 ---
 
-## 2. Proyecto: DevBlog — Blog estático interactivo
+## 2. Getting Started: Proyecto DevBlog — Blog estático interactivo
 
 DevBlog es un blog de artículos técnicos con:
 - **Artículos en Markdown** (prerendeados en build time).
@@ -47,13 +45,11 @@ DevBlog es un blog de artículos técnicos con:
 **¿Por qué DevBlog es perfecto para Waku?**
 1. Demuestra **prerendering estático** (Server Components async).
 2. Muestra **comunicación server→client** (props).
-3. Practica **rutas dinámicas** con `defineEntries`.
+3. Practica **rutas dinámicas** con `PageProps` y `render: 'dynamic'`.
 4. Implementa **APIs handlers** para acciones (likes, comentarios).
 5. Resulta en **build 100% estático** deployable en cualquier CDN.
 
----
-
-## 3. Prerrequisitos (Día 0 – 30 min)
+### 2.1. Prerrequisitos
 
 1. **Node 18.18+ / pnpm 8+**
    ```bash
@@ -113,23 +109,9 @@ DevBlog es un blog de artículos técnicos con:
 
 ---
 
-## 4. Roadmap de los 5 días
+## 3. Rendering: Conceptos Fundamentales de RSC
 
-| Día | Foco | Qué construyes |
-| --- | --- | --- |
-| 1 | Fundamentos RSC + estructura | Layout, setup básico |
-| 2 | Server Components async | Sistema de posts con Markdown, Suspense |
-| 3 | Client Components + interactividad | Búsqueda, comentarios con JSONPlaceholder, dark mode |
-| 4 | Routing, APIs, Weaving Patterns y Slices | File-based routing, rutas dinámicas `/posts/[slug]`, APIs handlers, Server-Client composition patterns, slices reutilizables (estáticos y lazy) |
-| 5 | Optimización + deploy | QA, audits (Lighthouse), build estático, deploy CDN |
-
----
-
-## Día 1 – Entender Waku: Server Components, Client Components y Routing
-
-**Meta:** Comprender la arquitectura Waku y dejar funcionando un layout base con navegación.
-
-### Bloque A (60 min) – Conceptos fundamentales de RSC
+### 3.1. Server Components vs Client Components
 
 **¿Qué son React Server Components (RSC)?**
 
@@ -141,7 +123,7 @@ Un **Client Component** es un componente marcado con `'use client'` que se ejecu
 
 | Capacidad | Server Component | Client Component |
 | --- | --- | --- |
-| `await` fetch/lectura archivo | ✅ | ❌ |
+| `await` fetch/lectura archivo | ✅ | ❌ (solo fetch hacia URLs públicas o APIs accesibles desde el navegador) |
 | `useState`, `useEffect` | ❌ | ✅ |
 | Acceso a `window`, `localStorage` | ❌ | ✅ |
 | Acceso a `process.env` secrets | ✅ | ❌ |
@@ -155,16 +137,16 @@ Un **Client Component** es un componente marcado con `'use client'` que se ejecu
 - Componentes `*.client.tsx` se hidratan en cliente (pueden usar hooks).
 - Props entre server→client **deben ser JSON-serializables** (sin funciones, clases, etc.).
 
-### Bloque B (60 min) – Setup y primer layout
+### 3.2. Setup y primer layout
 
 1. **Crear componente Header** (`src/components/Header.server.tsx`)
    ```tsx
    export default function Header() {
      return (
-       <header style={{ padding: '1rem', backgroundColor: '#f0f0f0', borderBottom: '1px solid #ccc' }}>
-         <nav style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
-           <h1 style={{ margin: 0 }}>
-             <a href="/" style={{ textDecoration: 'none', color: '#000' }}>
+       <header className="p-4 bg-gray-100 border-b border-gray-300">
+         <nav className="flex gap-8 items-center">
+           <h1 className="m-0">
+             <a href="/" className="no-underline text-black">
                📝 DevBlog
              </a>
            </h1>
@@ -184,10 +166,10 @@ Un **Client Component** es un componente marcado con `'use client'` que se ejecu
      return (
        <div>
          <Header />
-         <main style={{ padding: '2rem', maxWidth: '1200px', margin: '0 auto' }}>
+         <main className="p-8 max-w-7xl mx-auto">
            {children}
          </main>
-         <footer style={{ backgroundColor: '#f0f0f0', padding: '1rem', marginTop: '2rem', textAlign: 'center' }}>
+         <footer className="bg-gray-100 p-4 mt-8 text-center">
            <p>© 2025 DevBlog. Hecho con Waku.</p>
          </footer>
        </div>
@@ -227,12 +209,12 @@ Un **Client Component** es un componente marcado con `'use client'` que se ejecu
    - Verifica que se ve el layout sin errores.
    - **Prueba crítica:** Desactiva JavaScript en DevTools y recarga → la página debe verse igual (es HTML puro).
 
-#### Checklist Día 1 (Parte 1 – Setup básico)
+#### Checklist: Setup básico
 
-- [ ] Layout renderiza sin JS (Server Component puro).
-- [ ] Navegación funciona.
-- [ ] Estructura de carpetas creada correctamente.
-- [ ] `pnpm dev` corre sin warnings.
+- [x] Layout renderiza sin JS (Server Component puro).
+- [x] Navegación funciona.
+- [x] Estructura de carpetas creada correctamente.
+- [x] `pnpm dev` corre sin warnings.
 
 #### Errores frecuentes
 
@@ -240,15 +222,9 @@ Un **Client Component** es un componente marcado con `'use client'` que se ejecu
 - ❌ "Cannot find module" → Ruta de import incorrecta. Verifica `src/components/`.
 - ❌ Componente no renderiza → ¿Olvidaste exportar `default`?
 
----
-
-**📌 Nota:** La subsección detallada "Sistemas de Rutas en Waku" está movida a Día 4 Bloque A, donde tendrás el contexto de `defineEntries` y rutas dinámicas para entender mejor todo.
-
-## Día 2 – Server Components async: Sistema de posts con Markdown
+### 3.3. Server Components Async: Sistema de posts con Markdown
 
 **Meta:** Cargar artículos desde Markdown, renderizarlos en servidor y mostrar lista prerendereada.
-
-### Bloque A (60 min) – Cargar y parsear posts
 
 1. **Crear posts de ejemplo** (`src/posts/hello-world.md`)
    ```markdown
@@ -327,21 +303,17 @@ Un **Client Component** es un componente marcado con `'use client'` que se ejecu
      return (
        <section>
          <h2>Últimos artículos</h2>
-         <ul style={{ listStyle: 'none', display: 'grid', gap: '1rem' }}>
+         <ul className="list-none grid gap-4">
            {posts.map((post) => (
              <li
                key={post.slug}
-               style={{
-                 padding: '1rem',
-                 border: '1px solid #ddd',
-                 borderRadius: '8px',
-               }}
+               className="p-4 border border-gray-300 rounded-lg"
              >
                <h3>
                  <a href={`/posts/${post.slug}`}>{post.title}</a>
                </h3>
                <p>{post.excerpt}</p>
-               <small style={{ color: '#666' }}>📅 {post.date}</small>
+               <small className="text-gray-600">📅 {post.date}</small>
              </li>
            ))}
          </ul>
@@ -367,7 +339,7 @@ Un **Client Component** es un componente marcado con `'use client'` que se ejecu
    }
    ```
 
-### Bloque B (60 min) – Suspense y streaming
+### 3.4. Suspense y streaming
 
 **¿Por qué Suspense?** Si `getPosts()` tarda (ej. 500ms), sin Suspense todo se congela. Con Suspense, muestras un fallback inmediatamente.
 
@@ -397,7 +369,7 @@ export const getConfig = async () => {
 3. Reemplaza el fallback con la lista real (streaming HTML).
 4. **Resultado:** Percepción de velocidad mejorada.
 
-#### Checklist Día 2
+#### Checklist: Server Components y Suspense
 
 - [ ] Posts se cargan desde archivos Markdown.
 - [ ] Lista renderiza sin errors.
@@ -412,13 +384,9 @@ export const getConfig = async () => {
 
 ---
 
-## Día 3 – Client Components: Búsqueda, Dark Mode y Comentarios Reales
+## 4. Routing: Sistema de Rutas en Waku
 
-**Meta:** Agregar interactividad client-side, fetchear comentarios reales desde JSONPlaceholder (API pública), sin romper la arquitectura RSC.
-
-**Nota:** En lugar de simular datos, usaremos **JSONPlaceholder** (`jsonplaceholder.typicode.com`), una API pública gratuita que proporciona posts y comentarios reales para desarrollo y testing.
-
-### Bloque A (90 min) – Búsqueda client-side + Comentarios con JSONPlaceholder
+### 4.1. Fundamentos del File-Based Routing
 
 1. **Crear barra de búsqueda** (`src/components/SearchBar.client.tsx`)
    ```tsx
@@ -441,32 +409,22 @@ export const getConfig = async () => {
      )
 
      return (
-       <div style={{ marginBottom: '2rem' }}>
+       <div className="mb-8">
          <input
            type="text"
            placeholder="Buscar posts..."
            value={query}
            onChange={(e) => setQuery(e.target.value)}
-           style={{
-             width: '100%',
-             padding: '0.5rem',
-             fontSize: '1rem',
-             borderRadius: '4px',
-             border: '1px solid #ccc',
-           }}
+           className="w-full p-2 text-base rounded border border-gray-300"
          />
-         <p style={{ marginTop: '0.5rem', color: '#666' }}>
+         <p className="mt-2 text-gray-600">
            {filtered.length} de {posts.length} posts encontrados
          </p>
-         <ul style={{ listStyle: 'none', display: 'grid', gap: '1rem', marginTop: '1rem' }}>
+         <ul className="list-none grid gap-4 mt-4">
            {filtered.map((post) => (
              <li
                key={post.slug}
-               style={{
-                 padding: '1rem',
-                 border: '1px solid #ddd',
-                 borderRadius: '8px',
-               }}
+               className="p-4 border border-gray-300 rounded-lg"
              >
                <h3>
                  <a href={`/posts/${post.slug}`}>{post.title}</a>
@@ -497,7 +455,7 @@ export const getConfig = async () => {
    }
    ```
 
-### Bloque B (60 min) – Dark mode con localStorage
+### 4.2. Rutas Dinámicas con PageProps
 
 1. **Crear hook de dark mode** (`src/lib/useDarkMode.ts`)
    ```ts
@@ -544,12 +502,7 @@ export const getConfig = async () => {
      return (
        <button
          onClick={() => setIsDark(!isDark)}
-         style={{
-           background: 'none',
-           border: 'none',
-           fontSize: '1.5rem',
-           cursor: 'pointer',
-         }}
+         className="bg-transparent border-none text-2xl cursor-pointer"
        >
          {isDark ? '☀️' : '🌙'}
        </button>
@@ -563,11 +516,11 @@ export const getConfig = async () => {
 
    export default function Header() {
      return (
-       <header style={{ padding: '1rem', backgroundColor: '#f0f0f0', borderBottom: '1px solid #ccc' }}>
-         <nav style={{ display: 'flex', gap: '2rem', alignItems: 'center', justifyContent: 'space-between' }}>
-           <div style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
-             <h1 style={{ margin: 0 }}>
-               <a href="/" style={{ textDecoration: 'none', color: '#000' }}>
+       <header className="p-4 bg-gray-100 border-b border-gray-300">
+         <nav className="flex gap-8 items-center justify-between">
+           <div className="flex gap-8 items-center">
+             <h1 className="m-0">
+               <a href="/" className="no-underline text-black">
                  📝 DevBlog
                </a>
              </h1>
@@ -669,9 +622,9 @@ export default function CommentsList({ postId }: { postId: number }) {
   // Estado de carga
   if (loading) {
     return (
-      <section style={{ marginTop: '2rem', padding: '1rem', backgroundColor: '#f5f5f5' }}>
+      <section className="mt-8 p-4 bg-gray-100">
         <h3>💬 Comentarios</h3>
-        <p style={{ color: '#666' }}>⏳ Cargando comentarios desde JSONPlaceholder...</p>
+        <p className="text-gray-600">⏳ Cargando comentarios desde JSONPlaceholder...</p>
       </section>
     )
   }
@@ -679,10 +632,10 @@ export default function CommentsList({ postId }: { postId: number }) {
   // Estado de error
   if (error) {
     return (
-      <section style={{ marginTop: '2rem', padding: '1rem', backgroundColor: '#ffe0e0' }}>
+      <section className="mt-8 p-4 bg-red-100">
         <h3>💬 Comentarios</h3>
-        <p style={{ color: '#d32f2f' }}>❌ {error}</p>
-        <small style={{ color: '#999' }}>
+        <p className="text-red-700">❌ {error}</p>
+        <small className="text-gray-500">
           💡 Tip: JSONPlaceholder proporciona comentarios para posts 1-100. 
           Si el slug no mapea a un ID válido, prueba con otro post.
         </small>
@@ -693,7 +646,7 @@ export default function CommentsList({ postId }: { postId: number }) {
   // Sin comentarios (raro en JSONPlaceholder, pero posible)
   if (comments.length === 0) {
     return (
-      <section style={{ marginTop: '2rem', padding: '1rem', backgroundColor: '#f5f5f5' }}>
+      <section className="mt-8 p-4 bg-gray-100">
         <h3>💬 Comentarios</h3>
         <p>Sin comentarios para este post aún.</p>
       </section>
@@ -702,27 +655,21 @@ export default function CommentsList({ postId }: { postId: number }) {
 
   // Renderizar comentarios
   return (
-    <section style={{ marginTop: '2rem', paddingTop: '2rem', borderTop: '1px solid #ddd' }}>
+    <section className="mt-8 pt-8 border-t border-gray-300">
       <h3>💬 Comentarios ({comments.length})</h3>
-      <ul style={{ listStyle: 'none', padding: 0 }}>
+      <ul className="list-none p-0">
         {comments.map((comment) => (
           <li
             key={comment.id}
-            style={{
-              marginBottom: '1.5rem',
-              padding: '1rem',
-              backgroundColor: '#f9f9f9',
-              borderRadius: '4px',
-              borderLeft: '4px solid #0066cc',
-            }}
+            className="mb-6 p-4 bg-gray-50 rounded border-l-4 border-blue-600"
           >
-            <div style={{ marginBottom: '0.5rem' }}>
-              <strong style={{ fontSize: '1rem' }}>{comment.name}</strong>
-              <p style={{ fontSize: '0.85rem', color: '#666', margin: '0.25rem 0' }}>
+            <div className="mb-2">
+              <strong className="text-base">{comment.name}</strong>
+              <p className="text-sm text-gray-600 my-1">
                 ✉️ {comment.email}
               </p>
             </div>
-            <p style={{ margin: '0.5rem 0', lineHeight: '1.6' }}>{comment.body}</p>
+            <p className="my-2 leading-relaxed">{comment.body}</p>
           </li>
         ))}
       </ul>
@@ -736,22 +683,13 @@ export default function CommentsList({ postId }: { postId: number }) {
 **2. Integrar comentarios en la página de post** (`src/pages/posts/[slug].tsx`)
 
 ```tsx
-import { getPostBySlug, getPosts } from '../../lib/posts'
+import type { PageProps } from 'waku/router'
+import { getPostBySlug } from '../../lib/posts'
 import Layout from '../../components/Layout.server'
 import CommentsList from '../../components/CommentsList.client'
-import { defineEntries } from 'waku/server'
 
-export const entries = defineEntries(async () => {
-  const posts = await getPosts()
-  return posts.map((post) => `/posts/${post.slug}`)
-})
-
-interface Params {
-  slug: string
-}
-
-export default async function PostDetail({ params }: { params: Params }) {
-  const post = await getPostBySlug(params.slug)
+export default async function PostDetail({ slug }: PageProps<'/posts/[slug]'>) {
+  const post = await getPostBySlug(slug)
 
   if (!post) {
     return (
@@ -775,15 +713,12 @@ export default async function PostDetail({ params }: { params: Params }) {
     <Layout>
       <article>
         <h1>{post.title}</h1>
-        <p style={{ color: '#666', fontSize: '0.9rem' }}>
+        <p className="text-gray-600 text-sm">
           📅 {new Date(post.date).toLocaleDateString('es-ES')}
         </p>
 
         <div
-          style={{
-            marginTop: '2rem',
-            lineHeight: '1.8',
-          }}
+          className="mt-8 leading-relaxed"
           dangerouslySetInnerHTML={{
             __html: post.content.replace(/^# .+$/gm, ''), // Remove title
           }}
@@ -792,12 +727,18 @@ export default async function PostDetail({ params }: { params: Params }) {
         {/* 🟡 Componente de comentarios reales */}
         <CommentsList postId={postId} />
 
-        <nav style={{ marginTop: '2rem', paddingTop: '2rem', borderTop: '1px solid #ddd' }}>
+        <nav className="mt-8 pt-8 border-t border-gray-300">
           <a href="/">← Volver a posts</a>
         </nav>
       </article>
     </Layout>
   )
+}
+
+export const getConfig = async () => {
+  return {
+    render: 'dynamic',
+  } as const
 }
 ```
 
@@ -863,7 +804,7 @@ pnpm dev
 
 ---
 
-#### Checklist Día 3
+#### Checklist: Routing Completo
 
 - [ ] Búsqueda filtra posts en real time (sin reload).
 - [ ] Dark mode persiste en localStorage.
@@ -883,15 +824,7 @@ pnpm dev
 - ❌ Comentarios no cargan → Revisa Network tab, ¿CORS error? JSONPlaceholder debería permitir
 - ❌ "postId no es válido" → El slug mapea fuera de 1-100. Ajusta la lógica de hash en PostDetail
 
----
-
-## Día 4 – Routing en Waku, APIs Edge y Rutas dinámicas
-
-**Meta:** Dominar el sistema de file-based routing, crear rutas dinámicas con `defineEntries`, implementar APIs de mutaciones.
-
-### Bloque A (120 min) – Routing en Waku + Rutas dinámicas con `defineEntries`
-
-#### 🟢 SUBSECCIÓN: Sistemas de Rutas en Waku (Concepto + Práctica)
+### 4.3. Sistemas de Rutas en Detalle (Concepto + Práctica)
 
 **¿Cómo Waku maneja las rutas?**
 
@@ -904,8 +837,8 @@ Waku usa **file-based routing**: los archivos en `src/pages/` determinan automá
 | `src/pages/index.tsx` | `/` (home) | Estática | Build time |
 | `src/pages/about.tsx` | `/about` | Estática | Build time |
 | `src/pages/blog/index.tsx` | `/blog` | Estática | Build time |
-| `src/pages/posts/[slug].tsx` | `/posts/hello-world`, `/posts/faq` | Dinámica | Con `defineEntries` |
-| `src/pages/posts/[slug]/comments.tsx` | `/posts/hello-world/comments` | Dinámica anidada | Con `defineEntries` |
+| `src/pages/posts/[slug].tsx` | `/posts/hello-world`, `/posts/faq` | Dinámica | Con `render: 'dynamic'` |
+| `src/pages/posts/[slug]/comments.tsx` | `/posts/hello-world/comments` | Dinámica anidada | Con `render: 'dynamic'` |
 | `src/pages/[...notFound].tsx` | Cualquier ruta no encontrada | Catch-all 404 | Build time |
 
 ---
@@ -977,22 +910,10 @@ src/pages/
 
 ```tsx
 // src/pages/blog/category/[category].tsx
+import type { PageProps } from 'waku/router'
 import Layout from '../../components/Layout.server'
 
-interface Params {
-  category: string
-}
-
-export async function defineEntries() {
-  return [
-    { params: { category: 'javascript' } },
-    { params: { category: 'react' } },
-    { params: { category: 'deployment' } },
-  ]
-}
-
-export default function CategoryPage({ params }: { params: Params }) {
-  const { category } = params
+export default function CategoryPage({ category }: PageProps<'/blog/category/[category]'>) {
 
   // Simular data (en prod: fetch DB o archivo)
   const postsInCategory = {
@@ -1029,12 +950,20 @@ export default function CategoryPage({ params }: { params: Params }) {
     </Layout>
   )
 }
+
+export const getConfig = async () => {
+  return {
+    render: 'dynamic',
+  } as const
+}
 ```
 
-Rutas generadas automáticamente:
+Rutas dinámicas disponibles:
 - `http://localhost:4173/blog/category/javascript`
 - `http://localhost:4173/blog/category/react`
 - `http://localhost:4173/blog/category/deployment`
+
+**Nota:** Con `render: 'dynamic'`, las rutas se generan bajo demanda.
 
 ---
 
@@ -1044,21 +973,9 @@ Rutas generadas automáticamente:
 
 ```tsx
 // src/pages/posts/[slug]/comments.tsx
-interface Params {
-  slug: string
-}
+import type { PageProps } from 'waku/router'
 
-export async function defineEntries() {
-  // Obtener todos los posts
-  const posts = await getPosts() // función que lees archivos .md
-
-  return posts.map((post) => ({
-    params: { slug: post.slug },
-  }))
-}
-
-export default function CommentsPage({ params }: { params: Params }) {
-  const { slug } = params
+export default function CommentsPage({ slug }: PageProps<'/posts/[slug]/comments'>) {
 
   return (
     <html>
@@ -1092,18 +1009,18 @@ export default function NotFound({ params }: { params: { notFound: string[] } })
   return (
     <html>
       <head><title>404 - Página no encontrada</title></head>
-      <body style={{ textAlign: 'center', padding: '4rem' }}>
+      <body className="text-center p-16">
         <h1>🔍 404 - Página no encontrada</h1>
-        <p style={{ fontSize: '1.2rem', color: '#666' }}>
+        <p className="text-xl text-gray-600">
           No pudimos encontrar: <code>/{path}</code>
         </p>
         <p>Tal vez quisiste:</p>
-        <ul style={{ textAlign: 'left', display: 'inline-block' }}>
+        <ul className="text-left inline-block">
           <li><a href="/">Ir a home</a></li>
           <li><a href="/posts">Ver todos los posts</a></li>
           <li><a href="/about">Sobre mí</a></li>
         </ul>
-        <pre style={{ marginTop: '2rem', padding: '1rem', backgroundColor: '#f0f0f0', borderRadius: '4px' }}>
+        <pre className="mt-8 p-4 bg-gray-100 rounded">
           Ruta solicitada: /{path}
           Parámetro: {JSON.stringify(params)}
         </pre>
@@ -1127,8 +1044,8 @@ export default function NotFound({ params }: { params: { notFound: string[] } })
 | Escenario | Archivo | Cómo funciona | Usado en DevBlog |
 | --- | --- | --- | --- |
 | **Estática** | `pages/about.tsx` | 1 archivo = 1 ruta fija | `/about` |
-| **Dinámica simple** | `pages/posts/[slug].tsx` | 1 archivo + `defineEntries` = N rutas | `/posts/hello-world`, `/posts/faq` |
-| **Dinámica anidada** | `pages/blog/[category]/[post].tsx` | 1 archivo + `defineEntries` con 2 params = M×N rutas | `/blog/react/hooks-guide` |
+| **Dinámica simple** | `pages/posts/[slug].tsx` | 1 archivo con `render: 'dynamic'` = rutas bajo demanda | `/posts/hello-world`, `/posts/faq` |
+| **Dinámica anidada** | `pages/blog/[category]/[post].tsx` | 1 archivo con 2 parámetros dinámicos = rutas bajo demanda | `/blog/react/hooks-guide` |
 | **Catch-all** | `pages/[...notFound].tsx` | 1 archivo para rutas inválidas | Cualquier ruta no definida |
 
 ---
@@ -1143,10 +1060,10 @@ Rutas estáticas:
 ✓ /blog/featured
 
 Rutas dinámicas:
-✓ /posts/hello-world (generada por defineEntries)
+✓ /posts/hello-world (ruta dinámica, generada bajo demanda)
 ✓ /posts/waku-rsc-guide
 ✓ /posts/state-management
-✓ /blog/category/javascript (generada por defineEntries)
+✓ /blog/category/javascript (ruta dinámica, generada bajo demanda)
 ✓ /blog/category/react
 ✓ /blog/category/deployment
 
@@ -1204,31 +1121,21 @@ export default function About() {
 
 ---
 
-##### 8️⃣ Implementación real en DevBlog: Rutas dinámicas con defineEntries
+##### 8️⃣ Implementación real en DevBlog: Rutas dinámicas con PageProps
 
 ```tsx
 // src/pages/posts/[slug].tsx
+import type { PageProps } from 'waku/router'
 import Layout from '../../components/Layout.server'
-import { getPosts, getPostBySlug } from '../../lib/posts'
+import { getPostBySlug } from '../../lib/posts'
 
-interface Params {
-  slug: string
-}
-
-export async function defineEntries() {
-  const posts = await getPosts()
-  return posts.map((post) => ({
-    params: { slug: post.slug },
-  }))
-}
-
-export default async function PostDetail({ params }: { params: Params }) {
-  const post = await getPostBySlug(params.slug)
+export default async function PostDetail({ slug }: PageProps<'/posts/[slug]'>) {
+  const post = await getPostBySlug(slug)
 
   if (!post) {
     return (
       <Layout>
-        <h1>Post no encontrado: {params.slug}</h1>
+        <h1>Post no encontrado: {slug}</h1>
         <a href="/posts">Volver a posts</a>
       </Layout>
     )
@@ -1238,7 +1145,7 @@ export default async function PostDetail({ params }: { params: Params }) {
     <Layout>
       <article>
         <h1>{post.title}</h1>
-        <p style={{ color: '#666', fontSize: '0.9rem' }}>
+        <p className="text-gray-600 text-sm">
           Publicado: {new Date(post.date).toLocaleDateString('es-ES')}
         </p>
         <div>{post.content}</div>
@@ -1246,22 +1153,34 @@ export default async function PostDetail({ params }: { params: Params }) {
     </Layout>
   )
 }
+
+export const getConfig = async () => {
+  return {
+    render: 'dynamic',
+  } as const
+}
 ```
 
 ---
 
 ##### 9️⃣ Errores frecuentes con rutas en Waku
 
-- ❌ **Olvidar `defineEntries` en rutas dinámicas**
+- ❌ **Olvidar `getConfig` con `render: 'dynamic'` en rutas dinámicas**
   ```tsx
-  // ❌ MALO: Sin defineEntries, Waku no sabe qué valores pregenerar
-  export default function Post({ params }: { params: { slug: string } }) {
-    return <h1>{params.slug}</h1>
+  // ❌ MALO: Sin getConfig, obtendrás error de configuración inválida
+  export default function Post({ slug }: PageProps<'/posts/[slug]'>) {
+    return <h1>{slug}</h1>
   }
 
   // ✅ BUENO
-  export async function defineEntries() {
-    return [{ params: { slug: 'hello-world' } }, { params: { slug: 'faq' } }]
+  export default function Post({ slug }: PageProps<'/posts/[slug]'>) {
+    return <h1>{slug}</h1>
+  }
+  
+  export const getConfig = async () => {
+    return {
+      render: 'dynamic',
+    } as const
   }
   ```
 
@@ -1291,35 +1210,23 @@ export default async function PostDetail({ params }: { params: Params }) {
 ##### 🔟 Checklist: Rutas en DevBlog
 
 - [ ] Rutas estáticas funcionan: `/`, `/about`, `/blog`
-- [ ] Rutas dinámicas generadas: `/posts/[slug]` con `defineEntries`
+- [ ] Rutas dinámicas: `/posts/[slug]` con `render: 'dynamic'`
 - [ ] Rutas anidadas: `/blog/category/[category]`
 - [ ] Página 404 personalizada: `/[...notFound].tsx` captura rutas inválidas
 - [ ] Test: `http://localhost:4173/invalid-route` → Muestra 404 personalizado
 - [ ] Test: `http://localhost:4173/posts/hello-world` → Funciona
 - [ ] Test: `http://localhost:4173/posts/invalid-slug` → ¿Fallback o 404?
 
----
-
-#### 2. Práctica: Crear página de post individual con rutas dinámicas
+### 4.4. Práctica: Crear página de post individual con rutas dinámicas
 
 1. **Crear página de post individual** (`src/pages/posts/[slug].tsx`)
    ```tsx
-   import { getPostBySlug, getPosts } from '../../lib/posts'
+   import type { PageProps } from 'waku/router'
+   import { getPostBySlug } from '../../lib/posts'
    import Layout from '../../components/Layout.server'
-   import { defineEntries } from 'waku/server'
 
-   // Define qué rutas prerenderar en build time
-   export const entries = defineEntries(async () => {
-     const posts = await getPosts()
-     return posts.map((post) => `/posts/${post.slug}`)
-   })
-
-   interface Params {
-     slug: string
-   }
-
-   export default async function PostDetail({ params }: { params: Params }) {
-     const post = await getPostBySlug(params.slug)
+   export default async function PostDetail({ slug }: PageProps<'/posts/[slug]'>) {
+     const post = await getPostBySlug(slug)
 
      if (!post) {
        return (
@@ -1336,15 +1243,12 @@ export default async function PostDetail({ params }: { params: Params }) {
        <Layout>
          <article>
            <h1>{post.title}</h1>
-           <p style={{ color: '#666', fontSize: '0.9rem' }}>
+           <p className="text-gray-600 text-sm">
              📅 {new Date(post.date).toLocaleDateString()}
            </p>
 
            <div
-             style={{
-               marginTop: '2rem',
-               lineHeight: '1.8',
-             }}
+             className="mt-8 leading-relaxed"
              dangerouslySetInnerHTML={{
                __html: post.content.replace(
                  /^# .+$/gm,
@@ -1353,7 +1257,7 @@ export default async function PostDetail({ params }: { params: Params }) {
              }}
            />
 
-           <nav style={{ marginTop: '2rem', paddingTop: '2rem', borderTop: '1px solid #ddd' }}>
+           <nav className="mt-8 pt-8 border-t border-gray-300">
              <a href="/">← Volver a posts</a>
            </nav>
          </article>
@@ -1369,7 +1273,11 @@ export default async function PostDetail({ params }: { params: Params }) {
    - Revisa la carpeta `dist/posts/`
    - Deberías ver `hello-world/index.html`, etc.
 
-### Bloque B (60 min) – APIs handlers
+---
+
+## 5. Navegación en Waku
+
+### 5.1. Componente Link y Navegación Básica
 
 1. **Crear API para likes** (`api/likes.ts`)
    ```ts
@@ -1438,14 +1346,9 @@ export default async function PostDetail({ params }: { params: Params }) {
      return (
        <button
          onClick={handleLike}
-         style={{
-           padding: '0.5rem 1rem',
-           background: liked ? '#ff6b6b' : '#ddd',
-           color: liked ? 'white' : 'black',
-           border: 'none',
-           borderRadius: '4px',
-           cursor: 'pointer',
-         }}
+         className={`px-4 py-2 border-none rounded cursor-pointer ${
+           liked ? 'bg-red-400 text-white' : 'bg-gray-300 text-black'
+         }`}
        >
          {liked ? '❤️' : '🤍'} {count} likes
        </button>
@@ -1473,7 +1376,7 @@ export default async function PostDetail({ params }: { params: Params }) {
    }
    ```
 
-### Bloque C (OPCIONAL - 90 min) – Server Actions: Alternativa moderna a API handlers
+### 5.2. Hook useRouter para Navegación Programática
 
 **¿Qué son Server Actions?**
 
@@ -1633,19 +1536,15 @@ Un **Server Action** es una función async que se ejecuta en el servidor, invoca
          <button
            onClick={handleLike}
            disabled={loading}
-           style={{
-             padding: '0.5rem 1rem',
-             background: liked ? '#ff6b6b' : '#ddd',
-             color: liked ? 'white' : 'black',
-             border: 'none',
-             borderRadius: '4px',
-             cursor: loading ? 'not-allowed' : 'pointer',
-             opacity: loading ? 0.6 : 1,
-           }}
+           className={`px-4 py-2 border-none rounded ${
+             liked ? 'bg-red-400 text-white' : 'bg-gray-300 text-black'
+           } ${
+             loading ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'
+           }`}
          >
            {loading ? '⏳' : liked ? '❤️' : '🤍'} {count} likes
          </button>
-         {error && <p style={{ color: 'red', marginTop: '0.5rem' }}>{error}</p>}
+         {error && <p className="text-red-600 mt-2">{error}</p>}
        </div>
      )
    }
@@ -1773,31 +1672,17 @@ export async function updateProfile(userId: string, data: UserProfileData) {
   // api/webhook-github.ts → recibe POSTs de GitHub
   ```
 
-#### Checklist Día 4 (ampliado)
-
-- [ ] `pnpm build` genera archivos HTML para cada post en `dist/posts/[slug]/`.
-- [ ] `/posts/hello-world` se renderiza correctamente.
-- [ ] **API handler (Bloque B):** Like button funciona con fetch POST.
-- [ ] **Server Action (Bloque C):** Like button alternativo funciona sin fetch.
-- [ ] Comparación: Ambas opciones funcionan, entiendes cuándo usar cada una.
-- [ ] Rutas 404 se manejan gracefully.
-- [ ] **Weaving Patterns (Bloque E):**
-  - [ ] Entiendes que Server puede importar Client, pero no al revés
-  - [ ] Has creado `ThemeProvider.client.tsx` y lo usas en `_layout.tsx`
-  - [ ] `Modal.client.tsx` recibe Server Component como children (sin errores)
-  - [ ] `useTheme()` hook funciona en múltiples Client Components
-  - [ ] Build sin warnings sobre límites server-client
-  - [ ] ThemeProvider se aplica a todo el DevBlog (header, pages, slices)
-
-#### Errores frecuentes
-
-- ❌ `defineEntries` tarda mucho → Si hay 1000 posts, prerenderar todos es lento. Limita o usa fallback.
-- ❌ API retorna 404 → Asegúrate que el archivo está en `api/likes.ts` (no `api/likes/index.ts`).
-- ❌ Ruta dinámica no renderiza → ¿Olvidaste `export const entries`?
-
 ---
 
-## Día 4 Bloque D (45 min) – Weaving Patterns: Integrando Server y Client Components
+## 6. Client Components: Interactividad y Estado
+
+### 6.1. Búsqueda client-side y comentarios con JSONPlaceholder
+
+**Meta:** Agregar interactividad client-side, fetchear comentarios reales desde JSONPlaceholder (API pública), sin romper la arquitectura RSC.
+
+**Nota:** En lugar de simular datos, usaremos **JSONPlaceholder** (`jsonplaceholder.typicode.com`), una API pública gratuita que proporciona posts y comentarios reales para desarrollo y testing.
+
+### 6.2. Dark mode con localStorage
 
 **Meta:** Dominar los patrones de integración entre Server Components y Client Components, la base de una arquitectura RSC moderna.
 
@@ -1977,23 +1862,8 @@ export function Modal({ children, title }: { children: ReactNode; title: string 
     <>
       <button onClick={() => setOpen(!open)}>Abrir: {title}</button>
       {open && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: 'rgba(0,0,0,0.5)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}>
-          <div style={{
-            backgroundColor: 'white',
-            padding: '2rem',
-            borderRadius: '8px',
-            minWidth: '300px',
-          }}>
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white p-8 rounded-lg min-w-[300px]">
             <h2>{title}</h2>
             {children}  {/* ← Children pueden ser Server Component */}
             <button onClick={() => setOpen(false)}>Cerrar</button>
@@ -2143,12 +2013,7 @@ export default function ThemeToggle() {
   return (
     <button
       onClick={() => setIsDark(!isDark)}
-      style={{
-        background: 'none',
-        border: 'none',
-        fontSize: '1.5rem',
-        cursor: 'pointer',
-      }}
+      className="bg-transparent border-none text-2xl cursor-pointer"
     >
       {isDark ? '☀️' : '🌙'}
     </button>
@@ -2249,9 +2114,21 @@ _layout.tsx (SERVER)
 - [ ] `ThemeProvider` se aplica a todo DevBlog y funciona correctamente
 - [ ] Build (`pnpm build`) sin warnings sobre `'use client'`
 
+#### Checklist: Client Components y Interactividad
+
+- [ ] Búsqueda filtra posts en real time (sin reload).
+- [ ] Dark mode persiste en localStorage.
+- [ ] Botón tema funciona sin flickering.
+- [ ] State local (query, isDark) vive solo en Client Components.
+- [ ] ✅ **JSONPlaceholder:** `CommentsList.client.tsx` fetchea comentarios reales
+- [ ] ✅ **Loading state:** Muestra "⏳ Cargando comentarios..." mientras fetcha
+- [ ] ✅ **Error handling:** Si falla la API, muestra mensaje amigable
+- [ ] ✅ **Mapeo de slug a postId:** Verifica que cada post mapea a un ID válido (1-100)
+- [ ] ✅ **Network tab:** Revisa que JSONPlaceholder es llamado (sin errors CORS)
+
 ---
 
-## Día 4 Bloque E (60 min) – Slices: Componentes Reutilizables y Composables
+## 7. Weaving Patterns: Integrando Server y Client Components
 
 **Meta:** Entender Slices como unidad fundamental de composición en Waku, diferente de páginas y layouts.
 
@@ -2278,25 +2155,19 @@ El resultado: **Página mayormente estática, partes selectas dinámicas, máxim
 
 ---
 
-### Bloque E.1 (15 min) – Crear tu primer Slice
+### 8.1. Crear tu primer Slice
 
 1. **Crear slice simple** (`src/pages/_slices/author-bio.tsx`)
    ```tsx
    export default function AuthorBio() {
      return (
-       <aside style={{
-         padding: '1.5rem',
-         backgroundColor: '#f5f5f5',
-         borderRadius: '8px',
-         marginTop: '2rem',
-         borderLeft: '4px solid #0066cc',
-       }}>
+       <aside className="p-6 bg-gray-100 rounded-lg mt-8 border-l-4 border-blue-600">
          <h3>✍️ Sobre el autor</h3>
          <p>
            <strong>Ariel</strong> es un desarrollador Full Stack especializado en React Server Components 
            y arquitecturas modernas. Apasionado por enseñar conceptos complejos de forma simple.
          </p>
-         <p style={{ marginTop: '0.5rem', color: '#666', fontSize: '0.9rem' }}>
+         <p className="mt-2 text-gray-600 text-sm">
            📧 <a href="mailto:ariel@example.com">Contactame</a>
          </p>
        </aside>
@@ -2320,20 +2191,15 @@ El resultado: **Página mayormente estática, partes selectas dinámicas, máxim
 
    export default function RelatedPosts({ posts }: { posts: RelatedPost[] }) {
      return (
-       <aside style={{
-         padding: '1.5rem',
-         backgroundColor: '#f9f9f9',
-         borderRadius: '8px',
-         marginTop: '2rem',
-       }}>
+       <aside className="p-6 bg-gray-50 rounded-lg mt-8">
          <h3>📚 Posts relacionados</h3>
          {posts.length === 0 ? (
-           <p style={{ color: '#666' }}>No hay posts relacionados.</p>
+           <p className="text-gray-600">No hay posts relacionados.</p>
          ) : (
-           <ul style={{ listStyle: 'none', padding: 0 }}>
+           <ul className="list-none p-0">
              {posts.map((post) => (
-               <li key={post.slug} style={{ marginBottom: '0.75rem' }}>
-                 <a href={`/posts/${post.slug}`} style={{ color: '#0066cc', textDecoration: 'underline' }}>
+               <li key={post.slug} className="mb-3">
+                 <a href={`/posts/${post.slug}`} className="text-blue-600 underline">
                    {post.title}
                  </a>
                </li>
@@ -2353,23 +2219,14 @@ El resultado: **Página mayormente estática, partes selectas dinámicas, máxim
 
 3. **Integrar slices en página de post** (`src/pages/posts/[slug].tsx`)
    ```tsx
+   import type { PageProps } from 'waku/router'
    import { Slice } from 'waku'  // ← Importar componente Slice
    import { getPostBySlug, getPosts } from '../../lib/posts'
    import Layout from '../../components/Layout.server'
    import CommentsList from '../../components/CommentsList.client'
-   import { defineEntries } from 'waku/server'
 
-   export const entries = defineEntries(async () => {
-     const posts = await getPosts()
-     return posts.map((post) => `/posts/${post.slug}`)
-   })
-
-   interface Params {
-     slug: string
-   }
-
-   export default async function PostDetail({ params }: { params: Params }) {
-     const post = await getPostBySlug(params.slug)
+   export default async function PostDetail({ slug }: PageProps<'/posts/[slug]'>) {
+     const post = await getPostBySlug(slug)
 
      if (!post) {
        return (
@@ -2395,12 +2252,12 @@ El resultado: **Página mayormente estática, partes selectas dinámicas, máxim
        <Layout>
          <article>
            <h1>{post.title}</h1>
-           <p style={{ color: '#666', fontSize: '0.9rem' }}>
+           <p className="text-gray-600 text-sm">
              📅 {new Date(post.date).toLocaleDateString('es-ES')}
            </p>
 
            <div
-             style={{ marginTop: '2rem', lineHeight: '1.8' }}
+             className="mt-8 leading-relaxed"
              dangerouslySetInnerHTML={{
                __html: post.content.replace(/^# .+$/gm, ''),
              }}
@@ -2412,7 +2269,7 @@ El resultado: **Página mayormente estática, partes selectas dinámicas, máxim
 
            <CommentsList postId={postId} />
 
-           <nav style={{ marginTop: '2rem', paddingTop: '2rem', borderTop: '1px solid #ddd' }}>
+           <nav className="mt-8 pt-8 border-t border-gray-300">
              <a href="/">← Volver a posts</a>
            </nav>
          </article>
@@ -2429,9 +2286,7 @@ El resultado: **Página mayormente estática, partes selectas dinámicas, máxim
    }
    ```
 
----
-
-### Bloque E.2 (20 min) – Slices Lazy (Server Islands)
+### 8.2. Slices Lazy (Server Islands)
 
 **¿Qué son Lazy Slices?**
 
@@ -2475,55 +2330,33 @@ Resultado: Usuario ve post inmediatamente, signup aparece después (con fallback
 
      if (submitted) {
        return (
-         <div style={{
-           padding: '1rem',
-           backgroundColor: '#d4edda',
-           borderRadius: '4px',
-           color: '#155724',
-           textAlign: 'center',
-         }}>
+         <div className="p-4 bg-green-100 rounded text-green-800 text-center">
            ✅ ¡Gracias por suscribirte!
          </div>
        )
      }
 
      return (
-       <form onSubmit={handleSubmit} style={{
-         padding: '1.5rem',
-         backgroundColor: '#f0f8ff',
-         borderRadius: '8px',
-         marginTop: '2rem',
-       }}>
+       <form onSubmit={handleSubmit} className="p-6 bg-blue-50 rounded-lg mt-8">
          <h3>📬 Suscríbete a las novedades</h3>
-         <p style={{ color: '#666', marginBottom: '1rem' }}>
+         <p className="text-gray-600 mb-4">
            Recibe notificaciones cuando publique nuevos posts.
          </p>
-         <div style={{ display: 'flex', gap: '0.5rem' }}>
+         <div className="flex gap-2">
            <input
              type="email"
              placeholder="tu@email.com"
              value={email}
              onChange={(e) => setEmail(e.target.value)}
              required
-             style={{
-               flex: 1,
-               padding: '0.5rem',
-               borderRadius: '4px',
-               border: '1px solid #ccc',
-             }}
+             className="flex-1 p-2 rounded border border-gray-300"
            />
            <button
              type="submit"
              disabled={loading}
-             style={{
-               padding: '0.5rem 1rem',
-               backgroundColor: '#0066cc',
-               color: 'white',
-               border: 'none',
-               borderRadius: '4px',
-               cursor: loading ? 'not-allowed' : 'pointer',
-               opacity: loading ? 0.7 : 1,
-             }}
+             className={`px-4 py-2 bg-blue-600 text-white border-none rounded ${
+               loading ? 'cursor-not-allowed opacity-70' : 'cursor-pointer'
+             }`}
            >
              {loading ? '⏳' : '✉️ Suscribir'}
            </button>
@@ -2555,7 +2388,7 @@ Resultado: Usuario ve post inmediatamente, signup aparece después (con fallback
            <Slice 
              id="newsletter-signup" 
              lazy 
-             fallback={<p style={{ padding: '1rem', textAlign: 'center' }}>⏳ Cargando formulario de suscripción...</p>} 
+             fallback={<p className="p-4 text-center">⏳ Cargando formulario de suscripción...</p>} 
            />
 
            <CommentsList postId={postId} />
@@ -2593,9 +2426,7 @@ Resultado: Usuario ve post inmediatamente, signup aparece después (con fallback
 
    **Ventaja visual:** Percepción de velocidad mejorada. La página es usable inmediatamente.
 
----
-
-### Bloque E.3 (15 min) – Slices anidados
+### 8.3. Slices anidados
 
 **¿Slices dentro de slices?**
 
@@ -2618,9 +2449,7 @@ Uso:
 
 **Patrón común:** Organizar por feature o sección.
 
----
-
-### Bloque E.4 (10 min) – Actualizar estructura del proyecto
+### 8.4. Estructura del proyecto actualizada
 
 Actualiza el diagrama de carpetas en tu mente:
 
@@ -2657,9 +2486,7 @@ src/
     waku-rsc-guide.md
 ```
 
----
-
-### Bloque E.5 (Checklist Slices)
+#### Checklist: Slices
 
 - [ ] Folder `src/pages/_slices/` existe
 - [ ] Slice `author-bio.tsx` renderiza en página de post
@@ -2761,11 +2588,11 @@ export const getConfig = async () => {
 
 ---
 
-## Día 5 – Optimización, Audits y Deploy
+## 9. Mutations: API Endpoints y Server Actions
 
-**Meta:** Asegurar calidad, pasar audits de performance y desplegar.
+### 9.1. API Handlers
 
-### Bloque A (60 min) – QA y Lighthouse
+**Meta:** Implementar APIs de mutaciones para likes, comentarios y otras acciones del usuario.
 
 1. **Testing manual**
    ```
@@ -2790,7 +2617,72 @@ export const getConfig = async () => {
    - **Imágenes:** Usa rutas estáticas en `public/`, lazy load con `loading="lazy"`.
    - **Fuentes:** System fonts son más rápidas que Google Fonts (para esta guía).
 
-### Bloque B (60 min) – Build y Deploy
+### 9.2. Server Actions: Alternativa moderna a API handlers
+
+**¿Qué son Server Actions?**
+
+Un **Server Action** es una función async que se ejecuta en el servidor, invocada directamente desde un Client Component. Es la forma moderna de manejar mutaciones en arquitectura RSC.
+
+**Comparativa: API handlers vs Server Actions**
+
+| Aspecto | API handlers (`api/*`) | Server Actions (`'use server'`) |
+| --- | --- | --- |
+| **Ubicación** | `api/` folder | En cualquier archivo (típicamente en `lib/` o `actions/`) |
+| **Cómo se llama** | `fetch('/api/endpoint', { method: 'POST', body: ... })` | Invocación directa como función |
+| **Validación** | Manual (validar body) | Automática (tipos TypeScript) |
+| **Serialización** | JSON (manual) | Automática (React internals) |
+| **Error handling** | Respuesta HTTP | Try/catch directo |
+| **Mejor para** | APIs públicas, webhooks, casos complejos | Mutaciones, acciones del usuario |
+| **Bundle size** | Pequeño (no se envía al cliente) | Ínfimo (cero bytes en cliente) |
+
+**¿Cuándo usar cada uno?**
+- **API handlers:** Cuando necesitas un endpoint reutilizable, webhooks de terceros, o lógica que también consumen APIs externas.
+- **Server Actions:** Cuando solo necesitas mutaciones internas (crear, actualizar, eliminar) invocadas desde componentes.
+
+#### Checklist: Mutations
+
+- [ ] `pnpm build` genera archivos HTML para cada post en `dist/posts/[slug]/`.
+- [ ] `/posts/hello-world` se renderiza correctamente.
+- [ ] **API handler:** Like button funciona con fetch POST.
+- [ ] **Server Action:** Like button alternativo funciona sin fetch.
+- [ ] Comparación: Ambas opciones funcionan, entiendes cuándo usar cada una.
+- [ ] Rutas 404 se manejan gracefully.
+
+---
+
+## 10. Data Fetching: Cargar Datos en Server y Client
+
+### 10.1. Server-Side Data Fetching (Recomendado)
+
+### 10.2. Client-Side Data Fetching
+
+### 10.3. Configuración de Data Fetching en getConfig
+
+---
+
+## 11. Environment Variables
+
+### 11.1. Variables Privadas vs Públicas
+
+### 11.2. Configurar .env.local
+
+### 11.3. Acceder a Variables en DevBlog
+
+#### Checklist: Environment Variables
+
+- [ ] `.env.local` creado en raíz del proyecto
+- [ ] Variables privadas NO tienen prefijo `WAKU_PUBLIC_`
+- [ ] Variables públicas tienen prefijo `WAKU_PUBLIC_`
+- [ ] Server Components usan `getEnv()` o `process.env`
+- [ ] Client Components usan `import.meta.env`
+- [ ] `.env.local` está en `.gitignore`
+- [ ] `.env.example` documentado para otros devs
+
+---
+
+## 12. Optimización y Deployment
+
+### 12.1. QA y Lighthouse
 
 1. **Build estático**
    ```bash
@@ -2838,7 +2730,11 @@ export const getConfig = async () => {
    - Like button funciona (revisa Network)
    ```
 
-#### Checklist Día 5
+### 12.2. Build y Deploy
+
+### 12.3. Deployment en Netlify (Paso a Paso)
+
+#### Checklist: Optimización y Deploy
 
 - [ ] Build ejecuta sin errores.
 - [ ] `dist/` existe con HTML estáticos.
@@ -2854,7 +2750,7 @@ export const getConfig = async () => {
 
 ---
 
-## 6. Recursos y referencia
+## 13. Recursos y referencia
 
 - **Docs Waku:** https://waku.gg/docs — Documentación oficial
 - **Repo ejemplos:** https://github.com/dai-shi/waku-examples
@@ -2864,7 +2760,7 @@ export const getConfig = async () => {
 
 ---
 
-## 7. API Endpoints en Waku (Referencia)
+## 14. Referencia Completa: API Endpoints
 
 ### ¿Qué son API Endpoints?
 
@@ -3015,7 +2911,7 @@ export function LikeButton({ postSlug }: { postSlug: string }) {
 
 ---
 
-## 8. Data Fetching en Waku (Referencia)
+## 15. Referencia Completa: Data Fetching
 
 ### Server-Side Data Fetching (Recomendado)
 
@@ -3154,7 +3050,7 @@ export const getConfig = async () => {
 
 ---
 
-## 9. Environment Variables en Waku (Referencia)
+## 16. Referencia Completa: Environment Variables
 
 ### Variables Privadas vs Públicas
 
@@ -3241,7 +3137,527 @@ const publicSite = process.env.WAKU_PUBLIC_SITE_NAME
 
 ---
 
-## 10. Deployment en Netlify (Paso a Paso)
+## 17. Referencia Completa: Navegación
+
+**Meta:** Dominar la navegación entre páginas usando el componente `Link` y el hook `useRouter`.
+
+---
+
+### ¿Qué es la navegación en Waku?
+
+La navegación en Waku permite moverse entre páginas de forma eficiente mediante:
+- **`<Link />`**: Componente para enlaces internos con prefetch automático.
+- **`useRouter()`**: Hook para navegación programática e información de ruta actual.
+
+Ambos están optimizados para el modelo de Server Components, permitiendo transiciones rápidas sin recargas completas de página.
+
+---
+
+### Componente `Link`
+
+El componente `<Link />` se usa para enlaces internos dentro de tu aplicación Waku. Reemplaza los elementos `<a>` tradicionales para obtener:
+- ✅ **Prefetch automático**: Las rutas destino se precargan antes de hacer clic.
+- ✅ **Navegación sin recarga**: Transiciones instantáneas entre páginas.
+- ✅ **Optimización RSC**: Compatible con Server y Client Components.
+
+#### Sintaxis básica
+
+```tsx
+import { Link } from 'waku';
+
+export default function HomePage() {
+  return (
+    <>
+      <h1>Home</h1>
+      <Link to="/about">Sobre Nosotros</Link>
+      <Link to="/posts/hello-world">Leer Primer Post</Link>
+    </>
+  );
+}
+```
+
+#### Props de `Link`
+
+| Prop | Tipo | Descripción |
+|------|------|-------------|
+| `to` | `string` | Ruta destino (requerido). Debe comenzar con `/` para rutas absolutas. |
+| `children` | `ReactNode` | Contenido del enlace (texto, iconos, etc.). |
+| Otros props HTML | - | Acepta props estándar de `<a>` como `className`, `style`, etc. |
+
+#### Ejemplo en DevBlog: Header con navegación
+
+```tsx
+// src/components/Header.server.tsx
+import { Link } from 'waku';
+
+export default function Header() {
+  return (
+    <header className="bg-gray-900 text-white p-4">
+      <nav className="flex gap-6">
+        <Link to="/" className="hover:text-blue-400">
+          🏠 Home
+        </Link>
+        <Link to="/about" className="hover:text-blue-400">
+          ℹ️ About
+        </Link>
+        <Link to="/posts/hello-world" className="hover:text-blue-400">
+          📝 Blog
+        </Link>
+      </nav>
+    </header>
+  );
+}
+```
+
+#### ¿Cuándo usar `Link`?
+
+- ✅ **Navegación dentro de tu app**: Siempre usa `<Link>` para rutas internas (`/about`, `/posts/[slug]`).
+- ❌ **Enlaces externos**: Para sitios externos (https://example.com), usa `<a href="..." target="_blank">`.
+- ❌ **Descargas o anchors**: Para `#section` o archivos PDF, usa `<a>`.
+
+---
+
+### Hook `useRouter`
+
+El hook `useRouter()` permite:
+1. **Leer información de la ruta actual** (path, query params).
+2. **Navegar programáticamente** (sin hacer clic en un link).
+
+**Importante**: `useRouter()` solo funciona en **Client Components** (archivos con `'use client'`).
+
+#### Importar y usar
+
+```tsx
+'use client';
+
+import { useRouter } from 'waku';
+
+export function MyComponent() {
+  const router = useRouter();
+  
+  // Usar propiedades y métodos del router...
+}
+```
+
+---
+
+### Propiedades del router
+
+El objeto `router` tiene dos propiedades principales:
+
+| Propiedad | Tipo | Descripción |
+|-----------|------|-------------|
+| `path` | `string` | Ruta actual sin query params. Ej: `/posts/hello-world` |
+| `query` | `string` | Query string actual (sin el `?`). Ej: `search=waku&sort=date` |
+
+#### Ejemplo: Mostrar ruta actual
+
+```tsx
+'use client';
+
+import { useRouter } from 'waku';
+
+export function RouteInfo() {
+  const { path, query } = useRouter();
+
+  return (
+    <div className="p-4 bg-gray-100">
+      <p><strong>Ruta actual:</strong> {path}</p>
+      <p><strong>Query params:</strong> {query || 'ninguno'}</p>
+    </div>
+  );
+}
+```
+
+**Resultado en `/posts/hello-world?ref=twitter`:**
+```
+Ruta actual: /posts/hello-world
+Query params: ref=twitter
+```
+
+---
+
+### Métodos del router
+
+El router proporciona varios métodos para navegación programática:
+
+| Método | Descripción | Caso de uso |
+|--------|-------------|-------------|
+| `router.push(to)` | Navega a la ruta especificada | Redirigir después de submit, cambiar página por lógica |
+| `router.replace(to)` | Reemplaza la entrada actual del historial | Evitar que el usuario vuelva atrás (post-login) |
+| `router.prefetch(to)` | Precarga una ruta sin navegar | Optimizar rutas que el usuario probablemente visitará |
+| `router.reload()` | Recarga la ruta actual | Actualizar datos después de mutación |
+| `router.back()` | Navega a la entrada anterior del historial | Botón "Atrás" personalizado |
+| `router.forward()` | Navega a la siguiente entrada del historial | Botón "Adelante" |
+
+#### Ejemplo 1: Navegación después de submit (DevBlog)
+
+```tsx
+'use client';
+
+import { useState } from 'react';
+import { useRouter } from 'waku';
+
+export function CreatePostForm() {
+  const [title, setTitle] = useState('');
+  const router = useRouter();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // Simular creación de post
+    const slug = title.toLowerCase().replace(/\s+/g, '-');
+    await fetch('/api/posts', {
+      method: 'POST',
+      body: JSON.stringify({ title, slug }),
+    });
+
+    // Redirigir al nuevo post
+    router.push(`/posts/${slug}`);
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <input 
+        value={title} 
+        onChange={(e) => setTitle(e.target.value)}
+        placeholder="Título del post"
+      />
+      <button type="submit">Crear Post</button>
+    </form>
+  );
+}
+```
+
+#### Ejemplo 2: Botones de navegación personalizados
+
+```tsx
+'use client';
+
+import { useRouter } from 'waku';
+
+export function NavigationButtons() {
+  const router = useRouter();
+
+  return (
+    <div className="flex gap-4">
+      <button onClick={() => router.back()}>
+        ← Atrás
+      </button>
+      <button onClick={() => router.forward()}>
+        Adelante →
+      </button>
+      <button onClick={() => router.push('/')}>
+        🏠 Home
+      </button>
+      <button onClick={() => router.reload()}>
+        🔄 Recargar
+      </button>
+    </div>
+  );
+}
+```
+
+#### Ejemplo 3: Prefetch inteligente (DevBlog)
+
+```tsx
+'use client';
+
+import { useEffect } from 'react';
+import { useRouter } from 'waku';
+
+export function SmartPostCard({ slug }: { slug: string }) {
+  const router = useRouter();
+
+  // Prefetch cuando el usuario hace hover sobre la card
+  const handleMouseEnter = () => {
+    router.prefetch(`/posts/${slug}`);
+  };
+
+  return (
+    <div 
+      onMouseEnter={handleMouseEnter}
+      onClick={() => router.push(`/posts/${slug}`)}
+      className="cursor-pointer hover:shadow-lg transition"
+    >
+      <h3>Post: {slug}</h3>
+      <p>Haz clic para leer más...</p>
+    </div>
+  );
+}
+```
+
+**Ventaja**: La ruta se precarga al hacer hover, haciendo que el clic sea instantáneo.
+
+---
+
+### Diferencias clave: `Link` vs `router.push()`
+
+| Aspecto | `<Link to="...">` | `router.push('...')` |
+|---------|-------------------|----------------------|
+| **Uso** | Enlaces visuales (botones, menú) | Navegación por lógica (post-submit) |
+| **Prefetch** | Automático | Manual con `router.prefetch()` |
+| **Accesibilidad** | Mejor (es un `<a>` real) | Requiere manejar teclado |
+| **SEO** | Crawler puede seguir el link | No rastreable por bots |
+| **Cuándo usar** | Navegación estándar | Redirecciones condicionales |
+
+**Regla general**: Usa `<Link>` por defecto; `router.push()` solo cuando necesites lógica condicional.
+
+---
+
+### Ejemplo completo: Navegación en DevBlog
+
+#### 1. Header con `Link` (Server Component)
+
+```tsx
+// src/components/Header.server.tsx
+import { Link } from 'waku';
+
+export default function Header() {
+  return (
+    <header className="bg-gray-900 text-white p-4">
+      <nav className="flex justify-between items-center">
+        <Link to="/" className="text-2xl font-bold">
+          DevBlog
+        </Link>
+        
+        <div className="flex gap-6">
+          <Link to="/" className="hover:text-blue-400">
+            Home
+          </Link>
+          <Link to="/about" className="hover:text-blue-400">
+            About
+          </Link>
+        </div>
+      </nav>
+    </header>
+  );
+}
+```
+
+#### 2. SearchBar con navegación programática (Client Component)
+
+```tsx
+// src/components/SearchBar.client.tsx
+'use client';
+
+import { useState } from 'react';
+import { useRouter } from 'waku';
+
+export default function SearchBar() {
+  const [query, setQuery] = useState('');
+  const router = useRouter();
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (query.trim()) {
+      // Navegar a página de resultados con query param
+      router.push(`/search?q=${encodeURIComponent(query)}`);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSearch} className="flex gap-2">
+      <input
+        type="text"
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        placeholder="Buscar posts..."
+        className="px-4 py-2 border rounded"
+      />
+      <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded">
+        Buscar
+      </button>
+    </form>
+  );
+}
+```
+
+#### 3. Página de resultados que lee query params
+
+```tsx
+// src/pages/search.tsx
+'use client';
+
+import { useRouter } from 'waku';
+import { useEffect, useState } from 'react';
+
+export default function SearchPage() {
+  const { query } = useRouter();
+  const [results, setResults] = useState<string[]>([]);
+
+  useEffect(() => {
+    // Extraer parámetro 'q' de la query string
+    const searchQuery = new URLSearchParams(query).get('q');
+    
+    if (searchQuery) {
+      // Simular búsqueda (en prod, llamar API)
+      setResults([
+        `Resultado 1 para "${searchQuery}"`,
+        `Resultado 2 para "${searchQuery}"`,
+      ]);
+    }
+  }, [query]);
+
+  return (
+    <div>
+      <h1>Resultados de búsqueda</h1>
+      <ul>
+        {results.map((result, i) => (
+          <li key={i}>{result}</li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+```
+
+---
+
+### Casos de uso avanzados en DevBlog
+
+#### Caso 1: Breadcrumbs dinámicos
+
+```tsx
+'use client';
+
+import { Link } from 'waku';
+import { useRouter } from 'waku';
+
+export function Breadcrumbs() {
+  const { path } = useRouter();
+  const segments = path.split('/').filter(Boolean);
+
+  return (
+    <nav className="text-sm text-gray-600">
+      <Link to="/" className="hover:underline">Home</Link>
+      {segments.map((segment, i) => {
+        const href = '/' + segments.slice(0, i + 1).join('/');
+        return (
+          <span key={i}>
+            {' > '}
+            <Link to={href} className="hover:underline capitalize">
+              {segment}
+            </Link>
+          </span>
+        );
+      })}
+    </nav>
+  );
+}
+```
+
+**Resultado en `/posts/hello-world`:**
+```
+Home > posts > hello-world
+```
+
+#### Caso 2: Paginación con estado en URL
+
+```tsx
+'use client';
+
+import { useRouter } from 'waku';
+import { Link } from 'waku';
+
+export function Pagination({ totalPages }: { totalPages: number }) {
+  const { query } = useRouter();
+  const currentPage = parseInt(new URLSearchParams(query).get('page') || '1');
+
+  return (
+    <div className="flex gap-2">
+      {currentPage > 1 && (
+        <Link to={`?page=${currentPage - 1}`}>← Anterior</Link>
+      )}
+      
+      {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+        <Link 
+          key={page}
+          to={`?page=${page}`}
+          className={page === currentPage ? 'font-bold' : ''}
+        >
+          {page}
+        </Link>
+      ))}
+      
+      {currentPage < totalPages && (
+        <Link to={`?page=${currentPage + 1}`}>Siguiente →</Link>
+      )}
+    </div>
+  );
+}
+```
+
+---
+
+### Errores comunes con navegación
+
+#### ❌ Error 1: Usar `useRouter` en Server Component
+
+```tsx
+// ❌ MALO - Server Components no pueden usar hooks
+export default async function Page() {
+  const router = useRouter(); // Error!
+  return <div>...</div>;
+}
+
+// ✅ BUENO - Usar Link en Server Component
+import { Link } from 'waku';
+
+export default async function Page() {
+  return <Link to="/about">About</Link>;
+}
+```
+
+#### ❌ Error 2: Olvidar prefijo `/` en rutas
+
+```tsx
+// ❌ MALO - Ruta relativa
+<Link to="posts/hello-world">Post</Link>
+
+// ✅ BUENO - Ruta absoluta
+<Link to="/posts/hello-world">Post</Link>
+```
+
+#### ❌ Error 3: Mezclar Link con `<a>` para rutas internas
+
+```tsx
+// ❌ MALO - Recarga completa de página
+<a href="/about">About</a>
+
+// ✅ BUENO - Navegación optimizada
+<Link to="/about">About</Link>
+```
+
+---
+
+### Checklist: Navegación en DevBlog
+
+- [ ] Header usa `<Link>` para navegación principal.
+- [ ] SearchBar usa `router.push()` para redirigir con query params.
+- [ ] Breadcrumbs se actualizan según `router.path`.
+- [ ] Paginación usa `Link` con query strings (`?page=2`).
+- [ ] Botones "Atrás" y "Adelante" usan `router.back()` y `router.forward()`.
+- [ ] Prefetch manual en cards de posts (hover → `router.prefetch()`).
+- [ ] Todas las rutas internas usan `Link`, no `<a>`.
+
+---
+
+### Resumen: Link vs useRouter
+
+| Necesidad | Solución | Ejemplo |
+|-----------|----------|---------|
+| Enlace visual estático | `<Link to="...">` | Menú de navegación |
+| Redirigir después de acción | `router.push()` | Post-submit de form |
+| Leer ruta actual | `router.path` | Breadcrumbs, active links |
+| Leer query params | `router.query` | Filtros, búsqueda |
+| Botón "Atrás" | `router.back()` | Navegación personalizada |
+| Precargar ruta | `router.prefetch()` | Optimización hover |
+
+---
+
+## 18. Referencia Completa: Deployment en Netlify
 
 ### ¿Por qué Netlify?
 
@@ -3397,7 +3813,7 @@ netlify open
 
 ---
 
-## 11. Conceptos clave a dominar
+## 19. Conceptos clave a dominar
 
 | Concepto | Explicación | Ejemplo |
 | --- | --- | --- |
@@ -3410,7 +3826,7 @@ netlify open
 
 ---
 
-## 12. Próximos pasos después de esta semana
+## 20. Próximos pasos
 
 1. **Comentarios mejorados** — Actualmente JSONPlaceholder es de solo lectura. Integra un formulario para que usuarios creen comentarios (POST a tu propio `api/comments.ts`)
 2. **Persistencia real** — Reemplaza comentarios JSON con Supabase, Firebase, o tu propia DB
@@ -3423,7 +3839,7 @@ netlify open
 
 ---
 
-## 13. Patrón mental: Cuándo usar Server vs Client
+## 21. Patrón mental: Cuándo usar Server vs Client
 
 **Usa Server Components cuando:**
 - ✅ Necesitas leer archivos del sistema
@@ -3448,9 +3864,9 @@ App (Server)
 
 ---
 
-## 14. Resultado esperado
+## 22. Resultado esperado
 
-Tras 5 días tendrás:
+Al completar esta guía tendrás:
 
 ✅ **DevBlog completamente funcional** — Blog estático interactivo con posts en Markdown.
 
@@ -3472,4 +3888,4 @@ Tras 5 días tendrás:
 
 Con esta base, estarás preparado para proyectos más complejos: e-commerce, dashboards, portales con datos dinámicos. Waku te da el control total sobre qué renderizar dónde, sin la complejidad innecesaria de frameworks monolíticos.
 
-¡Que disfrutes aprendiendo Waku! 🚀
+**¡Que disfrutes aprendiendo Waku!** 🚀

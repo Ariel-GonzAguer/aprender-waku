@@ -1,15 +1,16 @@
+import { Link } from "waku"
 export default function Header() {
 
   return (
-    <header style={{ padding: '1rem', backgroundColor: '#f0f0f0', borderBottom: '1px solid #ccc' }}>
-      <nav style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
-        <h1 style={{ margin: 0 }}>
-          <a href="/" style={{ textDecoration: 'none', color: '#000' }}>
+    <header className="bg-black text-white h-10 flex items-center justify-center">
+      <nav className="flex gap-8 items-center justify-center">
+        <h1 className="m-0">
+          <Link to="/" className="no-underline text-white">
             📝 DevBlog
-          </a>
+          </Link>
         </h1>
-        <a href="/">Posts</a>
-        <a href="/about">About</a>
+        <Link to="/">Posts</Link>
+        <Link to="/about">About</Link>
       </nav>
     </header>
   )
