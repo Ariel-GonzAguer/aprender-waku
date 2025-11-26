@@ -49,8 +49,10 @@ export async function getPosts(): Promise<Post[]> {
     // Extraer extracto (primeros 100 caracteres sin markdown)
     const textOnly = content.replace(/[#*`\[\]]/g, '').trim()
     const excerpt = textOnly.substring(0, 100) + '...'
+    // Limpiar símbolos Markdown del contenido
+    const cleanContent = content.replace(/[#*`\[\]]/g, '').trim()
 
-    return { slug, title, excerpt, content, date: new Date().toISOString() }
+    return { slug, title, excerpt, content: cleanContent, date: new Date().toISOString() }
   })
 }
 
@@ -76,6 +78,8 @@ export async function getPostBySlug(slug: string): Promise<Post | null> {
   const content = fs.readFileSync(filePath, 'utf-8')
   const titleMatch = content.match(/^# (.+)$/m)
   const title = titleMatch?.[1] ?? slug
+  // Limpiar símbolos Markdown del contenido
+  const cleanContent = content.replace(/[#*`\[\]]/g, '').trim()
 
-  return { slug, title, excerpt: '', content, date: new Date().toISOString() }
+  return { slug, title, excerpt: '', content: cleanContent, date: new Date().toISOString() }
 }

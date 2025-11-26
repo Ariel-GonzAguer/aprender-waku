@@ -26,12 +26,12 @@ export default async function PostDetail({ slug }: PageProps<'/posts/[slug]'>) {
 			<head>
 				<title>{post.title}</title>
 			</head>
-			<article className="max-w-4xl mx-auto">
+			<article className="max-w-4xl mx-auto flex flex-col justify-center items-center">
 				<h1 className="text-3xl font-bold mb-4">{post.title}</h1>
 				<p className="text-gray-600 text-sm mb-8">
 					📅 {new Date(post.date).toLocaleDateString('es-ES')}
 				</p>
-				<div className="prose max-w-none leading-relaxed">
+				<div className="prose max-w-none leading-relaxed flex flex-col justify-center items-center">
 					{post.content}
 				</div>
 				<p className="mt-8 pt-8 border-t border-gray-300">

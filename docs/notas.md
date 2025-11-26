@@ -14,13 +14,14 @@
 - ResizeObserver
 - MutationObserver
 - WebSocket del navegador (aunque sí podés usar WebSocket del servidor)
-- Canvas 🖼️ (canvas.getContext(...))
+- Canvas (canvas.getContext(...))
 - WebGL
 - DOM (no podés manipular elementos)
 - Web Animations API
 
 ## APIs que SÍ podés usar
-- fetch 
+
+- fetch
 - crypto (hash, randomUUID, etc.)
 - URL, URLSearchParams
 - lectura de archivos (si tu entorno lo permite)
@@ -31,3 +32,7 @@
 - cache del servidor
 - llamadas internas a APIs privadas
 - librerías que no dependan del DOM (ej.: date-fns, zod, lodash, jose, bcrypt, etc.)
+
+## Head en slug routes
+Se puede agregar un head con metadatos dinámicos en rutas de slug, pero hay que tener en cuenta que el head se genera en el servidor y no puede depender de datos del cliente. 
+No se puede incluir body ni html en estas rutas, si se usa _root.tsx.

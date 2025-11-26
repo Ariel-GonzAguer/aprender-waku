@@ -339,12 +339,6 @@ Un **Client Component** es un componente marcado con `'use client'` que se ejecu
    }
    ```
 
-----------
-
-# QUEDÉ ACÁ → 25 11 2025
-
-----------
-
 ### 3.4. Suspense y streaming
 
 **¿Por qué Suspense?** Si `getPosts()` tarda (ej. 500ms), sin Suspense todo se congela. Con Suspense, muestras un fallback inmediatamente.
@@ -377,10 +371,10 @@ export const getConfig = async () => {
 
 #### Checklist: Server Components y Suspense
 
-- [ ] Posts se cargan desde archivos Markdown.
-- [ ] Lista renderiza sin errors.
-- [ ] Suspense muestra fallback mientras carga.
-- [ ] Desactiva JS → lista sigue visible (es HTML estático).
+- [x] Posts se cargan desde archivos Markdown.
+- [x] Lista renderiza sin errors.
+- [x] Suspense muestra fallback mientras carga.
+- [x] Desactiva JS → lista sigue visible (es HTML estático).
 
 #### Errores frecuentes
 
