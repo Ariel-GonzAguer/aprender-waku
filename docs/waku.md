@@ -339,6 +339,12 @@ Un **Client Component** es un componente marcado con `'use client'` que se ejecu
    }
    ```
 
+----------
+
+# QUEDÉ ACÁ → 25 11 2025
+
+----------
+
 ### 3.4. Suspense y streaming
 
 **¿Por qué Suspense?** Si `getPosts()` tarda (ej. 500ms), sin Suspense todo se congela. Con Suspense, muestras un fallback inmediatamente.
