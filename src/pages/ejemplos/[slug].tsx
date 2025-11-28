@@ -23,11 +23,6 @@ export default async function PostDetail({
     | undefined;
 
   if (!Component) {
-    // Mostrar componentes disponibles para debug
-    const availableComponents = Object.keys(ejemplos).filter((key) =>
-      key.startsWith("Ejemplo")
-    );
-
     return (
       <>
         <head>
@@ -36,16 +31,16 @@ export default async function PostDetail({
         <div className="p-8 max-w-2xl mx-auto">
           <h1 className="text-2xl font-bold mb-4">Ejemplo no encontrado</h1>
           <p className="mb-4">
-            El ejemplo <code className="bg-gray-200 px-2 py-1 rounded">
-              {slug}
-            </code>{" "}
-            no existe.
+            El ejemplo{" "}
+            <code className="bg-gray-200 px-2 py-1 rounded">{slug}</code> no
+            existe.
           </p>
 
-
-
           <p className="mt-6">
-            <Link to="/" className="text-blue-600 underline hover:text-blue-800">
+            <Link
+              to="/"
+              className="text-blue-600 underline hover:text-blue-800"
+            >
               ← Volver al inicio
             </Link>
           </p>
@@ -55,9 +50,9 @@ export default async function PostDetail({
   }
 
   return (
-    <>
+    <section className="flex flex-col justify-center items-center text-center text-balance mt-10">
       <Component />
-    </>
+    </section>
   );
 }
 
