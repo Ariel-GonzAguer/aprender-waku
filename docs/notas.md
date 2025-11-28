@@ -36,3 +36,27 @@
 ## Head en slug routes
 Se puede agregar un head con metadatos dinámicos en rutas de slug, pero hay que tener en cuenta que el head se genera en el servidor y no puede depender de datos del cliente. 
 No se puede incluir body ni html en estas rutas, si se usa _root.tsx.
+
+## Altura completa de pantalla (min-h-screen vs h-full)
+
+**Problema:** El fondo no cubre toda la pantalla cuando hay poco contenido.
+
+**Causa:** `h-full` (height: 100%) requiere que el elemento padre tenga altura definida. En pantallas con poco contenido, el body con `h-full` solo ocupa la altura del contenido.
+
+**Solución:** Usar `min-h-screen` en lugar de `h-full`:
+- `min-h-screen` = altura mínima de 100vh (toda la ventana visible)
+- Garantiza que el fondo cubra toda la pantalla, incluso con poco contenido
+- Si el contenido excede la pantalla, se extiende correctamente
+
+**Ejemplo:**
+```tsx
+// _root.tsx
+<html className='min-h-screen'>
+  <body className='min-h-screen'>{children}</body>
+</html>
+
+// _layout.tsx
+<section className="flex flex-col min-h-screen bg-zinc-900">
+  {children}
+</section>
+```

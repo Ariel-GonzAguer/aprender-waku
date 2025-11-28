@@ -1,5 +1,5 @@
 // funcion para obtener la lista de posts y mostrarlos
-import { getPosts } from '../lib/posts'
+import { getPosts } from '../lib/temas'
 import SearchBar from './SearchBar.client'
 // import { Link } from 'waku'
 

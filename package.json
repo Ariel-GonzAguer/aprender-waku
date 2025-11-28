@@ -9,9 +9,12 @@
     "start": "waku start"
   },
   "dependencies": {
+    "front-matter": "4.0.2",
     "react": "19.2.0",
     "react-dom": "19.2.0",
+    "react-markdown": "10.1.0",
     "react-server-dom-webpack": "19.2.0",
+    "remark-gfm": "4.0.1",
     "waku": "0.27.1"
   },
   "devDependencies": {
@@ -21,6 +24,7 @@
     "@vitejs/plugin-react": "5.1.1",
     "babel-plugin-react-compiler": "1.0.0",
     "tailwindcss": "4.1.17",
-    "typescript": "5.9.3"
+    "typescript": "5.9.3",
+    "vite": "7.2.4"
   }
 }

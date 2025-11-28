@@ -1,17 +1,14 @@
 import Header from '../components/Header.server'
+import Footer from '../components/Footer.server'
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <section className="flex flex-col h-full w-full bg-zinc-900 text-white">
+    <section className="flex flex-col min-h-screen w-full text-white text-lg bg-zinc-900 cursor-default">
       <Header />
-
-      <main className="flex-1 w-full">
+      <main className="flex flex-col flex-1 w-full">
         {children}
       </main>
-
-      <footer className='bg-gray-400 text-black w-full'>
-        <p>© 2025 DevBlog. Hecho con Waku.</p>
-      </footer>
+      <Footer />
     </section>
   )
 }
