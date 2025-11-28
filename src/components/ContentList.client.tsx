@@ -1,9 +1,9 @@
+'use client';
+
 import { useContentCollection } from '../hooks/useContentCollection';
 
 export default function ContentList() {
   const posts = useContentCollection();
-
-  if (!posts.length) return <p className="text-center text-gray-400">Cargando contenido...</p>;
 
   return (
     <section className="max-w-2xl mx-auto my-8">

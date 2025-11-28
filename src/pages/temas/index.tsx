@@ -1,7 +1,6 @@
 "use client";
 import { useContentCollection } from "../../hooks/useContentCollection";
 import { Link } from "waku";
-import { Suspense } from "react";
 
 export default function () {
   const temas = useContentCollection();
@@ -47,7 +46,9 @@ export default function () {
         En cada tema encontrará la explicación correspondiente, con ejemplos de
         este mismo sitio web, y más.
       </p>
-      <Suspense fallback={<div>Cargando temas...</div>}>
+      {temas.length === 0 ? (
+        <div className="text-white">Cargando temas...</div>
+      ) : (
         <ul className="flex flex-wrap gap-8 justify-center items-center-center">
           {temasordenados.map((tema) => (
             <li key={tema.path} className="mb-4">
@@ -61,7 +62,7 @@ export default function () {
             </li>
           ))}
         </ul>
-      </Suspense>
+      )}
     </section>
   );
 }
