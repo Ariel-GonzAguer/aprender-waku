@@ -1,1 +1,16 @@
-@import 'tailwindcss';
+@import "tailwindcss";
+
+/* Estilos para código inline - elementos como `computed`, `ref`, etc. */
+code {
+  @apply bg-gray-300 text-black px-1.5 py-0.5 rounded text-sm font-mono;
+}
+
+/* Asegurar que los bloques de código no hereden estos estilos */
+pre code {
+  @apply bg-transparent text-inherit px-0 py-0 rounded-none;
+}
+
+/* Estilos para bloques de código */
+.bloqueCodigo {
+  @apply text-left p-6 bg-[#24292e] rounded-lg border shadow-sm my-4 m-[0_auto];
+}

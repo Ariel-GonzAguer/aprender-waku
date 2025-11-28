@@ -46,6 +46,7 @@ Este archivo fue procesado con la librería `front-matter`.
 import fm from "front-matter";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import rehypeRaw from "rehype-raw";
 
 interface FrontmatterAttributes {
   titulo?: string;
@@ -78,7 +79,7 @@ export default function MarkdownRenderer({ markdown }: Props) {
     : undefined;
 
   return (
-    <article className="prose lg:prose-xl mx-auto p-4 leading-loose">
+    <article className="prose lg:prose-xl mx-auto p-4 leading-loose text-center">
       <header className="mb-6 text-center text-red-600 text-4xl">
         {data.titulo && <h2 id={safeId}>{data.titulo}</h2>}
         {(data.autor || data.fecha) && (
@@ -92,6 +93,7 @@ export default function MarkdownRenderer({ markdown }: Props) {
 
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
+        rehypePlugins={[rehypeRaw]}
         components={{
           a: (props) => (
             <a
