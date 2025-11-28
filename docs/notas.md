@@ -60,3 +60,73 @@ No se puede incluir body ni html en estas rutas, si se usa _root.tsx.
   {children}
 </section>
 ```
+
+## Cuándo usar Suspense en Waku
+
+### ✅ FUNCIONA: Server Components
+`Suspense` funciona normalmente en Server Components para operaciones async:
+
+```tsx
+import { Suspense } from 'react'
+
+export default async function Page() {
+  return (
+    <Suspense fallback={<div>Cargando...</div>}>
+      <AsyncComponent />
+    </Suspense>
+  )
+}
+
+async function AsyncComponent() {
+  const data = await fetch('...')
+  return <div>{data}</div>
+}
+```
+
+### ✅ FUNCIONA: Client Components con use()
+En `'use client'` puedes usar `Suspense` si el componente hijo usa el hook `use()` para resolver promises:
+
+```tsx
+'use client'
+
+import { Suspense, use } from 'react'
+
+function AsyncContent({ promise }: { promise: Promise<any> }) {
+  const data = use(promise)
+  return <div>{data}</div>
+}
+
+export default function Page({ dataPromise }: { dataPromise: Promise<any> }) {
+  return (
+    <Suspense fallback={<div>Cargando...</div>}>
+      <AsyncContent promise={dataPromise} />
+    </Suspense>
+  )
+}
+```
+
+### ❌ NO FUNCIONA: Client Components sin promises
+En `'use client'` sin promises (ej: con hooks que resuelven sincronónicamente como `useContentCollection()`), `Suspense` no funciona. **Solución:** usa condicionales:
+
+```tsx
+'use client'
+
+export default function Page() {
+  const datos = useContentCollection()
+  
+  return (
+    <>
+      {datos.length === 0 ? (
+        <div>Cargando...</div>
+      ) : (
+        <div>{/* contenido */}</div>
+      )}
+    </>
+  )
+}
+```
+
+**Resumen:**
+- `Suspense` + Server Components = ✅ Funciona
+- `Suspense` + `use()` hook + promises = ✅ Funciona  
+- `Suspense` + `'use client'` sin promises = ❌ Necesita condicional

@@ -25,9 +25,6 @@ export default async function PostDetail({ slug }: PageProps<'/temas/[slug]'>) {
 
   return (
     <>
-      <head>
-        <title>{tema.titulo}</title>
-      </head>
       <div className='max-w-[85%] m-[0_auto]'>
       <MarkdownRenderer markdown={tema.contenido} />
       </div>
