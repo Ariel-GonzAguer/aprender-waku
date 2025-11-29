@@ -115,6 +115,9 @@ export default function MarkdownRenderer({ markdown }: Props) {
           h3: (props) => (
             <h3 {...props} className="text-xl mt-6 mb-3 text-amber-300 font-bold" />
           ),
+          h4: (props) => (
+            <h4 {...props} className="text-lg mt-4 mb-2 text-green-400 font-semibold" />
+          ),
           table: (props) => (
             <table {...props} className="min-w-full border border-gray-300 my-6 rounded shadow-md bg-white" />
           ),

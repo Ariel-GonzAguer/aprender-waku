@@ -11,7 +11,7 @@ Si usted viene de crear proyectos React con Vite, ya está familiarizado con el 
 #### Server Components
 Los Server Components se ejecutan en el servidor y envían HTML pre-renderizado al cliente. Esto significa que el contenido ya está listo para mostrarse cuando llega al navegador, mejorando la experiencia del usuario. Estos componentes pueden realizar operaciones asincrónicas, como llamadas a APIs, consultas a bases de datos, y demás operaciones que requieran de lógica del lado del servidor de manera **segura**.
 Podemos acceder al sistema de archivos, variables de entorno y otras funcionalidades del servidor sin preocuparnos por exponer información sensible al cliente.
-Estos componente no tienen estado, efectos secundarios, accesoa a APIs del navegador, interactividad ni acceso al DOM, ya que **no** se ejecutan en el navegador, ya que se ejecutan en el **exclusivamente** servidor.
+Estos componentes no tienen estado, efectos secundarios, acceso a APIs del navegador, interactividad ni acceso al DOM, ya que **no** se ejecutan en el navegador, ya que se ejecutan **exclusivamente** en el servidor.
 
 Este componente es un ejemplo de Server Component que obtiene datos desde una API y los renderiza en el servidor:
 
