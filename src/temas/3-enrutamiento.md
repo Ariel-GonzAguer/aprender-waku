@@ -409,4 +409,4 @@ export { default as EjemploComponenteShared } from "./EjemploComponenteShared";
 
 ##### Rutas segmentadas/dinámicas anidadas (Nested Segmented/Dynamic Routes)
 
-Las rutas pueden tener multiples segmentos, por ejemplo `/`
+Las rutas pueden tener multiples segmentos, por ejemplo `/pokemones/[generacion]/[region]/[id]`, que se define creando una carpeta `pokemones` dentro de `src/pages`, y dentro de esa carpeta otra carpeta `[generacion]`, y dentro de esta otra carpeta `[region]`, y dentro de esta otra carpeta `[id]`, y finalmente dentro de esta última carpeta un archivo `index.tsx`.

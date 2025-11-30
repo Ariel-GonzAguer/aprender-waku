@@ -12,6 +12,8 @@ import type { getConfig as File_GatosSlugIndex_getConfig } from './pages/gatos/[
 // prettier-ignore
 import type { getConfig as File_Index_getConfig } from './pages/index';
 // prettier-ignore
+import type { getConfig as File_PokemonesGeneracionRegionId_getConfig } from './pages/pokemones/[generacion]/[region]/[id]';
+// prettier-ignore
 import type { getConfig as File_TemasSlug_getConfig } from './pages/temas/[slug]';
 // prettier-ignore
 import type { getConfig as File_Root_getConfig } from './pages/_root';
@@ -22,6 +24,7 @@ type Page =
 | ({ path: '/ejemplos/[slug]' } & GetConfigResponse<typeof File_EjemplosSlug_getConfig>)
 | ({ path: '/gatos/[slug]' } & GetConfigResponse<typeof File_GatosSlugIndex_getConfig>)
 | ({ path: '/' } & GetConfigResponse<typeof File_Index_getConfig>)
+| ({ path: '/pokemones/[generacion]/[region]/[id]' } & GetConfigResponse<typeof File_PokemonesGeneracionRegionId_getConfig>)
 | { path: '/temas'; render: 'dynamic' }
 | ({ path: '/temas/[slug]' } & GetConfigResponse<typeof File_TemasSlug_getConfig>)
 | ({ path: '/_root' } & GetConfigResponse<typeof File_Root_getConfig>);
