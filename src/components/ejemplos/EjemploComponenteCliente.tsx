@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import type { ReactElement } from "react";
-import NoAsyncServerComponent from "./EjemploNoAsyncServerComponent";
+import EjemploComponenteShared from "./EjemploComponenteShared";
 
 export default function EjemploComponenteCliente() {
   const [gatos, setGatos] = useState<ReactElement[]>([]);
@@ -48,7 +48,7 @@ export default function EjemploComponenteCliente() {
       <div className="flex flex-wrap gap-2 mt-2">
         {gatos}
       </div>
-      <NoAsyncServerComponent />
+      <EjemploComponenteShared />
     </div>
   );
 }
