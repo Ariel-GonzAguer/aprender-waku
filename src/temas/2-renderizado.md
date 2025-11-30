@@ -101,4 +101,15 @@ Waku permite combinar _Server Components_ y _Client Components_ de diversas mane
 
 ---
 
+#### Renderizado del lado del servidor (Server-side rendering)
+Waku nos ofrece la posibilidad de renderizar contenido de dos formas:
+- -> Prerenderizado estático (static prerendering (SSG) ).
+- -> Renderizado desde el servidor en cada solicitud (server-side rendering (SSR) ).
 
+Podemos usar estos métodos tanto para layouts como para páginas individuales, incluyendo Componentes de Servidor y Componentes de Cliente.
+
+En el siguiente tema **Enrutamiento** veremos cómo configurar cada método de renderizado en Waku.
+
+[Siguiente: 3-enrutamiento →](/temas/3-enrutamiento)
+
+[← Volver](/temas/1-primerosPasos)

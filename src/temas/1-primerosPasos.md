@@ -4,7 +4,7 @@ autor: "Ariel"
 fecha: "28-11-2025"
 ---
 
-### Primero pasos
+### Primeros pasos
 
 Comenzar un nuevo proyecto con Waku es sencillo. Antes de empezar, hay que asegurarse de tener Node.js en alguna de estas versiones: ^24.0.0 or ^22.12.0 or ^20.19.0.
 
@@ -29,3 +29,8 @@ cd portafolio-waku && pnpm dev
 Esto abrirá el proyecto en `http://localhost:3000`, donde podremos ver la página de inicio por defecto de Waku.
 
 **¡Y eso es todo! Ya tenemos un proyecto Waku corriendo localmente y listo para ser personalizado y desarrollado según nuestras necesidades.**
+
+
+[Siguiente: 2-renderizado →](/temas/2-renderizado)
+
+[← Volver](/temas/0-intro)

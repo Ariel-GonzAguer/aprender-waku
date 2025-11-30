@@ -47,6 +47,7 @@ import fm from "front-matter";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
+import { Link } from "waku/router/client";
 
 interface FrontmatterAttributes {
   titulo?: string;
@@ -95,14 +96,37 @@ export default function MarkdownRenderer({ markdown }: Props) {
         remarkPlugins={[remarkGfm]}
         rehypePlugins={[rehypeRaw]}
         components={{
-          a: (props) => (
-            <a
-              {...props}
-              className="text-blue-600 underline hover:text-blue-800"
-              target="_blank"
-              rel="noopener noreferrer"
-            />
-          ),
+          a: (props) => {
+            const { href, children, ...rest } = props;
+            
+            // Detectar si es un enlace interno (comienza con / o sin protocolo)
+            const isInternal = href && (href.startsWith('/') || (!href.startsWith('http://') && !href.startsWith('https://')));
+            
+            if (isInternal) {
+              return (
+                <Link
+                  to={href as any}
+                  className="text-blue-600 underline hover:text-blue-800"
+                  {...rest}
+                >
+                  {children}
+                </Link>
+              );
+            }
+            
+            // Enlaces externos
+            return (
+              <a
+                href={href}
+                {...rest}
+                className="text-blue-600 underline hover:text-blue-800"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {children}
+              </a>
+            );
+          },
           img: (props) => (
             <img
               {...props}
