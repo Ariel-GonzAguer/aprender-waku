@@ -1,20 +1,26 @@
 // server component
 
 export default async function EjemploComponenteServidor() {
-  async function fetchPosts() {
-    const productoUno = await fetch(
+
+  /**
+   * Hace fetch a un post de JSONPlaceholder.
+   * @returns {Promise<any>} Una promesa que resuelve con los datos del post.
+   */
+  async function fetchPosts(): Promise<any> {
+    const postUno = await fetch(
       "https://jsonplaceholder.typicode.com/posts/1"
     );
-    return productoUno.json();
+    return postUno.json().then((data) => data.title);
   }
 
   return (
     <div>
-      <h2>Componente de Servidor</h2>
-      <p>El siguiente dato es el título del post 1 de JSONPlaceholder:</p>
+      <h2 className="text-2xl font-bold mb-4">Server Component</h2>
+      <p className="mb-6">El siguiente dato es el título del post 1 de JSONPlaceholder:</p>
       <code>
-        {JSON.stringify((await fetchPosts()).title, null, 2)}
+        {await fetchPosts()}
       </code>
+      
     </div>
   );
 }

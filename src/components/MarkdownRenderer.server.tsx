@@ -79,7 +79,7 @@ export default function MarkdownRenderer({ markdown }: Props) {
     : undefined;
 
   return (
-    <article className="prose lg:prose-xl mx-auto p-4 leading-loose text-center">
+    <article className="prose lg:prose-xl mx-auto p-4 leading-loose text-center text-balance">
       <header className="mb-6 text-center text-red-600 text-4xl">
         {data.titulo && <h2 id={safeId}>{data.titulo}</h2>}
         {(data.autor || data.fecha) && (
@@ -117,6 +117,12 @@ export default function MarkdownRenderer({ markdown }: Props) {
           ),
           h4: (props) => (
             <h4 {...props} className="text-lg mt-4 mb-2 text-green-400 font-semibold" />
+          ),
+          h5: (props) => (
+            <h5 {...props} className="text-md mt-3 mb-1 text-purple-400 font-medium" />
+          ),
+          ul: (props) => (
+            <ul {...props} className="list-none my-4" />
           ),
           table: (props) => (
             <table {...props} className="min-w-full border border-gray-300 my-6 rounded shadow-md bg-white" />
