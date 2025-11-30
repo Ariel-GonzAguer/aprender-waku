@@ -1,7 +1,6 @@
 // Auto-import todos los componentes Ejemplo*
 export { default as EjemploComponenteServidor } from "./EjemploComponenteServidor";
 export { default as EjemploComponenteCliente } from "./EjemploComponenteCliente";
-export { default as EjemploNoAsyncServerComponent } from "./EjemploNoAsyncServerComponent";
 export { default as EjemploComponenteShared } from "./EjemploComponenteShared";
 
 
