@@ -18,6 +18,7 @@ export default function EjemploComponenteCliente() {
         alt="ícono de un gato color rojo que mueve su cabeza."
         className="size-20 rounded-full"
         key={gatos.length}
+        title="ícono de un gato color rojo que mueve su cabeza."
       />
     );
   }
@@ -30,9 +31,8 @@ export default function EjemploComponenteCliente() {
     setGatos([...gatos, imgGato]);
   }
 
-
   return (
-    <div className="p-6 border border-gray-300 rounded-lg">
+    <section title="Ejemplo de Client Component" className="p-6 border border-gray-300 rounded-lg">
       <h2 className="text-2xl font-bold mb-4">Client Component</h2>
       <p className="mb-4">
         Este componente se ejecuta en el cliente, y agrega un gato cada vez que
@@ -45,10 +45,10 @@ export default function EjemploComponenteCliente() {
         Incrementar gatos
       </button>
       <p className="mt-4">Gatos:</p>
-      <div className="flex flex-wrap gap-2 mt-2">
+      <div className="flex flex-wrap gap-2 my-6">
         {gatos}
       </div>
       <EjemploComponenteShared />
-    </div>
+    </section>
   );
 }

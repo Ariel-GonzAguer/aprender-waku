@@ -2,6 +2,7 @@
 titulo: "0-introducción"
 autor: "Ariel"
 fecha: "27-11-2025"
+tags: ["waku", "framework", "react", "introducción"]
 ---
 
 ### ¿Qué es y por qué Waku?

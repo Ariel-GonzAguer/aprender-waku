@@ -55,6 +55,7 @@ export default function () {
               <Link
                 to={`/temas/${tema.path.split("/").pop()?.replace(".md", "")}`}
                 className="text-blue-500 underline"
+                title={tema.attributes.titulo || tema.path.split("/").pop()?.replace(".md", "")}
               >
                 {tema.attributes.titulo ||
                   tema.path.split("/").pop()?.replace(".md", "")}

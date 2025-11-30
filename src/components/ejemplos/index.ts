@@ -3,7 +3,5 @@ export { default as EjemploComponenteServidor } from "./EjemploComponenteServido
 export { default as EjemploComponenteCliente } from "./EjemploComponenteCliente";
 export { default as EjemploComponenteShared } from "./EjemploComponenteShared";
 
-
-// Para agregar más componentes, simplemente crea un archivo Ejemplo*.tsx o exportelo así: 
-// export { default as EjemploNoAsyncServerComponent } from "./NoAsyncServerComponent" → agregue Ejemplo al inicio del nombre por default
-// y exportalo aquí siguiendo el patrón anterior
+// Para agregar más componentes, simplemente crea un archivo Ejemplo*.tsx
+// y exportelo acá siguiendo el patrón anterior
