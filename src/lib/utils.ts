@@ -10,7 +10,9 @@ export interface Tema {
 }
 
 export async function getTemaBySlug(slug: string): Promise<Tema | null> {
-  const postsDir = path.join(process.cwd(), "src", "temas");
+  // Use import.meta.url to get the current file's directory, then navigate to temas
+  const currentDir = path.dirname(new URL(import.meta.url).pathname);
+  const postsDir = path.resolve(currentDir, "..", "temas");
   const filePath = path.join(postsDir, `${slug}.md`);
 
   if (!fs.existsSync(filePath)) {

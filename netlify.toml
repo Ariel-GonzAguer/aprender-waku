@@ -2,5 +2,5 @@
   command = "pnpm run build"
   publish = "dist/public"
 [functions]
-  included_files = ["private/**"]
+  included_files = ["src/temas/**"]
   directory = "netlify-functions"
