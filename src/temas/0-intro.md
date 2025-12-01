@@ -14,6 +14,9 @@ Waku facilita muchísimo el aprovechar las ventajas del renderizado en el servid
 
 Para esta guía usaremos `pnpm` como gestor de paquetes, Tailwind CSS para estilos y Netlify para desplegar. Sin embargo, Waku es agnóstico a estas herramientas, y se puede usar npm, yarn, otros frameworks de CSS, y otros servicios de despliegue.
 
+#### Importante
+Waku está en etapa de desarrollo, y aunque es funcional y estable, algunas funcionalidades pueden cambiar en el futuro.
+
 [Siguiente: 1-primeros pasos →](/temas/1-primerosPasos)
 
 [← Volver](/)

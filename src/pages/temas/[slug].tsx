@@ -1,6 +1,7 @@
 import type { PageProps } from 'waku/router';
 import { getTemaBySlug } from '../../lib/utils';
 import MarkdownRenderer from '../../components/MarkdownRenderer.server';
+import { Suspense } from 'react';
 
 export default async function PostDetail({ slug }: PageProps<'/temas/[slug]'>) {
   const tema = await getTemaBySlug(slug);
@@ -23,11 +24,11 @@ export default async function PostDetail({ slug }: PageProps<'/temas/[slug]'>) {
   }
 
   return (
-    <>
+    <Suspense fallback={<div className='flex flex-col justify-center items-center mt-25'>Cargando contenido del tema...</div>}>
       <div className='max-w-[85%] m-[0_auto]'>
       <MarkdownRenderer markdown={tema.contenido} />
       </div>
-    </>
+    </Suspense>
   );
 }
 

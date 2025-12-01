@@ -401,7 +401,7 @@ export { default as EjemploComponenteServidor } from "./EjemploComponenteServido
 export { default as EjemploComponenteCliente } from "./EjemploComponenteCliente";
 export { default as EjemploComponenteShared } from "./EjemploComponenteShared";
 
-// Para agregar más componentes, simplemente crea un archivo Ejemplo*.tsx
+// Para agregar más componentes, simplemente cree un archivo Ejemplo*.tsx
 // y exportelo acá siguiendo el patrón anterior
 ```
 
@@ -730,7 +730,7 @@ export const getConfig = async () => {
 };
 ```
 
-Ahora, si queremos usar SSG en rutas segmentadas anidadas, debemos definir la propiedad `staticPaths` en `getConfig`, pero ahora será un array con los arrays de segmentos.
+Ahora, si queremos usar SSG en rutas segmentadas anidadas, debemos definir la propiedad `staticPaths` en `getConfig`, que ahora será un array con los arrays de segmentos.
 Acá este ejemplo de la documentación oficial de Waku:
 
 ```tsx
@@ -762,7 +762,7 @@ Reciben una prop que es un array con los segmentos como un array ordenado de str
 
 Por ejemplo, `src/pages/docs/[...slug].tsx` crea rutas como `/docs/tema-1`, `/docs/carpeta/tema-2`, `/docs/carpeta/subcarpeta/tema-3`, etc., donde `slug` es un array que contiene **todos** los segmentos después de `/docs/`.
 
-Haga click [en este enlace](/ejemplos/catchall/primer/segundo "enlace que muestra qué captura la ruta catch-all usando `primer` y `segundo` como parámetros") para ver qué captura la ruta catch-all. Puede probar cambiando los parámetros en la URL.
+Haga click [en este enlace](/pizzas/vegana/pesto/con-aceitunas "enlace que muestra qué captura la ruta catch-all usando `vegana` y `pesto` como parámetros") para ver qué captura la ruta catch-all. Puede probar cambiando los parámetros en la URL.
 
 ###### ¿Cuándo usar rutas catch-all?
 - Documentación o blogs con muchísimas rutas anidadas: No creamos un archivo por cada carpeta → Una sola ruta catch-all controla todas.
