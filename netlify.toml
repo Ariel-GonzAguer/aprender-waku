@@ -1,8 +1,6 @@
 [build]
-  command = "pnpm run build"
+  command = "NETLIFY=1 pnpm run build"
   publish = "dist/public"
-  [build.environment]
-    NETLIFY = "1"
 [functions]
   included_files = ["private/**"]
   directory = "netlify-functions"
