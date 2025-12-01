@@ -762,6 +762,8 @@ Reciben una prop que es un array con los segmentos como un array ordenado de str
 
 Por ejemplo, `src/pages/docs/[...slug].tsx` crea rutas como `/docs/tema-1`, `/docs/carpeta/tema-2`, `/docs/carpeta/subcarpeta/tema-3`, etc., donde `slug` es un array que contiene **todos** los segmentos después de `/docs/`.
 
+Haga click [en este enlace](/prncs/iea "enlace que muestra qué captura la ruta catch-all para `/pages` usando `prncs` y `iea` como parámetros") para ver qué captura la ruta catch-all para `/pages`. Puede probar cambiando los parámentros en la URL.
+
 ###### ¿Cuándo usar rutas catch-all?
 - Documentación o blogs con muchísimas rutas anidadas: No creamos un archivo por cada carpeta → Una sola ruta catch-all controla todas.
 - CMS o Markdown donde cada archivo define su propia estructura: La ruta catch-all puede mapear directamente la estructura del contenido.
