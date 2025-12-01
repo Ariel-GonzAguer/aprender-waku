@@ -7,7 +7,7 @@ export default function EjemploSharedComponent() {
     for (let i = 0; i < 5; i++) {
       ids.push(useId());
     }
-    console.log("ID generado:", ids);
+    console.log("IDs generado con useID:", ids);
     return ids.join(", ");
   }
 
