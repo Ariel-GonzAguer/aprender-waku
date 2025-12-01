@@ -1,8 +1,0 @@
-[build]
-  command = "pnpm run build"
-  publish = "dist/public"
-
-[functions]
-  directory = "netlify-functions"
-  node_bundler = "none"
-  included_files = ["dist/**", "node_modules/**"]
