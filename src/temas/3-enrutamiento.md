@@ -755,7 +755,9 @@ export const getConfig = async () => {
   } as const;
 };
 ```
- ##### Rutas catch-all (Catch-All Routes)
+
+##### Rutas catch-all (Catch-All Routes)
+
 También son conocidas como rutas "wildcard", son definidas creando un archivo o carpeta usando tres puntos `...` dentro de los paréntesis cuadrados `[]`, por ejemplo `[...catchAll]`, y tienen una indefinida cantidad de segmentos en la ruta, y no correspondan a una ruta ya definida.
 Esta es una ruta que captura **todos** los segmentos que sigan a un punto determinado del path.
 Reciben una prop que es un array con los segmentos como un array ordenado de strings.
@@ -765,18 +767,54 @@ Por ejemplo, `src/pages/docs/[...slug].tsx` crea rutas como `/docs/tema-1`, `/do
 Haga click [en este enlace](/pizzas/vegana/pesto/con-aceitunas "enlace que muestra qué captura la ruta catch-all usando `vegana` y `pesto` como parámetros") para ver qué captura la ruta catch-all. Puede probar cambiando los parámetros en la URL.
 
 ###### ¿Cuándo usar rutas catch-all?
-- Documentación o blogs con muchísimas rutas anidadas: No creamos un archivo por cada carpeta → Una sola ruta catch-all controla todas.
-- CMS o Markdown donde cada archivo define su propia estructura: La ruta catch-all puede mapear directamente la estructura del contenido.
-- Proyectos multilenguaje: Con un solo archivo capturás la ruta completa.
+
+- -> Documentación o blogs con muchísimas rutas anidadas: No creamos un archivo por cada carpeta → Una sola ruta catch-all controla todas.
+- -> CMS o Markdown donde cada archivo define su propia estructura: La ruta catch-all puede mapear directamente la estructura del contenido.
+- -> Proyectos multilenguaje: Con un solo archivo capturás la ruta completa.
+
 ```md
 /docs/es/setup
 /docs/en/setup
 /docs/fr/setup
 /docs/es/guia/avanzado/nav
 ```
+
 - Sitios donde las URLs pueden cambiar o ser generadas por usuarios.
 
 ---
 
-
 ##### Rutas grupales
+
+Estas rutas permiten agrupar rutas de manera lógica sin afectar la estructura de la URL.
+Se definen creando carpetas con nombres entre paréntesis `()`, por ejemplo `(admin)`, dentro de `src/pages`.
+Para este proyecto se crearon dos rutas grupales de ejemplo, que están dentro de la carpeta `src/pages/(grupales)`:
+
+- -> `src/pages/(grupales)/grupalEstatica.tsx` crea la ruta `/grupalEstatica`. Mírela en [este enlace](/grupalEstatica "enlace a ruta grupal estática").
+- -> `src/pages/(grupales)/grupalCliente.tsx` crea la ruta `/grupalCliente`. Mírela en [este enlace](/grupalCliente "enlace a ruta grupal con componente cliente").
+
+Las rutas grupales son útiles para organizar aplicaciones complejas donde ciertas páginas comparten layouts, middlewares o configuraciones comunes, sin que esto afecte las URLs públicas del sitio. Puede visitar la documentación oficial de Waku para más detalles sobre rutas grupales [aquí](https://waku.gg/#group-routes "Enlace a documentación oficial sobre rutas grupales").
+
+---
+
+#### Rutas ignoradas
+
+Las siguientes carpetas son ignoradas por el enrutador de Waku y no se convierten en rutas:
+
+- -> `_components`.
+- -> `_hooks`.
+
+Cualquier archivo o carpeta dentro de ellas, será excluida del enrutamiento.
+Veamos este ejemplo de la documentación oficial:
+
+```tsx
+pages/
+├── about.tsx
+├── _components/
+│   ├── header.tsx   // ignorada
+│   ├── footer.tsx   // ignorada
+│   ├── ...          // ignorada
+```
+
+---
+
+#### Layouts
