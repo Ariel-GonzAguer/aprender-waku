@@ -2,7 +2,7 @@ import type { PageProps } from 'waku/router';
 
 export default async function CatchAllRoute({
   catchAll,
-}: PageProps<'/app/[...catchAll]'>) {
+}: PageProps<'/[...catchAll]'>) {
   return (
     <section title='Ruta ...catch all' className='flex flex-col justify-center items-center mt-10 text-xl'>
       <h1>Rutas dinámicas</h1>
