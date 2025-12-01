@@ -730,3 +730,51 @@ export const getConfig = async () => {
 };
 ```
 
+Ahora, si queremos usar SSG en rutas segmentadas anidadas, debemos definir la propiedad `staticPaths` en `getConfig`, pero ahora será un array con los arrays de segmentos.
+Acá este ejemplo de la documentación oficial de Waku:
+
+```tsx
+// ./src/pages/shop/[category]/[product].tsx
+import type { PageProps } from "waku/router";
+
+// Create product detail pages
+export default async function ProductDetailPage({
+  category,
+  product,
+}: PageProps<"/shop/[category]/[product]">) {
+  return <>{/* ...*/}</>;
+}
+
+export const getConfig = async () => {
+  return {
+    render: "static",
+    staticPaths: [
+      ["same-category", "some-product"],
+      ["same-category", "another-product"],
+    ],
+  } as const;
+};
+```
+ ##### Rutas catch-all (Catch-All Routes)
+También son conocidas como rutas "wildcard", son definidas creando un archivo o carpeta usando tres puntos `...` dentro de los paréntesis cuadrados `[]`, por ejemplo `[...catchAll]`, y tienen una indefinida cantidad de segmentos en la ruta, y no correspondan a una ruta ya definida.
+Esta es una ruta que captura **todos** los segmentos que sigan a un punto determinado del path.
+Reciben una prop que es un array con los segmentos como un array ordenado de strings.
+
+Por ejemplo, `src/pages/docs/[...slug].tsx` crea rutas como `/docs/tema-1`, `/docs/carpeta/tema-2`, `/docs/carpeta/subcarpeta/tema-3`, etc., donde `slug` es un array que contiene **todos** los segmentos después de `/docs/`.
+
+###### ¿Cuándo usar rutas catch-all?
+- Documentación o blogs con muchísimas rutas anidadas: No creamos un archivo por cada carpeta → Una sola ruta catch-all controla todas.
+- CMS o Markdown donde cada archivo define su propia estructura: La ruta catch-all puede mapear directamente la estructura del contenido.
+- Proyectos multilenguaje: Con un solo archivo capturás la ruta completa.
+```md
+/docs/es/setup
+/docs/en/setup
+/docs/fr/setup
+/docs/es/guia/avanzado/nav
+```
+- Sitios donde las URLs pueden cambiar o ser generadas por usuarios.
+
+---
+
+
+##### Rutas grupales

@@ -16,6 +16,8 @@ import type { getConfig as File_PokemonesGeneracionRegionId_getConfig } from './
 // prettier-ignore
 import type { getConfig as File_TemasSlug_getConfig } from './pages/temas/[slug]';
 // prettier-ignore
+import type { getConfig as File_CatchAll_getConfig } from './pages/[...catchAll]';
+// prettier-ignore
 import type { getConfig as File_Root_getConfig } from './pages/_root';
 
 // prettier-ignore
@@ -27,6 +29,7 @@ type Page =
 | ({ path: '/pokemones/[generacion]/[region]/[id]' } & GetConfigResponse<typeof File_PokemonesGeneracionRegionId_getConfig>)
 | { path: '/temas'; render: 'dynamic' }
 | ({ path: '/temas/[slug]' } & GetConfigResponse<typeof File_TemasSlug_getConfig>)
+| ({ path: '/[...catchAll]' } & GetConfigResponse<typeof File_CatchAll_getConfig>)
 | ({ path: '/_root' } & GetConfigResponse<typeof File_Root_getConfig>);
 
 // prettier-ignore

@@ -39,6 +39,6 @@ export default async function GatoDetalle(
 export const getConfig = async () => {
   return {
     render: "static",
-    staticPaths: ['sundae', 'luna', 'timi'],
+    staticPaths: ['sundae', 'luna', 'timi', 'onigiri'],
   } as const;
 }

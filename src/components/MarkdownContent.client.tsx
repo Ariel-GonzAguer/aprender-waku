@@ -50,16 +50,19 @@ export default function MarkdownContent({ markdown }: Props) {
           />
         ),
         h2: (props: any) => (
-          <h2 {...props} className="text-2xl mt-8 mb-4 text-rose-700" />
+          <h2 {...props} className="text-3xl mt-8 mb-4 text-rose-700" />
         ),
         h3: (props: any) => (
-          <h3 {...props} className="text-xl mt-6 mb-3 text-amber-300 font-bold" />
+          <h3 {...props} className="text-2xl mt-6 mb-3 text-amber-300 font-bold" />
         ),
         h4: (props: any) => (
-          <h4 {...props} className="text-lg mt-4 mb-2 text-green-400 font-semibold" />
+          <h4 {...props} className="text-xl mt-4 mb-2 text-green-400 font-semibold" />
         ),
         h5: (props: any) => (
-          <h5 {...props} className="text-md mt-3 mb-1 text-purple-400 font-medium" />
+          <h5 {...props} className="text-lg mt-3 mb-1 text-purple-400 font-medium" />
+        ),
+        h6: (props: any) => (
+          <h6 {...props} className="text-lg mt-2 mb-1 text-blue-200 font-medium" />
         ),
         ul: (props: any) => (
           <ul {...props} className="list-none my-4" />

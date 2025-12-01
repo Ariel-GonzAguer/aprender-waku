@@ -2,6 +2,7 @@ export const gatos = [
   { slug: "sundae", nombre: "Sundae", edad: 7, color: "naranja", mejorAmigo: "/imagenes/ardilla-amiga.webp" },
   { slug: "luna", nombre: "Luna", edad: 2, color: "gris", mejorAmigo: "/imagenes/caballo-amigo.webp" },
   { slug: "timi", nombre: "Timi", edad: 5, color: "vaca", mejorAmigo: "/imagenes/pato-amigo.webp" },
+  { slug: "onigiri", nombre: "Onigiri", edad: 1, color: "blanco", mejorAmigo: "/imagenes/oso-amigo.webp" },
 ];
 
 export function getGatoBySlug(slug: string) {
