@@ -3,7 +3,6 @@ import react from "@vitejs/plugin-react";
 import { defineConfig } from "waku/config";
 
 export default defineConfig({
-  adapter: "netlify",
   vite: {
     plugins: [
       // @ts-ignore
