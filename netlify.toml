@@ -1,5 +1,5 @@
 [build]
-  command = "NETLIFY=1 pnpm run build"
+  command = "npm run build"
   publish = "dist/public"
 [functions]
   included_files = ["private/**"]
