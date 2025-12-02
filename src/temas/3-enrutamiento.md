@@ -13,7 +13,7 @@ Waku utiliza un sistema mínimo de enrutamiento basado en archivos, similar a As
 Cada archivo `.tsx` dentro de la carpeta `src/pages` se convertirá una ruta de nuestra aplicación. Así de fácil.
 Además, Waku nos da acceso a su [API de bajo nivel](https://github.com/wakujs/waku/blob/main/docs/create-pages.mdx "Enlace a API de bajo nivel de Waku") si preferimos definir las rutas programáticamente; eso sí, en esta guía nos enfocaremos en el enrutamiento basado en archivos, al igual que en la documentación oficial.
 
-Páginas y layouts pueden crearse creando archivos `.tsx` que contengan dos exportaciones: una función `default` que para el componente React, y una función llamada `getConfig` que retorna un objeto de configuración para definir el tipo de renderizado y otras opciones.
+Páginas y layouts pueden crearse con archivos `.tsx` que contengan dos exportaciones: una función `default` para el componente React, y una función llamada `getConfig` que retorna un objeto de configuración para definir el tipo de renderizado y otras opciones.
 
 Como vimos en la [sección anterior](/temas/2-renderizado "enlace a tema 2-renderizado"), Waku soporta dos tipos de renderizado: SSG (estático) y SSR (dinámico).
 Layouts, páginas y slices (se verán más adelante) son estáticos por defecto (SSG), mientras los handlers de API son dinámicos (SSR) por defecto.
