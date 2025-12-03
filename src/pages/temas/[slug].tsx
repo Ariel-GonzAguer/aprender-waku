@@ -25,7 +25,7 @@ export default async function PostDetail({ slug }: PageProps<'/temas/[slug]'>) {
 
   return (
     <Suspense fallback={<div className='flex flex-col justify-center items-center mt-25'>Cargando contenido del tema...</div>}>
-      <div className='max-w-[85%] m-[0_auto]'>
+      <div className='max-w-[85%] m-[0_auto] break-all'>
       <MarkdownRenderer markdown={tema.contenido} />
       </div>
     </Suspense>
