@@ -24,9 +24,14 @@ export default async function PostDetail({ slug }: PageProps<'/temas/[slug]'>) {
   }
 
   return (
-    <Suspense fallback={<div className='flex flex-col justify-center items-center mt-25'>Cargando contenido del tema...</div>}>
+    <Suspense fallback={
+      <section title='Cargando tema...' className='flex flex-col justify-center items-center mt-25'>
+        <p>Cargando contenido del tema...</p>
+        <img src="/loaders/OrangeCat_SVG.svg" alt="Imagen de carga que muestra un gatito rojo girando." />
+      </section>}
+    >
       <div className='max-w-[85%] m-[0_auto] break-all'>
-      <MarkdownRenderer markdown={tema.contenido} />
+        <MarkdownRenderer markdown={tema.contenido} />
       </div>
     </Suspense>
   );
