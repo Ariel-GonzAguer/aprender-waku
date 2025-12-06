@@ -30,7 +30,7 @@ export default async function PostDetail({ slug }: PageProps<'/temas/[slug]'>) {
         <img src="/loaders/OrangeCat_SVG.svg" alt="Imagen de carga que muestra un gatito rojo girando." />
       </section>}
     >
-      <div className='max-w-[85%] m-[0_auto] break-all'>
+      <div className='max-w-[85%] m-[0_auto] break-normal'>
         <MarkdownRenderer markdown={tema.contenido} />
       </div>
     </Suspense>

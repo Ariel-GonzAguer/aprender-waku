@@ -63,7 +63,7 @@ No se puede incluir body ni html en estas rutas, si se usa _root.tsx.
 
 ## Cuándo usar Suspense en Waku
 
-### ✅ FUNCIONA: Server Components
+### FUNCIONA: Server Components
 `Suspense` funciona normalmente en Server Components para operaciones async:
 
 ```tsx
@@ -83,7 +83,7 @@ async function AsyncComponent() {
 }
 ```
 
-### ✅ FUNCIONA: Client Components con use()
+### FUNCIONA: Client Components con use()
 En `'use client'` puedes usar `Suspense` si el componente hijo usa el hook `use()` para resolver promises:
 
 ```tsx
@@ -105,7 +105,7 @@ export default function Page({ dataPromise }: { dataPromise: Promise<any> }) {
 }
 ```
 
-### ❌ NO FUNCIONA: Client Components sin promises
+### NO FUNCIONA: Client Components sin promises
 En `'use client'` sin promises (ej: con hooks que resuelven sincronónicamente como `useContentCollection()`), `Suspense` no funciona. **Solución:** usa condicionales:
 
 ```tsx
@@ -127,6 +127,6 @@ export default function Page() {
 ```
 
 **Resumen:**
-- `Suspense` + Server Components = ✅ Funciona
-- `Suspense` + `use()` hook + promises = ✅ Funciona  
-- `Suspense` + `'use client'` sin promises = ❌ Necesita condicional
+- `Suspense` + Server Components = Funciona
+- `Suspense` + `use()` hook + promises = Funciona  
+- `Suspense` + `'use client'` sin promises = Necesita condicional
