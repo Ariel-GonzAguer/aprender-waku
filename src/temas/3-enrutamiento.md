@@ -995,3 +995,7 @@ Según sus necesidades y preferencias, puede optar por usar _slices_ para cierta
 ##### Lazy Slices
 
 Los lazy slices son una variante que nos permite usar _slices_ sin necesidad de definirlos en la propiedad `slices` de `getConfig`, es decir sin que se incluyan automáticamente en el HTML estático generado durante el build (SSG), sino que pueden llamarse por separado cuando se necesiten. Acá el enlace a esta sección en la documentación oficial de Waku: [Lazy Slices](https://waku.gg/#lazy-slices "Enlace a documentación oficial sobre lazy slices").
+
+[Siguiente: 4-navegacion →](/temas/4-navegacion)
+
+[← Volver](/temas/2-renderizado)

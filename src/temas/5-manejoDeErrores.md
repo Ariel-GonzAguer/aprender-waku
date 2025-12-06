@@ -1,5 +1,5 @@
 ---
-titulo: "5-manejoDeErrores"
+titulo: "5-manejo de errores"
 autor: "Ariel"
 fecha: "30-11-2025"
 tags: ["waku", "guía", "manejo de errores", "errores"]
@@ -36,3 +36,7 @@ import { ErrorBoundary } from "react-error-boundary";
   <ExampleApplication />
 </ErrorBoundary>;
 ```
+
+[Siguiente: 6-metadata →](/temas/6-metadata)
+
+[← Volver](/temas/4-navegacion)

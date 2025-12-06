@@ -100,3 +100,7 @@ export default function Router() {
 }
 ```
 Visite la página que usa este componente aquí: [ver página aquí](/router "enlace a la página que usa el componente Router").
+
+[Siguiente: 5-manejo de errores →](/temas/5-manejoDeErrores)
+
+[← Volver](/temas/3-enrutamiento)
