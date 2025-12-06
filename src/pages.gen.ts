@@ -37,6 +37,7 @@ type Page =
 | ({ path: '/paginaSeis' } & GetConfigResponse<typeof File_PaginaSeis_getConfig>)
 | ({ path: '/pizzas/[...slug]' } & GetConfigResponse<typeof File_PizzasSlug_getConfig>)
 | ({ path: '/pokemones/[generacion]/[region]/[id]' } & GetConfigResponse<typeof File_PokemonesGeneracionRegionId_getConfig>)
+| { path: '/router'; render: 'dynamic' }
 | { path: '/temas'; render: 'dynamic' }
 | ({ path: '/temas/[slug]' } & GetConfigResponse<typeof File_TemasSlug_getConfig>)
 | ({ path: '/_root' } & GetConfigResponse<typeof File_Root_getConfig>)
