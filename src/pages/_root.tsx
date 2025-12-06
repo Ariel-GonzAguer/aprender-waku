@@ -21,7 +21,6 @@ export default async function RootElement({ children }: { children: ReactNode })
         <meta name="twitter:description" content="Aprende Waku en en español" />
         <meta name="twitter:image" content="/imagenes/waku.webp" />
         <meta name="publisher" content="Gato Rojo Lab" />
-
       </head>
       <body data-version="1.0" className='min-h-screen'>{children}</body>
     </html>
