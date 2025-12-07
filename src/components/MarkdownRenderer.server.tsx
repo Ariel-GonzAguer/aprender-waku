@@ -68,7 +68,6 @@ export default async function MarkdownRenderer({ markdown }: Props) {
       <title>{data.titulo}</title>
       <meta name="author" content={data.autor} />
       <meta name="keywords" content={Array.isArray(data.tags) ? data.tags.join(', ') : ''} />
-      <meta name="robots" content="index, follow" />
       
       <article className="prose lg:prose-xl mx-auto p-4 leading-loose text-center text-balance">
         <header className="mb-6 text-center text-red-600 text-4xl">

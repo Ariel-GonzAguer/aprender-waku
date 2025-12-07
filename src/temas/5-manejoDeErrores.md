@@ -1,7 +1,7 @@
 ---
 titulo: "5-manejo de errores"
 autor: "Ariel"
-fecha: "30-11-2025"
+fecha: "5-12-2025"
 tags: ["waku", "guía", "manejo de errores", "errores"]
 ---
 

@@ -9,7 +9,6 @@ export default async function RootElement({ children }: { children: ReactNode })
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/imagenes/waku.webp" />
         <meta name="description" content="Aprende Waku en en español" />
-        <meta name="keywords" content="Waku, aprendizaje, tutorial" />
         <meta name="author" content="Ariel GonzAgüero" />
         <meta name="robots" content="index, follow" />
         <meta property="og:type" content="website" />

@@ -12,10 +12,11 @@
     "front-matter": "4.0.2",
     "react": "19.2.1",
     "react-dom": "19.2.1",
+    "react-error-boundary": "6.0.0",
     "react-markdown": "10.1.0",
     "react-server-dom-webpack": "19.2.1",
     "react-syntax-highlighter": "16.1.0",
-    "rehype-raw": "^7.0.0",
+    "rehype-raw": "7.0.0",
     "remark-gfm": "4.0.1",
     "waku": "0.27.3"
   },

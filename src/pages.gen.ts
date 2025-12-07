@@ -14,6 +14,8 @@ import type { getConfig as File_Index_getConfig } from './pages/index';
 // prettier-ignore
 import type { getConfig as File_PaginaSeis_getConfig } from './pages/paginaSeis';
 // prettier-ignore
+import type { getConfig as File_PizzasPaginaConTextoPrivado_getConfig } from './pages/pizzas/paginaConTextoPrivado';
+// prettier-ignore
 import type { getConfig as File_PizzasSlug_getConfig } from './pages/pizzas/[...slug]';
 // prettier-ignore
 import type { getConfig as File_PokemonesGeneracionRegionId_getConfig } from './pages/pokemones/[generacion]/[region]/[id]';
@@ -34,7 +36,9 @@ type Page =
 | ({ path: '/ejemplos/[slug]' } & GetConfigResponse<typeof File_EjemplosSlug_getConfig>)
 | ({ path: '/gatos/[slug]' } & GetConfigResponse<typeof File_GatosSlugIndex_getConfig>)
 | ({ path: '/' } & GetConfigResponse<typeof File_Index_getConfig>)
+| { path: '/mutaciones'; render: 'dynamic' }
 | ({ path: '/paginaSeis' } & GetConfigResponse<typeof File_PaginaSeis_getConfig>)
+| ({ path: '/pizzas/paginaConTextoPrivado' } & GetConfigResponse<typeof File_PizzasPaginaConTextoPrivado_getConfig>)
 | ({ path: '/pizzas/[...slug]' } & GetConfigResponse<typeof File_PizzasSlug_getConfig>)
 | ({ path: '/pokemones/[generacion]/[region]/[id]' } & GetConfigResponse<typeof File_PokemonesGeneracionRegionId_getConfig>)
 | { path: '/router'; render: 'dynamic' }
