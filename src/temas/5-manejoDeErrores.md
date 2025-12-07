@@ -37,6 +37,6 @@ import { ErrorBoundary } from "react-error-boundary";
 </ErrorBoundary>;
 ```
 
-[Siguiente: 6-metadata →](/temas/6-metadata)
+[Siguiente: 6-meta-data →](/temas/6-meta-data)
 
 [← Volver](/temas/4-navegacion)

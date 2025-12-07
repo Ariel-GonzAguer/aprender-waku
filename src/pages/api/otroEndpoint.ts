@@ -1,6 +1,6 @@
 export default function handler(request: Request): Response {
   return Response.json(
-    { message: "Default handler " + request.method },
+    { message: "Endpoint Catch-All " + request.method },
     { status: 200 }
   );
 }

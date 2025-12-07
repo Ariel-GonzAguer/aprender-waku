@@ -3,7 +3,8 @@
 import { useState, useEffect } from "react";
 
 export default function Mutaciones() {
-  const [post1, setPost1] = useState<any>(null);
+  const [post1, setPost1] = useState<unknown>(null);
+  const [catchAllResponse, setCatchAllResponse] = useState<unknown>(null);
 
   // Función para manejar el endpoint GET
   async function getPost1(id: number) {
@@ -94,6 +95,26 @@ export default function Mutaciones() {
     return data;
   };
 
+  // función para manejar endpoint catch all
+  async function handleCatchAll() {
+    const response = await fetch(`/api/otroEndpoint`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    const text = await response.text();
+    let data: any;
+    try {
+      data = text ? JSON.parse(text) : null;
+    } catch {
+      data = text;
+    }
+    setCatchAllResponse(data);
+    alert(`Catch-All response: ${JSON.stringify(data)}`);
+    return data;
+  };
+
   // Cargar el post 1 al montar el componente
   useEffect(() => {
     getPost1(1).then(data => setPost1(data));
@@ -138,6 +159,18 @@ export default function Mutaciones() {
       >
         Actualizar Post 1
       </button>
+      <span>- - - - - -</span>
+      <p>Finalmente, el siguiente botón hace una petición al endpoint catch-all</p>
+      <button
+        className="mt-4 px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600"
+        onClick={async () => {
+          const response = await handleCatchAll();
+          alert(`Respuesta Catch-All: ${JSON.stringify(response)}`);
+        }}
+      >
+        Llamar endpoint Catch-All
+      </button>
+      <p className="mt-4">Respuesta Catch-All: {catchAllResponse ? JSON.stringify(catchAllResponse) : 'Esperando acción'}</p>
     </section>
   )
 }

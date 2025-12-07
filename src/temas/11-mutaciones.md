@@ -171,12 +171,14 @@ Para usar estos endpoints en Client Components, usamos la función `fetch` está
 Acá el código de la página `/mutaciones` que usa el endpoint anterior para hacer mutaciones:
 
 ```tsx
+// src/pages/mutaciones/index.tsx
 "use client";
 
 import { useState, useEffect } from "react";
 
 export default function Mutaciones() {
-  const [post1, setPost1] = useState<any>(null);
+  const [post1, setPost1] = useState<unknown>(null);
+  const [catchAllResponse, setCatchAllResponse] = useState<unknown>(null);
 
   // Función para manejar el endpoint GET
   async function getPost1(id: number) {
@@ -273,6 +275,26 @@ export default function Mutaciones() {
     return data;
   }
 
+  // función para manejar endpoint catch all
+  async function handleCatchAll() {
+    const response = await fetch(`/api/otroEndpoint`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const text = await response.text();
+    let data: any;
+    try {
+      data = text ? JSON.parse(text) : null;
+    } catch {
+      data = text;
+    }
+    setCatchAllResponse(data);
+    alert(`Catch-All response: ${JSON.stringify(data)}`);
+    return data;
+  }
+
   // Cargar el post 1 al montar el componente
   useEffect(() => {
     getPost1(1).then((data) => setPost1(data));
@@ -330,12 +352,105 @@ export default function Mutaciones() {
       >
         Actualizar Post 1
       </button>
+      <span>- - - - - -</span>
+      <p>
+        Finalmente, el siguiente botón hace una petición al endpoint catch-all
+      </p>
+      <button
+        className="mt-4 px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600"
+        onClick={async () => {
+          const response = await handleCatchAll();
+          alert(`Respuesta Catch-All: ${JSON.stringify(response)}`);
+        }}
+      >
+        Llamar endpoint Catch-All
+      </button>
+      <p className="mt-4">
+        Respuesta Catch-All:{" "}
+        {catchAllResponse
+          ? JSON.stringify(catchAllResponse)
+          : "Esperando acción"}
+      </p>
     </section>
   );
 }
 ```
 
 Puede visitar la página siguiente este enlace → [/mutaciones](/mutaciones) y probar los botones para ver las mutaciones en acción.
+
+Alternativamente, podemos crear un endpoint "catch-all" que responda a todos las solicitudes.
+
+```tsx
+// src/pages/api/otroEndpoint.ts
+export default function handler(request: Request): Response {
+  return Response.json(
+    { message: "Endpoint Catch-All " + request.method },
+    { status: 200 }
+  );
+}
+```
+
+##### Configurando API routes
+
+Las rutas API son dinámicas de forma predeterminada, pero si se usarán para crear un recurso estático, como un documento XML, puede exportar una función getConfig que devuelva un objeto de configuración con la propiedad de representación establecida en 'estática'. Acá el ejemplo de la documentación oficial:
+
+```tsx
+// ./src/pages/api/rss.xml.ts
+
+export const GET = async () => {
+  const rssFeed = generateRSSFeed(items);
+
+  return new Response(rssFeed, {
+    headers: {
+      'Content-Type': 'application/rss+xml',
+    },
+  });
+};
+
+export const getConfig = async () => {
+  return {
+    render: 'static',
+  } as const;
+};
+
+const items = [
+  {
+    title: `Announcing API routes`,
+    description: `Easily add public API endpoints to your Waku projects.`
+    pubDate: `Tue, 1 Apr 2025 00:00:00 GMT`,
+    link: `https://waku.gg/blog/api-routes`,
+  },
+  // ...
+];
+
+const generateRSSFeed = (items) => {
+  const itemsXML = items
+    .map(
+      (item) => `
+        <item>
+          <title>${item.title}</title>
+          <link>${item.link}</link>
+          <pubDate>${item.pubDate}</pubDate>
+          <description>${item.description}</description>
+        </item>
+      `,
+    )
+    .join('');
+
+  return `
+    <?xml version="1.0" encoding="UTF-8" ?>
+    <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+      <atom:link href="https://waku.gg/api/rss.xml" rel="self" type="application/rss+xml" />
+      <title>Waku</title>
+      <link>https://waku.gg</link>
+      <description>The minimal React framework</description>
+      ${itemsXML}
+    </channel>
+    </rss>
+  `;
+};
+```
 
 [Siguiente: 12-manejoDeEstado →](/temas/12-manejoDeEstado)
 

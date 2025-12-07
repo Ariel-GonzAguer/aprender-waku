@@ -1,8 +1,8 @@
 ---
-titulo: "6-metadata"
+titulo: "6-meta-data"
 autor: "Ariel"
 fecha: "7-12-2025"
-tags: ["waku", "guía", "metadata"]
+tags: ["waku", "guía", "meta-data"]
 ---
 
 Waku eleva (hace _hoisting_) cualquier metadata (title, meta tags, etc.) al head del documento HTML generado, por lo que agregar meta tags es tan sencillo como incluirlos en cualquier layout o página.
