@@ -452,6 +452,117 @@ const generateRSSFeed = (items) => {
 };
 ```
 
+#### Server Actions
+
+Las Server Actions (acciones del servidor) nos permiten definir y ejecutar **de manera segura** funciones, sin la necesidad de crear API endpoints explícitos. Por ejemplo, podemos hacer un `POST` con una Server Action con solo un fetch estándar de JavaScript.
+
+##### Definiendo y protegiendo Actions/Acciones
+
+La directiva `"use server"` marca una función asíncrona como una Server Action. Waku automáticamente crea una referencia de la acción, que es pasada como `prop` o importada a Client Components.
+
+Si la directiva la colocamos en la primera línea del archivo, todas las funciones exportadas en ese archivo serán Server Actions. Si la directiva la colocamos **al incio del cuerpo de la función**, solo esa función será una Server Action.
+
+**Importante:**
+
+- -> Hay que tener cuidado de donde usar esta directiva, para no crear sin querer 'endpoints' que no deberían existir. Los 'endpoints' creados por server actions **no están protegidos** a menos que agregue su propia lógica de autenticación y autorización dentro del cuerpo de la función.
+- -> La directiva `"use server"` **no tiene relación** con la directiva `"use client"`. No marca un componente como servidor y no debe colocarse al principio de los componentes de servidor.
+
+##### Creando y consumiendo una Server Action
+
+Al crear una Server Action "en línea" dentro de un Server Component, se puede pasar como `prop` a un Client Component.
+Acá el ejemplo de una Server Action que obtiene una imagen aleatoria de un gato desde una API externa:
+
+```tsx
+// src/actions/randomCatAPI.ts
+
+export async function fetchRandomCat(): Promise<string | null> {
+  "use server";
+  try {
+    const response = await fetch("https://api.thecatapi.com/v1/images/search");
+    const data = await response.json();
+    console.log("Random cat data:", data);
+    return data[0].url;
+  } catch (error) {
+    console.error("Error fetching random cat:", error);
+    return null;
+  }
+}
+```
+
+Nótese que la directiva `"use server"` está al inicio del cuerpo de la función `fetchRandomCat`, por lo que solo esa función es una Server Action. El `console.log` se mostrará en la consola del servidor, no en la del navegador.
+
+Acá el Client Component que consume la Server Action anterior:
+
+```tsx
+// src/components/ClientComponentConServerAction.tsx
+"use client";
+
+import { useState } from "react";
+
+export default function ClientComponentConServerAction({
+  funcionRandomCat,
+}: {
+  funcionRandomCat: () => Promise<string | null>;
+}) {
+  const [catImg, setCatImg] = useState<string | null>(null);
+
+  async function handleFetchCat() {
+    const catData = await funcionRandomCat();
+    setCatImg(catData);
+  }
+
+  return (
+    <section>
+      <button
+        className="bg-amber-300 hover:bg-red-600 text-black font-bold py-2 px-4 rounded cursor-pointer"
+        onClick={handleFetchCat}
+      >
+        Fetch Random Cat
+      </button>
+      {catImg ? (
+        <div>
+          <img src={catImg} alt="Random Cat" />
+        </div>
+      ) : (
+        <p className="mt-6">Aún no se ha obtenido una imagen de gato.</p>
+      )}
+    </section>
+  );
+}
+```
+
+En este componente, la función `funcionRandomCat` es pasada como `prop`.
+
+Y esta es la página (con getConfig 'static') que usa el Client Component anterior, pasando la Server Action como `prop`:
+
+```tsx
+// src/pages/mutaciones/client-component-con-server-action.tsx
+import ClientComponentConServerAction from "../../components/ClientComponentConServerAction";
+import { fetchRandomCat } from "../../actions/randomCatAPI";
+
+export default function RutaDeClientComponentConServerAction() {
+  return (
+    <section className="flex flex-col justify-center items-center text-center mt-6 mb-10">
+      <h2 className="mb-10">
+        Esta ruta muestra el uso de un Client Component con una Server Action
+        pasada como prop
+      </h2>
+      <ClientComponentConServerAction funcionRandomCat={fetchRandomCat} />
+    </section>
+  );
+}
+
+export const getConfig = async () => {
+  return {
+    render: "static",
+  } as const;
+};
+```
+
+Para ver el resultado visite esta ruta → [Ver resultado de Client Component con Server Action](/mutaciones/client-component-con-server-action) y presione el botón "Fetch Random Cat". Nótese en este caso que la Server Action se importa directamente en el Server Component y se pasa como `prop` al Client Component.
+
+##### Invocando Server Actions
+
 [Siguiente: 12-manejoDeEstado →](/temas/12-manejoDeEstado)
 
 [← Volver](/temas/10-dataFetching)

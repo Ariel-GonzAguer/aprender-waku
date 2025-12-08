@@ -12,6 +12,8 @@ import type { getConfig as File_GatosSlugIndex_getConfig } from './pages/gatos/[
 // prettier-ignore
 import type { getConfig as File_Index_getConfig } from './pages/index';
 // prettier-ignore
+import type { getConfig as File_MutacionesClientComponentConServerAction_getConfig } from './pages/mutaciones/client-component-con-server-action';
+// prettier-ignore
 import type { getConfig as File_PaginaSeis_getConfig } from './pages/paginaSeis';
 // prettier-ignore
 import type { getConfig as File_PizzasPaginaConTextoPrivado_getConfig } from './pages/pizzas/paginaConTextoPrivado';
@@ -36,6 +38,7 @@ type Page =
 | ({ path: '/ejemplos/[slug]' } & GetConfigResponse<typeof File_EjemplosSlug_getConfig>)
 | ({ path: '/gatos/[slug]' } & GetConfigResponse<typeof File_GatosSlugIndex_getConfig>)
 | ({ path: '/' } & GetConfigResponse<typeof File_Index_getConfig>)
+| ({ path: '/mutaciones/client-component-con-server-action' } & GetConfigResponse<typeof File_MutacionesClientComponentConServerAction_getConfig>)
 | { path: '/mutaciones'; render: 'dynamic' }
 | ({ path: '/paginaSeis' } & GetConfigResponse<typeof File_PaginaSeis_getConfig>)
 | ({ path: '/pizzas/paginaConTextoPrivado' } & GetConfigResponse<typeof File_PizzasPaginaConTextoPrivado_getConfig>)
