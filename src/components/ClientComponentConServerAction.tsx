@@ -14,7 +14,7 @@ export default function ClientComponentConServerAction({ funcionRandomCat }: { f
   return (
     <section>
       <button
-        className="bg-amber-300 hover:bg-red-600 text-black font-bold py-2 px-4 rounded cursor-pointer"
+        className="bg-amber-300 hover:bg-red-600 text-black font-bold py-2 px-4 rounded cursor-pointer mb-6"
         onClick={handleFetchCat}
       >
         Fetch Random Cat
