@@ -21,7 +21,6 @@ export default function Mutaciones() {
     } catch {
       data = text;
     }
-    alert(`GET response: ${JSON.stringify(data)}`);
     return data;
   };
 
@@ -34,7 +33,6 @@ export default function Mutaciones() {
       },
     });
     if (response.status === 204) {
-      alert('DELETE response: 204 No Content. El post fue eliminado correctamente.');
       return { success: true, status: 204 };
     }
 
@@ -45,7 +43,6 @@ export default function Mutaciones() {
     } catch {
       data = text;
     }
-    alert(`DELETE response: ${JSON.stringify(data)}. El post fue eliminado correctamente.`);
     return data;
   };
 
@@ -71,7 +68,6 @@ export default function Mutaciones() {
     } catch {
       data = text;
     }
-    alert(`POST response: ${JSON.stringify(data)}`);
     return data;
   };
 
@@ -91,7 +87,6 @@ export default function Mutaciones() {
     } catch {
       data = text;
     }
-    alert(`PUT response: ${JSON.stringify(data)}`);
     return data;
   };
 
@@ -122,8 +117,11 @@ export default function Mutaciones() {
 
   return (
     <section className="flex flex-col justify-center items-center text-center mb-10">
-      <h2 className="text-4xl mb-6 font-extrabold">Esta página muestra es un Client Component, y muestra el uso de mutaciones con API endpoints</h2>
-      <p>Este es el post 1: {post1 ? JSON.stringify(post1) : 'Cargando...'} </p>
+      <h2 className="text-4xl mb-6 font-extrabold">Esta página renderiza un Client Component, y muestra el uso de mutaciones con API endpoints</h2>
+      <p>Este es el post 1 de JSONPlaceholder:</p>
+      <pre className="bg-gray-700 p-4 rounded mt-4 mb-4 w-3/4 text-left overflow-x-auto">
+        {post1 ? JSON.stringify(post1, null, 2) : 'Cargando...'}
+      </pre>
       <span>- - - - - -</span>
 
       <p>Presionando el siguiente botón, eliminamos el post 11 de JSONPlaceholder</p>

@@ -22,7 +22,7 @@ export default function GrupalClientePage() {
     >
       <h2 className="text-red-300 mb-6">¡Hola desde la página Grupal Cliente!</h2>
       <p className="mb-10">
-        Esta es otra página creada para el ejercicio grupal, y es un Client
+        Esta es otra página creada para el tema de rutas grupales, y es un Client
         Component.
       </p>
       <p>Usa <code>useEffect</code>, <code>useState</code> y <code>navigator.onLine (API del navegador)</code>.</p>

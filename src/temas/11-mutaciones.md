@@ -619,7 +619,7 @@ export const ContactForm = ({ author = "guest" }) => {
 };
 ```
 
-La documetación oficial sugiere (o eso interpreto 😸) usar Server Actions, ya que se integran con varias funcionalidades de React, como los hooks `useTransition`, `useActionState` y `useOptimistic`. 
+La documetación oficial sugiere (o eso interpreto 😸) usar Server Actions, ya que se integran con varias funcionalidades de React, como los hooks `useTransition`, `useActionState` y `useOptimistic`. Waku es un (meta)framework **_React First_**.
 El uso de una Server Action o un API endpoint depende de las necesidades específicas de la aplicación y de nuestras preferencias desarrollando.
 
 [Siguiente: 12-manejoDeEstado →](/temas/12-manejoDeEstado)
