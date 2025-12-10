@@ -795,8 +795,8 @@ Estas rutas permiten agrupar rutas de manera lógica sin afectar la estructura d
 Se definen creando carpetas con nombres entre paréntesis `()`, por ejemplo `(admin)`, dentro de `src/pages`.
 Para este proyecto se crearon dos rutas grupales de ejemplo, que están dentro de la carpeta `src/pages/(grupales)`:
 
-- -> `src/pages/(grupales)/grupalEstatica.tsx` crea la ruta `/grupalEstatica`. Mírela en [este enlace](/grupalEstatica "enlace a ruta grupal estática").
-- -> `src/pages/(grupales)/grupalCliente.tsx` crea la ruta `/grupalCliente`. Mírela en [este enlace](/grupalCliente "enlace a ruta grupal con componente cliente").
+- -> `src/pages/(grupales)/pagina-grupal-estatica.tsx` crea la ruta `/pagina-grupal-estatica`. Mírela en [este enlace](/pagina-grupal-estatica "enlace a ruta grupal estática").
+- -> `src/pages/(grupales)/pagina-grupal-cliente.tsx` crea la ruta `/pagina-grupal-cliente`. Mírela en [este enlace](/pagina-grupal-cliente "enlace a ruta grupal con componente cliente").
 
 Las rutas grupales son útiles para organizar aplicaciones complejas donde ciertas páginas comparten layouts, middlewares o configuraciones comunes, sin que esto afecte las URLs públicas del sitio. Puede visitar la documentación oficial de Waku para más detalles sobre rutas grupales [aquí](https://waku.gg/#group-routes "Enlace a documentación oficial sobre rutas grupales").
 

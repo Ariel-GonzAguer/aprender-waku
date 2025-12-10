@@ -32,8 +32,8 @@ import type { getConfig as File_SlicesSeis_getConfig } from './pages/_slices/sei
 
 // prettier-ignore
 type Page =
-| { path: '/grupalCliente'; render: 'dynamic' }
-| { path: '/grupalEstatica'; render: 'dynamic' }
+| { path: '/pagina-grupal-cliente'; render: 'dynamic' }
+| { path: '/pagina-grupal-estatica'; render: 'dynamic' }
 | ({ path: '/acercaDe' } & GetConfigResponse<typeof File_AcercaDe_getConfig>)
 | ({ path: '/ejemplos/[slug]' } & GetConfigResponse<typeof File_EjemplosSlug_getConfig>)
 | ({ path: '/gatos/[slug]' } & GetConfigResponse<typeof File_GatosSlugIndex_getConfig>)
