@@ -18,10 +18,9 @@ export default function GrupalClientePage() {
 
   return (
     <section
-      title="Página Grupal Uno"
       className="flex flex-col justify-center items-center mt-10 text-2xl"
     >
-      <h2 className="text-red-300 mb-6">¡Hola desde la página grupal uno!</h2>
+      <h2 className="text-red-300 mb-6">¡Hola desde la página Grupal Cliente!</h2>
       <p className="mb-10">
         Esta es otra página creada para el ejercicio grupal, y es un Client
         Component.

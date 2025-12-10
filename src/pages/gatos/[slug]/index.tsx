@@ -23,7 +23,7 @@ export default async function GatoDetalle(
   }
 
   return (
-    <section title="Gatos estático segmentados/dinámicos" className="flex flex-col justify-center items-center my-10 text-xl">
+    <section className="flex flex-col justify-center items-center my-10 text-xl">
       <p className="mb-2 text-amber-300">Nombre del michi</p>
       <p className="mb-6">{gato.nombre}</p>
       <p className="mb-6">Edad: {gato.edad}</p>

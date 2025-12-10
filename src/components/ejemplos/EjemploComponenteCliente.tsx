@@ -18,7 +18,6 @@ export default function EjemploComponenteCliente() {
         alt="ícono de un gato color rojo que mueve su cabeza."
         className="size-20 rounded-full"
         key={gatos.length}
-        title="ícono de un gato color rojo que mueve su cabeza."
       />
     );
   }
@@ -32,7 +31,7 @@ export default function EjemploComponenteCliente() {
   }
 
   return (
-    <section title="Ejemplo de Client Component" className="p-6 border border-gray-300 rounded-lg max-w-2xl">
+    <section className="p-6 border border-gray-300 rounded-lg max-w-2xl">
       <h2 className="text-2xl font-bold mb-4">Client Component</h2>
       <p className="mb-4">
         Este componente se ejecuta en el cliente, y agrega un gato cada vez que

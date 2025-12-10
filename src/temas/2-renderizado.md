@@ -48,7 +48,6 @@ export default async function EjemploComponenteServidor() {
 
   return (
     <section
-      title="Ejemplo de Server Component"
       className="p-6 border border-gray-300 rounded-lg mb-6"
     >
       <h2 className="text-2xl font-bold mb-4">Server Component</h2>
@@ -99,7 +98,6 @@ export default function EjemploComponenteCliente() {
         alt="ícono de un gato color rojo que mueve su cabeza."
         className="size-20 rounded-full"
         key={gatos.length}
-        title="ícono de un gato color rojo que mueve su cabeza."
       />
     );
   }
@@ -114,7 +112,6 @@ export default function EjemploComponenteCliente() {
 
   return (
     <section
-      title="Ejemplo de Client Component"
       className="p-6 border border-gray-300 rounded-lg"
     >
       <h2 className="text-2xl font-bold mb-4">Client Component</h2>
@@ -182,7 +179,7 @@ export default function EjemploSharedComponent() {
   }
 
   return (
-    <section title="Ejemplo de Componente Shared" className="mt-6">
+    <section className="mt-6">
       <div className="p-6 bg-linear-to-r from-amber-300 to-red-600 text-black rounded-lg shadow-lg">
         <h2 className="text-2xl font-bold mb-4">Componente Shared</h2>
         <p className="mb-3">

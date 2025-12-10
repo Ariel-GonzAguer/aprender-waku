@@ -466,6 +466,7 @@ Si la directiva la colocamos en la primera línea del archivo, todas las funcion
 
 - -> Hay que tener cuidado de donde usar esta directiva, para no crear sin querer 'endpoints' que no deberían existir. Los 'endpoints' creados por server actions **no están protegidos** a menos que agregue su propia lógica de autenticación y autorización dentro del cuerpo de la función.
 - -> La directiva `"use server"` **no tiene relación** con la directiva `"use client"`. No marca un componente como servidor y no debe colocarse al principio de los componentes de servidor.
+- -> Se sugiere colocar las en la carpetas `src/actions` o `src/server/actions`.
 
 ##### Creando y consumiendo una Server Action
 
@@ -562,6 +563,64 @@ export const getConfig = async () => {
 Para ver el resultado visite esta ruta → [Ver resultado de Client Component con Server Action](/mutaciones/client-component-con-server-action) y presione el botón "Fetch Random Cat". Nótese en este caso que la Server Action se importa directamente en el Server Component y se pasa como `prop` al Client Component.
 
 ##### Invocando Server Actions
+
+Podemos usar/invocar Server Actions a través de _handlers_ de eventos como `onClick` o `onSubmit` (como vimos en el ejemplos anterior con el botón **Fetch Random Cat** ) o con el hook `useEffect`, según las condiciones que queramos.
+
+También se pueden invocar mediante una prop `action` en elementos nativos `<form>`. En este caso, la Server Action recibirá automáticamente un parámetro de `FormData` con todos los valores de los campos del formulario, **incluiyendo los ocultos**.
+Veamos los ejemplos de la documentación oficial:
+
+```tsx
+// ./src/actions/send-message.ts
+"use server";
+
+import db from "some-db";
+
+export async function sendMessage(formData: FormData) {
+  const message = formData.get("message");
+
+  await db.messages.create(message);
+}
+```
+
+```tsx
+// ./src/components/create-todo-button.tsx
+"use client";
+
+import { sendMessage } from "../actions/send-message";
+
+export const ContactForm = () => {
+  return (
+    <form action={sendMessage}>
+      <textarea name="message" rows={4} />
+      <input type="hidden" name="secret-message" value="This too!" />
+      <button type="submit">Send message</button>
+    </form>
+  );
+};
+```
+
+Si necesitamos pasar argumentos adicionales a la acción del formulario, más allá de sus campos nativos, podemos usar el método `bind` para crear una acción de servidor **extendida** con los argumentos adicionales.
+
+```tsx
+// ./src/components/create-todo-button.tsx
+"use client";
+
+import { sendMessage } from "../actions/send-message";
+
+export const ContactForm = ({ author = "guest" }) => {
+  const sendMessageWithAuthor = sendMessage.bind(null, author);
+
+  return (
+    <form action={sendMessageWithAuthor}>
+      <textarea name="message" rows={4} />
+      <button type="submit">Send message</button>
+    </form>
+  );
+};
+```
+
+La documetación oficial sugiere (o eso interpreto 😸) usar Server Actions, ya que se integran con varias funcionalidades de React, como los hooks `useTransition`, `useActionState` y `useOptimistic`. 
+El uso de una Server Action o un API endpoint depende de las necesidades específicas de la aplicación y de nuestras preferencias desarrollando.
 
 [Siguiente: 12-manejoDeEstado →](/temas/12-manejoDeEstado)
 

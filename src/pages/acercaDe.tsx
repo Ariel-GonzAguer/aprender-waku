@@ -1,7 +1,7 @@
 export default async function AcercaDe() {
 
   return (
-    <section title='Sección de Acerca De' className="flex flex-col justify-center items-center text-center mt-10">
+    <section className="flex flex-col justify-center items-center text-center mt-10">
       <p>Los íconos animados usados en este proyecto son de <a href="http://https://lordicon.com/" target="_blank" rel="noopener noreferrer" className='text-sky-300 font-bold'>Lordicon</a>.</p>
     
     </section>

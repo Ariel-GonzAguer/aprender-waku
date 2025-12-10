@@ -9,5 +9,5 @@ Para desplegar en Netlify, lo mejor es hacerlo desde la terminal con el comando:
 
 ```bash
 NETLIFY=1 pnpm run build
-netlify deploy
+netlify deploy --prod
 ```

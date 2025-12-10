@@ -12,7 +12,7 @@ export default async function EjemploComponenteServidor() {
   }
 
   return (
-    <section title="Ejemplo de Server Component" className="p-6 border border-gray-300 rounded-lg mb-6">
+    <section className="p-6 border border-gray-300 rounded-lg mb-6">
       <h2 className="text-2xl font-bold mb-4">Server Component</h2>
       <p className="mb-6">El siguiente dato es el título del post 1 de JSONPlaceholder:</p>
       <code>

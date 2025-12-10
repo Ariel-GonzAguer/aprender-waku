@@ -7,7 +7,7 @@ export default function Router() {
   const router = useRouter();
 
   return (
-    <section title='Página que muestra el uso del hook useRouter' className='flex flex-col justify-center items-center my-10 text-xl'>
+    <section className='flex flex-col justify-center items-center my-10 text-xl'>
       <p className='mb-6'>Ruta actual: {path}</p>
       <p className='mb-6'>Parámetros de consulta: {JSON.stringify(query)}</p>
 

@@ -17,13 +17,13 @@ export default function Header() {
   return (
     <header className="bg-black text-white h-10 flex items-center justify-center">
       <nav className="w-full flex items-center justify-between gap-10 px-4 max-w-4xl mx-auto">
-        <Link to="/temas" title="Temas">
+        <Link to="/temas">
           Temas
         </Link>
-        <Link to="/" title="Inicio">
+        <Link to="/">
           Inicio
         </Link>
-        <Link to="/acercaDe" title="Acerca De">
+        <Link to="/acercaDe">
           Acerca De
         </Link>
       </nav>
@@ -74,7 +74,6 @@ export default function Router() {
 
   return (
     <section
-      title="Página que muestra el uso del hook useRouter"
       className="flex flex-col justify-center items-center my-10 text-xl"
     >
       <p className="mb-6">Ruta actual: {path}</p>

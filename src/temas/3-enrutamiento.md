@@ -6,6 +6,7 @@ tags: ["waku", "enrutamiento", "rutas", "guía"]
 ---
 
 Esta es la sección más extensa de la guía.
+Los componentes de página deben comenzar con letra minúscula.
 
 ### Introducción
 
