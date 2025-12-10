@@ -1,4 +1,4 @@
-export default function grupalDos() {
+export default function GrupalEstaticaPage() {
   return (
     <section
       title="Página Grupal Dos"

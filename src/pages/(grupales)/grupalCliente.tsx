@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-export default function grupalDos() {
+export default function GrupalClientePage() {
   const [isOnline, setIsOnline] = useState(navigator.onLine);
 
   useEffect(() => {

@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "dev": "waku dev",
-    "build": "waku build --with-netlify",
+    "build": "waku build",
     "start": "waku start"
   },
   "dependencies": {
