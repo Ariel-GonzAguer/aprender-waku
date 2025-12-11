@@ -11,3 +11,10 @@ Para desplegar en Netlify, lo mejor es hacerlo desde la terminal con el comando:
 NETLIFY=1 pnpm run build
 netlify deploy --prod
 ```
+
+O bien, ejecuta el script proporcionado en el repositorio que hace exactamente lo mismo, pero sin la necesidad de escribir ambos comandos:
+
+```bash
+bash scripts/deploy-netlify.sh
+```
+
