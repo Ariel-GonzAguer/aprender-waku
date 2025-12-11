@@ -58,6 +58,45 @@ Vamos a usar persistencia en el almacenamiento local (local storage) para que el
 
 Podemos ver el uso de este store en la siguiente ruta → [/manejoDeEstado](/manejoDeEstado).
 
+### Jotai
+
+Jotai es otra librería de manejo de estado muy sencilla y liviana. Para usarla en Waku, primero debemos instalarla:
+
+```bash
+pnpm add jotai
+```
+
+Luego debemos crear unos átomos para nuestro estado global. Para este proyecto tenemos `src/stores/jotai/jotaiAtoms.ts`, que se ve así:
+
+```typescript
+import { atom } from "jotai";
+
+export const colorAtom = atom("rojizo");
+
+export const tamañoAtom = atom("mediano");
+
+export const actividadesAtom = atom([
+  "dormir",
+  "comer",
+  "dormir después de comer",
+]);
+
+export const amigosAtom = atom([
+  {
+    nombre: "Gandalf",
+    color: "gris",
+    pelea: true,
+  },
+  {
+    nombre: "Campanita",
+    color: "calico",
+    pelea: false,
+  },
+]);
+```
+
+Podemos ver el uso de estos átomos en la misma ruta → [/manejoDeEstado](/manejoDeEstado).
+
 [Siguiente: 13-variablesDeEntorno →](/temas/13-variablesDeEntorno)
 
 [← Volver](/temas/11-mutaciones)

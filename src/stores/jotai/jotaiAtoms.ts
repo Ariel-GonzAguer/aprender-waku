@@ -1,10 +1,10 @@
 import { atom } from 'jotai'
 
-const colorAtom = atom('rojizo')
+export const colorAtom = atom('rojizo')
 
-const tamañoAtom = atom('mediano')
+export const tamañoAtom = atom('mediano')
 
-const actividadesAtom = atom(['dormir', 'comer', 'dormir después de comer'])
+export const actividadesAtom = atom(['dormir', 'comer', 'dormir después de comer'])
 
 export const amigosAtom = atom([
   {
