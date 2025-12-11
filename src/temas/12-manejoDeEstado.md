@@ -56,7 +56,55 @@ export default useZustandStore;
 
 Vamos a usar persistencia en el almacenamiento local (local storage) para que el estado se mantenga entre recargas de la página, para ello usamos el middleware `persist`. También usamos el middleware `immer` para poder mutar el estado directamente.
 
-Podemos ver el uso de este store en la siguiente ruta → [/manejoDeEstado](/manejoDeEstado).
+Acá el Client Component que usa este store:
+
+```tsx
+"use client";
+
+import useZustandStore from "../stores/zustand/useZustandStore";
+import { useState, useEffect } from "react";
+
+export default function Zustand() {
+  const { gatos, incrementarGatos, decrementarGatos, reiniciarStore } =
+    useZustandStore();
+  const [localGatos, setLocalGatos] = useState("");
+
+  useEffect(() => {
+    if (gatos === 0) setLocalGatos("");
+    for (let i = 0; i < gatos; i++) {
+      setLocalGatos(localGatos + "🐱");
+    }
+  }, [gatos]);
+
+  return (
+    <section className="flex flex-col justify-center items-center mt-6">
+      <h2 className="text-3xl font-bold">Manejo de Estado con Zustand</h2>
+      <p className="my-4">
+        Número de gatos en la store de Zustand: {gatos}{" "}
+        {localGatos.length > 0 ? localGatos : ""}
+      </p>
+      <button
+        className="bg-amber-300 hover:bg-red-600 hover:text-white transition-colors ease-in-out cursor-pointer text-black font-bold py-2 px-4 rounded mb-6"
+        onClick={incrementarGatos}
+      >
+        Incrementar Gatos
+      </button>
+      <button
+        className="bg-red-600 hover:bg-amber-300 hover:text-black transition-colors ease-in-out cursor-pointer text-white font-bold py-2 px-4 rounded"
+        onClick={() => alert(decrementarGatos())}
+      >
+        Decrementar Gatos
+      </button>
+      <button
+        className="bg-pink-300 hover:bg-gray-700 text-black hover:text-white transition-colors ease-in-out cursor-pointer font-bold py-2 px-4 rounded mt-6"
+        onClick={reiniciarStore}
+      >
+        Reiniciar Store
+      </button>
+    </section>
+  );
+}
+```
 
 ### Jotai
 
@@ -95,7 +143,126 @@ export const amigosAtom = atom([
 ]);
 ```
 
-Podemos ver el uso de estos átomos en la misma ruta → [/manejoDeEstado](/manejoDeEstado).
+Acá el Client Component que usa estos átomos:
+
+```tsx
+"use client";
+
+import { useAtomValue, useSetAtom } from "jotai";
+import {
+  amigosAtom,
+  actividadesAtom,
+  colorAtom,
+  tamañoAtom,
+} from "../stores/jotai/jotaiAtoms";
+
+export default function Jotai() {
+  const color = useAtomValue(colorAtom);
+  const tamaño = useAtomValue(tamañoAtom);
+  const actividades = useAtomValue(actividadesAtom);
+  const amigos = useAtomValue(amigosAtom);
+  const setAmigos = useSetAtom(amigosAtom);
+
+  function agregarAmigoFelino(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const nombre = formData.get("nombre");
+    const color = formData.get("color");
+    const pelea = formData.get("pelea") === "on" ? true : false;
+    if (typeof nombre === "string" && typeof color === "string") {
+      const nuevoAmigo = { nombre, color, pelea };
+      setAmigos([...amigos, nuevoAmigo]);
+      event.currentTarget.reset();
+    }
+  }
+
+  return (
+    <section className="flex flex-col justify-center items-center mt-6 ">
+      <h2 className="text-3xl font-bold mb-4">Manejo de Estado con Jotai</h2>
+      <p>
+        La siguiente descripción (lo que está en rojo) se crea a base de 'atoms'
+        de Jotai.
+      </p>
+      <p>
+        Hay un gato <span className="text-red-600">{color}</span> llamado Sundae
+        de Caramelo, que es de tamaño{" "}
+        <span className="text-red-600">{tamaño}</span> y le gusta:{" "}
+      </p>
+      <ul className="list-disc list-inside">
+        {actividades.map((actividad, index) => (
+          <li key={index}>
+            <span className="text-red-600">{actividad}</span>
+          </li>
+        ))}
+      </ul>
+      <p className="mt-6">Sus amigos son:</p>
+      <ul className="list-disc list-inside">
+        {amigos.map((amigo, index) => (
+          <li key={index}>
+            <span className="text-red-600">{amigo.nombre}</span> que es de color{" "}
+            <span className="text-red-600">{amigo.color}</span> y{" "}
+            {amigo.pelea ? "le gusta pelear" : "no le gusta pelear"}
+          </li>
+        ))}
+      </ul>
+
+      <p className="mt-6 mb-2">Este es Sundae de Caramelo:</p>
+      <img
+        src="/imagenes/sundae_1.webp"
+        alt="foto de un lindo gato rojo llamado Sundae de Caramelo"
+      />
+
+      <form
+        onSubmit={agregarAmigoFelino}
+        className="mt-6 flex flex-col justify-center items-center"
+      >
+        <h3 className="text-xl font-bold mb-2">
+          Agregar un nuevo amigo felino
+        </h3>
+        <label htmlFor="nombre" className="mb-2 mr-4">
+          Nombre:
+        </label>
+        <input
+          type="text"
+          name="nombre"
+          required
+          className="bg-white text-black"
+        />
+
+        <label htmlFor="color" className="mb-2">
+          {" "}
+          Color:{" "}
+        </label>
+        <input
+          type="text"
+          name="color"
+          required
+          className="bg-white text-black"
+        />
+
+        <fieldset>
+          <legend>¿Le gusta pelear?</legend>
+          <label htmlFor="si-pelea">Sí</label>
+          <input type="radio" id="si-pelea" name="pelea" />
+          <label htmlFor="no-pelea" className="ml-4">
+            No
+          </label>
+          <input type="radio" id="no-pelea" name="pelea" defaultChecked />
+        </fieldset>
+
+        <button
+          type="submit"
+          className="bg-amber-300 px-4 py-2 rounded cursor-pointer text-black hover:scale-110 transition-all duration-300 ease-in-out"
+        >
+          Agregar Amigo
+        </button>
+      </form>
+    </section>
+  );
+}
+```
+
+Podemos ver el uso de ambos componentes en la misma ruta → [/manejodeestado](/manejodeestado).
 
 [Siguiente: 13-variablesDeEntorno →](/temas/13-variablesDeEntorno)
 

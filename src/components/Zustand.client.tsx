@@ -8,11 +8,9 @@ export default function Zustand() {
   const [localGatos, setLocalGatos] = useState('');
 
   useEffect(() => {
+    if (gatos === 0) setLocalGatos('');
     for (let i = 0; i < gatos; i++) {
       setLocalGatos(localGatos + '🐱');
-      if (gatos === 0) {
-        setLocalGatos('');
-      }
     }
   }, [gatos]);
 

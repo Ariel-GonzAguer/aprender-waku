@@ -9,6 +9,20 @@ export default function Jotai() {
   const tamaño = useAtomValue(tamañoAtom);
   const actividades = useAtomValue(actividadesAtom);
   const amigos = useAtomValue(amigosAtom);
+  const setAmigos = useSetAtom(amigosAtom);
+
+  function agregarAmigoFelino(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const nombre = formData.get('nombre');
+    const color = formData.get('color');
+    const pelea = formData.get('pelea') === 'on' ? true : false;
+    if (typeof nombre === 'string' && typeof color === 'string') {
+      const nuevoAmigo = { nombre, color, pelea };
+      setAmigos([...amigos, nuevoAmigo]);
+      event.currentTarget.reset();
+    }
+  }
 
   return (
     <section className="flex flex-col justify-center items-center mt-6 ">
@@ -29,6 +43,25 @@ export default function Jotai() {
 
       <p className='mt-6 mb-2'>Este es Sundae de Caramelo:</p>
       <img src="/imagenes/sundae_1.webp" alt="foto de un lindo gato rojo llamado Sundae de Caramelo" />
+
+      <form onSubmit={agregarAmigoFelino} className="mt-6 flex flex-col justify-center items-center">
+        <h3 className="text-xl font-bold mb-2">Agregar un nuevo amigo felino</h3>
+        <label htmlFor="nombre" className="mb-2 mr-4">Nombre:</label>
+        <input type="text" name="nombre" required className='bg-white text-black' />
+
+        <label htmlFor="color" className="mb-2"> Color: </label>
+        <input type="text" name="color" required className='bg-white text-black' />
+
+        <fieldset>
+          <legend>¿Le gusta pelear?</legend>
+          <label htmlFor="si-pelea">Sí</label>
+          <input type="radio" id="si-pelea" name="pelea" />
+          <label htmlFor="no-pelea" className="ml-4">No</label>
+          <input type="radio" id="no-pelea" name="pelea" defaultChecked />
+        </fieldset>
+
+        <button type="submit" className="bg-amber-300 px-4 py-2 rounded cursor-pointer text-black hover:scale-110 transition-all duration-300 ease-in-out">Agregar Amigo</button>
+      </form>
     </section>
   )
 }
