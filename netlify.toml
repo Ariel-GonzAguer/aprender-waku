@@ -5,3 +5,7 @@
 [functions]
   included_files = ["private/**"]
   directory = "netlify-functions"
+
+[[edge_functions]]
+  function = "csp-nonce"
+  path = "/*"
