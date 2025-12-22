@@ -40,6 +40,6 @@ export default async function PostDetail({ slug }: PageProps<'/temas/[slug]'>) {
 export const getConfig = async () => {
   return {
     render: 'static',
-    staticPaths: ['0-intro', '1-primerosPasos', '2-renderizado', '3-enrutamiento', '4-navegacion', '5-manejoDeErrores', '6-meta-data', '7-estilos','8-staticAssets', '9-sistemaDeArchivos', '10-dataFetching', '11-mutaciones', '12-manejoDeEstado', '13-variablesDeEntorno', '14-despliegue']
+    staticPaths: ['0-intro', '1-primerosPasos', '2-renderizado', '3-enrutamiento', '4-navegacion', '5-manejoDeErrores', '6-meta-data', '7-estilos','8-staticAssets', '9-sistemaDeArchivos', '10-dataFetching', '11-mutaciones', '12-manejoDeEstado', '13-variablesDeEntorno', '14-despliegue', '15-seguridad']
   } as const;
 };

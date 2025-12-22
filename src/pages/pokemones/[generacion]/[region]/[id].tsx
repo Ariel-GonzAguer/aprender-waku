@@ -186,7 +186,7 @@ export default async function PokemonDetailPage({
                 </div>
                 <div className="w-full bg-gray-200 rounded h-4">
                   <div
-                    className="bg-linear-to-r from-blue-500 to-purple-500 h-4 rounded transition-all"
+                    className="bg-linear-to-r from-black to-red-600 h-4 rounded transition-all"
                     style={{ width: `${Math.min(stat.base_stat / 2.5, 100)}%` }}
                   />
                 </div>

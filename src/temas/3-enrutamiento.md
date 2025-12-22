@@ -414,9 +414,9 @@ Las rutas pueden tener multiples segmentos, por ejemplo `/pokemones/[generacion]
 
 Pruebe con las siguientes rutas para ver el resultado:
 
-- -> https://aprendiendowaku.vercel.app/pokemones/primera/kanto/4
-- -> https://aprendiendowaku.vercel.app/pokemones/segunda/johto/133
-- -> https://aprendiendowaku.vercel.app/pokemones/primera/kanto/133
+- -> https://aprenderwaku.netlify.app/pokemones/primera/kanto/4
+- -> https://aprenderwaku.netlify.app/pokemones/segunda/johto/133
+- -> https://aprenderwaku.netlify.app/pokemones/primera/kanto/133
 
 Acá el código del archivo que nos retorna la data de los pokemones (`src/lib/pokemones.ts`):
 
