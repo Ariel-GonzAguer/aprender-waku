@@ -14,6 +14,7 @@ function generateNonce(): string {
  * y los inyecta en los scripts inline del HTML
  */
 export default async (request: Request, context: Context) => {
+  console.log('Procesando request para añadir CSP con nonce dinámico');
   // Generar un nonce único para esta request
   const nonce = generateNonce();
 
