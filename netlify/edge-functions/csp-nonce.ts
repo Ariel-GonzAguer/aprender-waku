@@ -14,10 +14,6 @@ function generateNonce(): string {
  * y los inyecta en los scripts inline del HTML
  */
 export default async (request: Request, context: Context) => {
-  console.log('Procesando request para añadir CSP con nonce dinámico');
-  // Generar un nonce único para esta request
-  const nonce = generateNonce();
-
   // Obtener la respuesta original
   const response = await context.next();
   const contentType = response.headers.get('content-type') || '';
@@ -26,6 +22,10 @@ export default async (request: Request, context: Context) => {
   if (!contentType.includes('text/html')) {
     return response;
   }
+
+  console.log('Procesando request para añadir CSP con nonce dinámico');
+  // Generar un nonce único para esta request
+  const nonce = generateNonce();
 
   // Crear nueva respuesta con headers modificados
   const newHeaders = new Headers(response.headers);
