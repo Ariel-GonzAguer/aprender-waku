@@ -6,7 +6,7 @@ export default function Header() {
       <nav className="w-full flex items-center justify-between gap-10 px-4 max-w-4xl mx-auto">
         <Link to="/temas" >Temas</Link>
         <Link to="/" >Inicio</Link>
-        <Link to="/acercaDe" >Acerca De</Link>
+        <Link to="/acerca-de" >Acerca De</Link>
       </nav>
     </header>
   )

@@ -4,7 +4,7 @@
 import type { PathsForPages, GetConfigResponse } from 'waku/router';
 
 // prettier-ignore
-import type { getConfig as File_AcercaDe_getConfig } from './pages/acercaDe';
+import type { getConfig as File_AcercaDe_getConfig } from './pages/acerca-de';
 // prettier-ignore
 import type { getConfig as File_EjemplosSlug_getConfig } from './pages/ejemplos/[slug]';
 // prettier-ignore
@@ -36,7 +36,7 @@ import type { getConfig as File_SlicesSeis_getConfig } from './pages/_slices/sei
 type Page =
 | { path: '/pagina-grupal-cliente'; render: 'dynamic' }
 | { path: '/pagina-grupal-estatica'; render: 'dynamic' }
-| ({ path: '/acercaDe' } & GetConfigResponse<typeof File_AcercaDe_getConfig>)
+| ({ path: '/acerca-de' } & GetConfigResponse<typeof File_AcercaDe_getConfig>)
 | ({ path: '/ejemplos/[slug]' } & GetConfigResponse<typeof File_EjemplosSlug_getConfig>)
 | ({ path: '/gatos/[slug]' } & GetConfigResponse<typeof File_GatosSlugIndex_getConfig>)
 | ({ path: '/' } & GetConfigResponse<typeof File_Index_getConfig>)
