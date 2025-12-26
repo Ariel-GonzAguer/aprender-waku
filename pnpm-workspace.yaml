@@ -1,3 +1,6 @@
 onlyBuiltDependencies:
   - '@swc/core'
   - esbuild
+
+overrides:
+  react-server-dom-webpack@>=19.2.0 <19.2.2: '>=19.2.2'

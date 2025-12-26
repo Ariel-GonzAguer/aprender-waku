@@ -78,7 +78,7 @@ pnpm deploy:netlify
 
 Con Vercel no encontré problemas al desplegar mediante CI/CD, por lo que desplegar de esa manera o mediante CLI.
 
-Existen otras plataformas que de momento están en etapa experimental:Deno Deploy, Cloudflare, AWS Lambda (experimental).
+Existen otras plataformas que de momento están en etapa experimental:Deno Deploy, Cloudflare, AWS Lambda.
 La documentación oficial también menciona la posibilidad de desplegar el proyecto puro SSG. Pueden visitar esta sección → [Despliegue SSG](https://waku.gg/#deployment) para más información.
 
 [Siguiente: 15-seguridad →](/temas/15-seguridad)
