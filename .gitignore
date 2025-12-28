@@ -8,3 +8,5 @@ dist
 *.env
 # Local Netlify folder
 .netlify
+# Local Cloudflare Workers folder
+.wrangler

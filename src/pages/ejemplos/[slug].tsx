@@ -58,6 +58,12 @@ export default async function PostDetail({
 
 export const getConfig = async () => {
   return {
-    render: "dynamic",
+    render: "static",
+    staticPaths: [
+      "componente-cliente",
+      "componente-servidor",
+      "componente-shared",
+      "server-componente-con-private",
+    ],
   } as const;
 };

@@ -1,0 +1,26 @@
+name = "waku-cloudflare-pages"
+type = "javascript"
+compatibility_date = "2024-12-10"
+
+# Cloudflare Pages ejecutará:
+# - /functions/api/* → Maneja requests a /api/* (implementar handlers aquí)
+# - /functions/[[path]].ts → Maneja páginas estáticas
+# - dist/public/ → Archivos estáticos
+
+[env.production]
+name = "waku-cloudflare-pages-prod"
+route = "https://tu-dominio.com/*"
+zone_id = "tu-zone-id-aqui"
+
+[env.production.vars]
+ENVIRONMENT = "production"
+NODE_ENV = "production"
+
+[env.production.secrets]
+# Secretos (configura en: wrangler secret put MI_SECRET --env production)
+# DATABASE_URL = "tu-conexion-db"
+# API_KEY = "tu-api-key"
+
+[observability]
+enabled = true
+
