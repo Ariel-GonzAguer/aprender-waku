@@ -6,7 +6,6 @@ settings:
 
 overrides:
   esbuild@<=0.24.2: '>=0.25.0'
-  react-server-dom-webpack@>=19.2.0 <19.2.2: '>=19.2.2'
 
 importers:
 
@@ -34,7 +33,7 @@ importers:
         specifier: 10.1.0
         version: 10.1.0(@types/react@19.2.5)(react@19.2.1)
       react-server-dom-webpack:
-        specifier: ^19.2.3
+        specifier: 19.2.3
         version: 19.2.3(react-dom@19.2.1(react@19.2.1))(react@19.2.1)(webpack@5.103.0)
       react-syntax-highlighter:
         specifier: 16.1.0
@@ -55,9 +54,6 @@ importers:
         specifier: 5.0.9
         version: 5.0.9(@types/react@19.2.5)(immer@11.0.1)(react@19.2.1)
     devDependencies:
-      '@netlify/edge-functions':
-        specifier: 3.0.3
-        version: 3.0.3
       '@tailwindcss/vite':
         specifier: 4.1.17
         version: 4.1.17(vite@7.2.4(@types/node@25.0.3)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1))
@@ -670,14 +666,6 @@ packages:
   '@jridgewell/trace-mapping@0.3.9':
     resolution: {integrity: sha512-3Belt6tdc8bPgAtbcmdtNJlirVoTmEb5e2gC94PnkwEW9jI6CAHUeoG85tjWP5WquqfavoMtMwiG4P926ZKKuQ==}
 
-  '@netlify/edge-functions@3.0.3':
-    resolution: {integrity: sha512-grElRK+rTBdYrPsULPKrhcHhrW+fwpDRLPbGByqa6Xrz0fhzcFJ2D9ijxEQ/onFcSVPYHT1u1mI48GhS5bZ/Ag==}
-    engines: {node: '>=18.0.0'}
-
-  '@netlify/types@2.3.0':
-    resolution: {integrity: sha512-5gxMWh/S7wr0uHKSTbMv4bjWmWSpwpeLYvErWeVNAPll5/QNFo9aWimMAUuh8ReLY3/fg92XAroVVu7+z27Snw==}
-    engines: {node: ^18.14.0 || >=20}
-
   '@poppinss/colors@4.1.6':
     resolution: {integrity: sha512-H9xkIdFswbS8n1d6vmRd8+c10t2Qe+rZITbbDHHkQixH5+2x1FDGmi/0K+WgWiqQFKPSlIYB7jlH6Kpfn6Fleg==}
 
@@ -1048,7 +1036,7 @@ packages:
     peerDependencies:
       react: '*'
       react-dom: '*'
-      react-server-dom-webpack: '>=19.2.2'
+      react-server-dom-webpack: '*'
       vite: '*'
     peerDependenciesMeta:
       react-server-dom-webpack:
@@ -2068,7 +2056,7 @@ packages:
     peerDependencies:
       react: ~19.2.1
       react-dom: ~19.2.1
-      react-server-dom-webpack: '>=19.2.2'
+      react-server-dom-webpack: ~19.2.1
 
   watchpack@2.5.0:
     resolution: {integrity: sha512-e6vZvY6xboSwLz2GD36c16+O/2Z6fKvIf4pOXptw2rY9MVwE/TXc6RGqxD3I3x0a28lwBY7DE+76uTPSsBrrCA==}
@@ -2567,12 +2555,6 @@ snapshots:
     dependencies:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
-
-  '@netlify/edge-functions@3.0.3':
-    dependencies:
-      '@netlify/types': 2.3.0
-
-  '@netlify/types@2.3.0': {}
 
   '@poppinss/colors@4.1.6':
     dependencies:
