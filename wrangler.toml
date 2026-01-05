@@ -1,4 +1,4 @@
-name = "waku-cloudflare-pages"
+name = "aprenderwaku"
 type = "javascript"
 compatibility_date = "2024-12-10"
 
@@ -8,7 +8,7 @@ compatibility_date = "2024-12-10"
 # - dist/public/ → Archivos estáticos
 
 [env.production]
-name = "waku-cloudflare-pages-prod"
+name = "aprenderwaku-prod"
 route = "https://tu-dominio.com/*"
 zone_id = "tu-zone-id-aqui"
 

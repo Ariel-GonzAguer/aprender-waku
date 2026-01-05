@@ -115,6 +115,12 @@ Genera:
 - `dist/public/` - Páginas SSG y assets estáticos (esto se despliega)
 - `dist/server/` - Servidor SSR (no se usa en Cloudflare)
 
+## Probar antes del Despliegue
+
+```bash
+pnpm cf-pages:test
+```
+
 ### Desplegar
 
 ```bash

@@ -1,5 +1,5 @@
 {
-  "name": "devblog",
+  "name": "aprenderwaku",
   "version": "0.0.0",
   "type": "module",
   "private": true,
@@ -8,7 +8,7 @@
     "build": "waku build",
     "start": "waku start",
     "deploy:netlify": "bash scripts/deploy-netlify.sh",
-    "deploy:cloudflare": "waku build && wrangler pages deploy dist/public --project-name=waku",
+    "deploy:cloudflare": "waku build && wrangler pages deploy dist/public --project-name=aprenderwaku",
     "cf-pages:test": "waku build && wrangler pages dev dist/public",
     "cf-functions:dev": "waku build && wrangler dev functions/[[path]].ts --compat-flags nodejs_compat"
   },
