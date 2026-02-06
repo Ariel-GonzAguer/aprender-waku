@@ -1,6 +1,6 @@
-import ServerComponentConPrivate from "../../components/ejemplos/ServerComponenteConPrivate";
+import ServerComponentConPrivate from "../../components/ejemplos/servercomponenteconprivate";
 
-export default function PaginaConImagenPrivada() {
+export default function PaginaConTextoPrivado() {
 
   return (
     <section className="flex flex-col justify-center items-center text-center mb-10">

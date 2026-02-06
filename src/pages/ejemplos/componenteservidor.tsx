@@ -1,4 +1,4 @@
-export default async function EjemploComponenteServidor() {
+export default async function ComponenteServidor() {
 
   /**
    * Hace fetch a un post de JSONPlaceholder.
@@ -18,7 +18,7 @@ export default async function EjemploComponenteServidor() {
       <code>
         {await fetchPosts()}
       </code>
-      
+      <p>Este componente usa `render: "dynamic"` en `getConfig`.</p>
     </section>
   );
 }

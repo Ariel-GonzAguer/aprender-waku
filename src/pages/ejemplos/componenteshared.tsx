@@ -1,6 +1,6 @@
-import {useId} from "react"
+import { useId } from "react"
 
-export default function EjemploSharedComponent() {
+export default function SharedComponent() {
 
   function generarId() {
     let ids: string[] = [];

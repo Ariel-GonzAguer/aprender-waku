@@ -6,7 +6,7 @@ import type { PathsForPages, GetConfigResponse } from 'waku/router';
 // prettier-ignore
 import type { getConfig as File_AcercaDe_getConfig } from './pages/acerca-de';
 // prettier-ignore
-import type { getConfig as File_EjemplosSlug_getConfig } from './pages/ejemplos/[slug]';
+import type { getConfig as File_EjemplosComponenteservidor_getConfig } from './pages/ejemplos/componenteservidor';
 // prettier-ignore
 import type { getConfig as File_GatosSlugIndex_getConfig } from './pages/gatos/[slug]/index';
 // prettier-ignore
@@ -37,7 +37,9 @@ type Page =
 | { path: '/pagina-grupal-cliente'; render: 'static' }
 | { path: '/pagina-grupal-estatica'; render: 'static' }
 | ({ path: '/acerca-de' } & GetConfigResponse<typeof File_AcercaDe_getConfig>)
-| ({ path: '/ejemplos/[slug]' } & GetConfigResponse<typeof File_EjemplosSlug_getConfig>)
+| { path: '/ejemplos/componentecliente'; render: 'static' }
+| ({ path: '/ejemplos/componenteservidor' } & GetConfigResponse<typeof File_EjemplosComponenteservidor_getConfig>)
+| { path: '/ejemplos/componenteshared'; render: 'static' }
 | ({ path: '/gatos/[slug]' } & GetConfigResponse<typeof File_GatosSlugIndex_getConfig>)
 | ({ path: '/' } & GetConfigResponse<typeof File_Index_getConfig>)
 | ({ path: '/manejoDeEstado' } & GetConfigResponse<typeof File_ManejoDeEstadoIndex_getConfig>)
@@ -49,6 +51,23 @@ type Page =
 | ({ path: '/pokemones/[generacion]/[region]/[id]' } & GetConfigResponse<typeof File_PokemonesGeneracionRegionId_getConfig>)
 | { path: '/router'; render: 'static' }
 | { path: '/temas'; render: 'static' }
+| { path: '/temas/temas/DataFetching-10'; render: 'static' }
+| { path: '/temas/temas/Despliegue-14'; render: 'static' }
+| { path: '/temas/temas/enrutamiento'; render: 'static' }
+| { path: '/temas/temas/Estilos-7'; render: 'static' }
+| { path: '/temas/temas/introduccion'; render: 'static' }
+| { path: '/temas/temas/ManejoDeErrores-5'; render: 'static' }
+| { path: '/temas/temas/ManejoDeEstado-12'; render: 'static' }
+| { path: '/temas/temas/Metadata-6'; render: 'static' }
+| { path: '/temas/temas/Mutaciones-11'; render: 'static' }
+| { path: '/temas/temas/Navegacion-4'; render: 'static' }
+| { path: '/temas/temas/primerospasos'; render: 'static' }
+| { path: '/temas/temas/PWA-16'; render: 'static' }
+| { path: '/temas/temas/renderizado'; render: 'static' }
+| { path: '/temas/temas/Seguridad-15'; render: 'static' }
+| { path: '/temas/temas/SistemaDeArchivos-9'; render: 'static' }
+| { path: '/temas/temas/StaticAssets-8'; render: 'static' }
+| { path: '/temas/temas/VariablesDeEntorno-13'; render: 'static' }
 | ({ path: '/temas/[slug]' } & GetConfigResponse<typeof File_TemasSlug_getConfig>)
 | ({ path: '/_root' } & GetConfigResponse<typeof File_Root_getConfig>)
 | ({ path: '/_slices/mil/seiscientos' } & GetConfigResponse<typeof File_SlicesMilSeiscientos_getConfig>)

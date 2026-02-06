@@ -1,9 +1,5 @@
-
-// ****
-
-
-import BotonesAvance from '../components/BotonesAvance';
-import CodeBlock from '../components/CodeBlock';
+import BotonesAvance from '../../../components/BotonesAvance';
+import CodeBlock from '../../../components/CodeBlock';
 
 export default function PrimerosPasos() {
 
@@ -20,19 +16,19 @@ export default function PrimerosPasos() {
 
   return (
     <>
-      <head>
+      <>
         <title>{data.titulo}</title>
         <meta name="author" content={data.autor} />
         <meta name="keywords" content={data.tags.join(", ")} />
         <meta name="date" content={data.fecha} />
-      </head>
+      </>
 
       <section className='text-center my-6'>
-        <h2 className='text-4xl font-bold mb-3'>{data.titulo}</h2>
+        <h2>{data.titulo}</h2>
         <p className='italic mb-3'>por {data.autor} - {data.fecha}</p>
         <hr />
 
-        <h3 className='text-3xl text-amber-300 my-6'>Comenzar un nuevo proyecto con Waku</h3>
+        <h3>Comenzar un nuevo proyecto con Waku</h3>
 
         <p>Comenzar un nuevo proyecto con Waku es sencillo. Antes de empezar, hay que asegurarse de tener Node.js en alguna de estas versiones: `^24.0.0` or `^22.12.0` or `^20.19.0`.</p>
         <p>En la terminal ejecutamos el siguiente comando para crear un nuevo proyecto:</p>
@@ -54,10 +50,11 @@ export default function PrimerosPasos() {
         <p>¡Y eso es todo! Ya tenemos un proyecto Waku corriendo localmente y listo para ser personalizado y desarrollado según nuestras necesidades.</p>
 
         <BotonesAvance
-          rutaSiguiente="/temas/Renderizado"
-          rutaAnterior="/temas/Introduccion"
+          rutaSiguiente="/temas/temas/renderizado"
+          rutaAnterior="/temas/temas/introduccion"
           textoSiguiente="2-Renderizado"
-          textoAnterior="0-Introducción" />
+          textoAnterior="0-Introducción"
+        />
       </section>
     </>
   )

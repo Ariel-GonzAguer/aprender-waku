@@ -4,7 +4,7 @@ import { getComponentBySlug } from '../../utils/getComponentBySlug';
 import { getStaticPaths } from '../../utils/getStaticPaths';
 
 export default async function PostDetail({ slug }: PageProps<'/temas/[slug]'>) {
-  const Componente = getComponentBySlug(slug);
+  const Componente = getComponentBySlug({slug, modulo: "temas"});
 
   if (!Componente) {
     return (

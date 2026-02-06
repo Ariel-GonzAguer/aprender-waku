@@ -2,9 +2,8 @@
 
 import { useState } from "react";
 import type { ReactElement } from "react";
-import EjemploComponenteShared from "./EjemploComponenteShared";
 
-export default function EjemploComponenteCliente() {
+export default function ComponenteCliente() {
   const [gatos, setGatos] = useState<ReactElement[]>([]);
 
   /**
@@ -47,7 +46,6 @@ export default function EjemploComponenteCliente() {
       <div className="flex flex-wrap gap-2 my-6">
         {gatos}
       </div>
-      <EjemploComponenteShared />
     </section>
   );
 }

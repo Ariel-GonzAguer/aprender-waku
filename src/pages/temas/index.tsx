@@ -9,8 +9,8 @@ export default function () {
         este mismo sitio web, y más.
       </p>
       <ul>
-        <li><Link to='/temas/Introduccion'>0-Introducción</Link></li>
-        <li><Link to='/temas/PrimerosPasos'>1-Primeros Pasos</Link></li>
+        <li><Link to='/temas/temas/introduccion'>0-Introducción</Link></li>
+        <li><Link to='/temas/temas/primerospasos'>1-Primeros Pasos</Link></li>
         {/* <li><Link to=''></Link></li>
         <li><Link to=''></Link></li>
         <li><Link to=''></Link></li>
