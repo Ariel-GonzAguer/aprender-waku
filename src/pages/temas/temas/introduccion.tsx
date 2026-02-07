@@ -18,7 +18,7 @@ export default function Intro() {
         <meta name="date" content={data.fecha} />
       </>
 
-      <section className='text-center my-6'>
+      <section className='tema'>
         <h2>{data.titulo}</h2>
         <p className='italic mb-3'>por {data.autor} - {data.fecha}</p>
         <hr />

@@ -145,7 +145,7 @@ export default function EjemploSharedComponent() {
         <meta name="date" content={data.fecha} />
       </>
 
-      <section className="text-center my-6">
+      <section className="tema">
         <h2 className="text-4xl font-bold mb-3">{data.titulo}</h2>
         <p className="italic mb-3">
           por {data.autor} - {data.fecha}
@@ -191,8 +191,8 @@ export default function EjemploSharedComponent() {
 
         <h5>Importante</h5>
         <ul className="list-disc list-inside space-y-2 text-left mx-auto max-w-4xl">
-          <li>No importes un Server Component dentro de un Client Component.</li>
-          <li>No coloques nada antes de la directiva <strong>'use client'</strong> en un Client Component.</li>
+          <li>No importe un Server Component dentro de un Client Component.</li>
+          <li>No coloque nada antes de la directiva <strong>'use client'</strong> en un Client Component.</li>
           <li>Se pueden anidar Client dentro de Client y Server dentro de Server sin problemas.</li>
           <li>Se pueden importar Client dentro de Server y pasar Server como children a Client.</li>
           <li>Los Shared Components funcionan tanto en cliente como en servidor.</li>
@@ -213,8 +213,7 @@ export default function EjemploSharedComponent() {
         <h4>¿Cómo decidir?</h4>
         <p>
           Si necesita interactividad o DOM → Client. <br />
-          Si usa APIs del servidor o
-          lógica sensible → Server. <br />
+          Si usa APIs del servidor o lógica sensible → Server. <br />
           Si no usa nada exclusivo de cliente ni servidor → Server o Shared.
         </p>
 
@@ -227,8 +226,8 @@ export default function EjemploSharedComponent() {
         <h4>Renderizado en Waku</h4>
         <p>
           Waku ofrece pre-renderizado estático (SSG) y renderizado en cada
-          solicitud (SSR) para layouts y páginas, tanto con componentes de
-          servidor como de cliente.
+          solicitud (SSR) para layouts y páginas, tanto con Componentes de
+          Servidor como de Cliente.
         </p>
 
         <h5>¿Qué es SSR y SSG?</h5>

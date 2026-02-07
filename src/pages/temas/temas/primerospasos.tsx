@@ -10,10 +10,6 @@ export default function PrimerosPasos() {
     tags: ["waku", "framework", "react", "primeros pasos"]
   };
 
-  const codigo = {
-    uno: `pnpm create waku@latest`
-  }
-
   return (
     <>
       <>
@@ -23,7 +19,7 @@ export default function PrimerosPasos() {
         <meta name="date" content={data.fecha} />
       </>
 
-      <section className='text-center my-6'>
+      <section className='tema'>
         <h2>{data.titulo}</h2>
         <p className='italic mb-3'>por {data.autor} - {data.fecha}</p>
         <hr />
@@ -33,7 +29,7 @@ export default function PrimerosPasos() {
         <p>Comenzar un nuevo proyecto con Waku es sencillo. Antes de empezar, hay que asegurarse de tener Node.js en alguna de estas versiones: `^24.0.0` or `^22.12.0` or `^20.19.0`.</p>
         <p>En la terminal ejecutamos el siguiente comando para crear un nuevo proyecto:</p>
         <CodeBlock lang="bash">
-          {codigo.uno}
+          pnpm create waku@latest
         </ CodeBlock>
 
         <p> Nos pedirá un nombre para el proyecto; podemos escribir el que queramos, por ejemplo `portafolio-waku`, y después empezará a instalar las dependencias necesarias. </p>

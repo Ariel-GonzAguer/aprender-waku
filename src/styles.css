@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 h2 {
-  @apply text-4xl font-bold mb-3;
+  @apply text-4xl text-red-600 font-bold mb-3;
 }
 
 h3 {
@@ -22,4 +22,8 @@ a {
 
 p {
   @apply mb-4;
+}
+
+.tema {
+  @apply text-center my-6 text-balance leading-relaxed;
 }

@@ -70,6 +70,6 @@ export async function getPokemonByID(
         ? "alola"
         : "galar",
   };
-  console.log("Fetched Pokémon:", objetoPokemon);
+  console.log("Pokémon encontrado:", objetoPokemon);
   return objetoPokemon;
 }
