@@ -1,37 +1,7 @@
 
 
-// ---
-
-// ##### Rutas grupales
-
-// Estas rutas permiten agrupar rutas de manera lógica sin afectar la estructura de la URL.
-// Se definen creando carpetas con nombres entre paréntesis `()`, por ejemplo `(admin)`, dentro de `src/pages`.
-// Para este proyecto se crearon dos rutas grupales de ejemplo, que están dentro de la carpeta `src/pages/(grupales)`:
-
-// - -> `src/pages/(grupales)/pagina-grupal-estatica.tsx` crea la ruta `/pagina-grupal-estatica`. Mírela en [este enlace](/pagina-grupal-estatica "enlace a ruta grupal estática").
-// - -> `src/pages/(grupales)/pagina-grupal-cliente.tsx` crea la ruta `/pagina-grupal-cliente`. Mírela en [este enlace](/pagina-grupal-cliente "enlace a ruta grupal con componente cliente").
-
-// Las rutas grupales son útiles para organizar aplicaciones complejas donde ciertas páginas comparten layouts, middlewares o configuraciones comunes, sin que esto afecte las URLs públicas del sitio. Puede visitar la documentación oficial de Waku para más detalles sobre rutas grupales [aquí](https://waku.gg/#group-routes "Enlace a documentación oficial sobre rutas grupales").
-
-// ---
-
-// ##### Rutas ignoradas
-
-// Las siguientes carpetas son ignoradas por el enrutador de Waku y no se convierten en rutas:
-
-// - -> `_components`.
-// - -> `_hooks`.
-
-// Cualquier archivo o carpeta dentro de ellas, será excluida del enrutamiento.
-// Veamos este ejemplo de la documentación oficial:
-
 // ```tsx
-// pages/
-// ├── about.tsx
-// ├── _components/
-// │   ├── header.tsx   // ignorada
-// │   ├── footer.tsx   // ignorada
-// │   ├── ...          // ignorada
+
 // ```
 
 // ---
@@ -869,15 +839,51 @@ export const getConfig = async () => {
 
         <h5>¿Cuándo usar rutas catch-all?</h5>
         <ul>
-          <li>→ Documentación o blogs con muchísimas rutas anidadas: No creamos un archivo por cada carpeta → Una sola ruta catch-all controla todas.</li>
+          <li>→ Documentación o blogs con muchísimas rutas anidadas: No creamos un archivo por cada carpeta. Una sola ruta catch-all controla todas.</li>
           <li>→ CMS o Markdown donde cada archivo define su propia estructura: La ruta catch-all puede mapear directamente la estructura del contenido.</li>
-          <li>→ Proyectos multilenguaje: Con un solo archivo capturás la ruta completa: <br />
-            → /docs/es/setup<br />
-            → /docs/fr/setup<br />
-            → /docs/en/setup<br />
+          <li>→ Proyectos multilenguaje: Con un solo archivo capturas la ruta completa: <br />
+            ▬ /docs/es/setup<br />
+            ▬ /docs/fr/setup<br />
+            ▬ /docs/en/setup<br />
           </li>
-          <li>→ Sitios donde las URLs pueden cambiar o ser generadas por usuarios.</li>
+          <li>→ Sitios donde las URLs pueden cambiar o ser generadas por las personas usuarias.</li>
         </ul>
+
+        <h4>Rutas grupales</h4>
+
+        <p>Estas rutas permiten agrupar rutas de manera lógica sin afectar la estructura de la URL.</p>
+        <p>Se definen creando carpetas con nombres entre paréntesis `({" "})`, por ejemplo `(admin)`, dentro de `src/pages`.</p>
+        <p>Para este proyecto se crearon dos rutas grupales de ejemplo, que están dentro de la carpeta `src/pages/(grupales)`:</p>
+
+        <ul>
+          <li>→ `src/pages/(grupales)/pagina-grupal-estatica.tsx` crea la ruta `/pagina-grupal-estatica`. Vea la ruta siguiendo <Link to="/pagina-grupal-estatica">este enlace</Link>.</li>
+          <li>→ `src/pages/(grupales)/pagina-grupal-cliente.tsx` crea la ruta `/pagina-grupal-cliente`. Vea la ruta siguiendo <Link to="/pagina-grupal-cliente">este enlace</Link>.</li>
+        </ul>
+
+        <p>Las rutas grupales son útiles para organizar aplicaciones complejas donde ciertas páginas comparten layouts, middlewares o configuraciones comunes, sin que esto afecte las URLs públicas del sitio. Puede visitar la documentación oficial de Waku para más detalles sobre rutas grupales <a href="https://waku.gg/#group-routes" title="Enlace a documentación oficial sobre rutas grupales" target="_blank" rel="noopener noreferrer">acá</a>.</p>
+
+        <h4>Rutas ignoradas</h4>
+
+        <p>Las siguientes carpetas son ignoradas por el enrutador de Waku y no se convierten en rutas:</p>
+
+        <ul>
+          <li>→ `_components`</li>
+          <li>→ `_hooks`</li>
+        </ul>
+
+
+        <p>Cualquier archivo o carpeta dentro de ellas, será excluida del enrutamiento.</p>
+        <p>Veamos este ejemplo de la documentación oficial:</p>
+        <div className='m-[0_auto] self-center'>
+          <p className='text-left'>
+            pages/ <br />
+            ├── about.tsx <br />
+            ├── _components/ <br />
+            │   ├── header.tsx   // ignorada <br />
+            │   ├── footer.tsx   // ignorada <br />
+            │   ├── ...          // ignorada <br />
+          </p>
+        </div>
 
         <BotonesAvance
           rutaSiguiente="/temas/temas/navegacion"
