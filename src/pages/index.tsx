@@ -11,6 +11,7 @@ export default async function HomePage() {
         <p className="mb-4">Puede visitar el repositorio de este sitio web acá → <a href="https://github.com/Ariel-GonzAguer/aprender-waku" target="_blank" rel="noopener noreferrer" className="font-bold text-amber-300! hover:text-red-600! transition-all duration-300">Repositorio en Github</a>.</p>
         <img src="/imagenes/waku.webp" alt="ícono de Waku" className="mt-4 animate-fade-in" />
         <p>Nota: esta guía cubre la versión 1.0.0</p>
+        <p>🌟 Pronto se agregara una sección Tutorial basado en Proyecto 🌟</p>
       </section>
     </>
   )
