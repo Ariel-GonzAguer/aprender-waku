@@ -749,6 +749,14 @@ export const getConfig = () => {
           {codigo.slugGatos}
         </CodeBlock>
 
+        <p>Puede ver el componente renderizado para cuatro gatos en los siguientes enlaces:</p>
+        <ul>
+          <li><Link to="/gatos/sundae">/gatos/sundae</Link></li>
+          <li><Link to="/gatos/luna">/gatos/luna</Link></li>
+          <li><Link to="/gatos/timi">/gatos/timi</Link></li>
+          <li><Link to="/gatos/onigiri">/gatos/onigiri</Link></li>
+        </ul>
+
         <h4>Rutas segmentadas anidadas (Nested Segmented Routes)</h4>
 
         <p>Las rutas pueden tener multiples segmentos, por ejemplo `/pokemones/[generacion]/[region]/[id]`, que se define creando, en este ejemplo, una carpeta `pokemones` dentro de `src/pages`, y dentro de esa carpeta otra llamada `[generacion]`, y dentro de esta otra llamada `[region]`, y dentro de esta otra carpeta un archivo `[id].tsx`.</p>
