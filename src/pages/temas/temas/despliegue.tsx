@@ -1,11 +1,6 @@
-// ---
-// titulo: "14-despliegue"
-// autor: "Ariel"
-// fecha: "30-11-2025"
-// tags: ["waku", "guía", "despliegue", "vercel", "netlify"]
-// ---
 
 // En esta sección veremos cómo desplegar en dos de las posibles plataformas actualmente que actualmente soportas Waku: Netlify y Vercel. Personalmente recomiendo Netlify.
+
 
 // ### Netlify
 
@@ -84,3 +79,27 @@
 // [Siguiente: 15-seguridad →](/temas/15-seguridad)
 
 // [← Volver](/temas/13-variables-de-entorno)
+import BotonesAvance from '../../../components/BotonesAvance';
+import CodeBlock from '../../../components/CodeBlock';
+import { Link } from 'waku';
+import RenderTemaData from "../../../components/RenderTemaData"
+
+export default function Despliegue() {
+
+  const data = {
+    titulo: "14-despliegue",
+    autor: "Ariel",
+    fecha: "30-11-2025",
+    tags: ["waku", "guía", "despliegue", "vercel", "netlify"],
+  }
+
+  return (
+    <>
+      <RenderTemaData data={data} />
+
+      <section className="tema">
+
+      </section>
+    </>
+  )
+}

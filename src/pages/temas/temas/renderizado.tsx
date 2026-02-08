@@ -1,6 +1,7 @@
 import { Link } from "waku";
 import BotonesAvance from "../../../components/BotonesAvance";
 import CodeBlock from "../../../components/CodeBlock";
+import RenderTemaData from "../../../components/RenderTemaData";
 
 export default function Renderizado() {
   const data = {
@@ -138,12 +139,7 @@ export default function EjemploSharedComponent() {
 
   return (
     <>
-      <>
-        <title>{data.titulo}</title>
-        <meta name="author" content={data.autor} />
-        <meta name="keywords" content={data.tags.join(", ")} />
-        <meta name="date" content={data.fecha} />
-      </>
+      <RenderTemaData data={data} />
 
       <section className="tema">
         <h2 className="text-4xl font-bold mb-3">{data.titulo}</h2>

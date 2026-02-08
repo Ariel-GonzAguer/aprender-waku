@@ -10,7 +10,7 @@ export default async function PostDetail({ slug }: PageProps<'/temas/[slug]'>) {
     return (
       <section aria-label='Tema no encontrado' className='flex flex-col justify-center items-center mt-25'>
         <h1 aria-live="polite">Tema no encontrado</h1>
-        <p aria-live="polite">Lo sentimos, el tema que buscas no existe.</p>
+        <p aria-live="polite">Lo sentimos, el tema que busca no existe.</p>
       </section>
     );
   }

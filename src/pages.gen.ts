@@ -12,11 +12,11 @@ import type { getConfig as File_GatosSlugIndex_getConfig } from './pages/gatos/[
 // prettier-ignore
 import type { getConfig as File_Index_getConfig } from './pages/index';
 // prettier-ignore
-import type { getConfig as File_ManejoDeEstadoIndex_getConfig } from './pages/manejoDeEstado/index';
+import type { getConfig as File_ManejodeestadoIndex_getConfig } from './pages/manejodeestado/index';
 // prettier-ignore
-import type { getConfig as File_MutacionesClientComponentConServerAction_getConfig } from './pages/mutaciones/client-component-con-server-action';
+import type { getConfig as File_MutacionesActions_getConfig } from './pages/mutaciones/actions';
 // prettier-ignore
-import type { getConfig as File_PaginaSeis_getConfig } from './pages/paginaSeis';
+import type { getConfig as File_Paginaseis_getConfig } from './pages/paginaseis';
 // prettier-ignore
 import type { getConfig as File_PizzasPaginaConTextoPrivado_getConfig } from './pages/pizzas/paginaConTextoPrivado';
 // prettier-ignore
@@ -27,6 +27,8 @@ import type { getConfig as File_PokemonesGeneracionRegionId_getConfig } from './
 import type { getConfig as File_TemasSlug_getConfig } from './pages/temas/[slug]';
 // prettier-ignore
 import type { getConfig as File_Root_getConfig } from './pages/_root';
+// prettier-ignore
+import type { getConfig as File_SlicesLazyseis_getConfig } from './pages/_slices/lazyseis';
 // prettier-ignore
 import type { getConfig as File_SlicesMilSeiscientos_getConfig } from './pages/_slices/mil/seiscientos';
 // prettier-ignore
@@ -42,34 +44,35 @@ type Page =
 | { path: '/ejemplos/componenteshared'; render: 'static' }
 | ({ path: '/gatos/[slug]' } & GetConfigResponse<typeof File_GatosSlugIndex_getConfig>)
 | ({ path: '/' } & GetConfigResponse<typeof File_Index_getConfig>)
-| ({ path: '/manejoDeEstado' } & GetConfigResponse<typeof File_ManejoDeEstadoIndex_getConfig>)
-| ({ path: '/mutaciones/client-component-con-server-action' } & GetConfigResponse<typeof File_MutacionesClientComponentConServerAction_getConfig>)
+| ({ path: '/manejodeestado' } & GetConfigResponse<typeof File_ManejodeestadoIndex_getConfig>)
+| ({ path: '/mutaciones/actions' } & GetConfigResponse<typeof File_MutacionesActions_getConfig>)
 | { path: '/mutaciones'; render: 'static' }
-| ({ path: '/paginaSeis' } & GetConfigResponse<typeof File_PaginaSeis_getConfig>)
+| ({ path: '/paginaseis' } & GetConfigResponse<typeof File_Paginaseis_getConfig>)
 | ({ path: '/pizzas/paginaConTextoPrivado' } & GetConfigResponse<typeof File_PizzasPaginaConTextoPrivado_getConfig>)
 | ({ path: '/pizzas/[...slug]' } & GetConfigResponse<typeof File_PizzasSlug_getConfig>)
 | ({ path: '/pokemones/[generacion]/[region]/[id]' } & GetConfigResponse<typeof File_PokemonesGeneracionRegionId_getConfig>)
 | { path: '/router'; render: 'static' }
 | { path: '/temas'; render: 'static' }
-| { path: '/temas/temas/DataFetching-10'; render: 'static' }
-| { path: '/temas/temas/Despliegue-14'; render: 'static' }
+| { path: '/temas/temas/datafetching'; render: 'static' }
+| { path: '/temas/temas/despliegue'; render: 'static' }
 | { path: '/temas/temas/enrutamiento'; render: 'static' }
-| { path: '/temas/temas/Estilos-7'; render: 'static' }
+| { path: '/temas/temas/estilos'; render: 'static' }
 | { path: '/temas/temas/introduccion'; render: 'static' }
-| { path: '/temas/temas/ManejoDeErrores-5'; render: 'static' }
-| { path: '/temas/temas/ManejoDeEstado-12'; render: 'static' }
-| { path: '/temas/temas/Metadata-6'; render: 'static' }
-| { path: '/temas/temas/Mutaciones-11'; render: 'static' }
-| { path: '/temas/temas/Navegacion-4'; render: 'static' }
+| { path: '/temas/temas/manejodeerrores'; render: 'static' }
+| { path: '/temas/temas/manejodeestado'; render: 'static' }
+| { path: '/temas/temas/metadata'; render: 'static' }
+| { path: '/temas/temas/mutaciones'; render: 'static' }
+| { path: '/temas/temas/navegacion'; render: 'static' }
 | { path: '/temas/temas/primerospasos'; render: 'static' }
 | { path: '/temas/temas/PWA-16'; render: 'static' }
 | { path: '/temas/temas/renderizado'; render: 'static' }
 | { path: '/temas/temas/Seguridad-15'; render: 'static' }
-| { path: '/temas/temas/SistemaDeArchivos-9'; render: 'static' }
-| { path: '/temas/temas/StaticAssets-8'; render: 'static' }
-| { path: '/temas/temas/VariablesDeEntorno-13'; render: 'static' }
+| { path: '/temas/temas/sistemadearchivos'; render: 'static' }
+| { path: '/temas/temas/staticassets'; render: 'static' }
+| { path: '/temas/temas/variablesdeentorno'; render: 'static' }
 | ({ path: '/temas/[slug]' } & GetConfigResponse<typeof File_TemasSlug_getConfig>)
 | ({ path: '/_root' } & GetConfigResponse<typeof File_Root_getConfig>)
+| ({ path: '/_slices/lazyseis' } & GetConfigResponse<typeof File_SlicesLazyseis_getConfig>)
 | ({ path: '/_slices/mil/seiscientos' } & GetConfigResponse<typeof File_SlicesMilSeiscientos_getConfig>)
 | ({ path: '/_slices/seis' } & GetConfigResponse<typeof File_SlicesSeis_getConfig>);
 

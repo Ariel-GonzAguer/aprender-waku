@@ -1,7 +1,7 @@
 import ClientComponentConServerAction from '../../components/ClientComponentConServerAction';
 import { fetchRandomCat } from '../../actions/randomCatAPI';
 
-export default function RutaDeClientComponentConServerAction() {
+export default function Actions() {
 
   return (
     <section className="flex flex-col justify-center items-center text-center mt-6 mb-10">

@@ -7,92 +7,56 @@ export default function Mutaciones() {
   const [catchAllResponse, setCatchAllResponse] = useState<unknown>(null);
 
   // Función para manejar el endpoint GET
-  async function getPost1(id: number) {
-    const response = await fetch(`/_api/jsonPlaceholderPosts?id=${id}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+  async function getPost1() {
+    const response = await fetch(`/getJsonPlaceholder`,
+      { method: 'GET', headers: { 'Content-Type': 'application/json; charset=utf-8' } }
+    );
     const text = await response.text();
-    let data: any;
+    let data;
     try {
       data = text ? JSON.parse(text) : null;
-    } catch {
-      data = text;
+    } catch (error) {
+      data = error instanceof Error ? error.message : text;
     }
     return data;
   };
 
   // Función para manejar el endpoint DELETE
-  async function deletePost(id: number) {
-    const response = await fetch(`/_api/jsonPlaceholderPosts?id=${id}`, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+  async function deletePost1() {
+    const response = await fetch(`/deleteJsonPlaceholder`,
+      { method: 'DELETE', headers: { 'Content-Type': 'application/json; charset=utf-8' } }
+    );
     if (response.status === 204) {
       return { success: true, status: 204 };
     }
 
     const text = await response.text();
-    let data: any;
+    let data;
     try {
       data = text ? JSON.parse(text) : null;
-    } catch {
-      data = text;
+    } catch (error) {
+      data = error instanceof Error ? error.message : text;
     }
     return data;
   };
 
   // Función para manejar el endpoint POST
   async function createPost() {
-    const post = {
-      title: 'Post Felino',
-      body: 'Hay un gato llamado Sundae de Caramelo, y es un muy bueno.',
-      userId: 123
-    };
-
-    const response = await fetch(`/_api/jsonPlaceholderPosts`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(post),
-    });
+    const response = await fetch(`/createJsonPlaceholder`,
+      { method: 'POST', headers: { 'Content-Type': 'application/json; charset=utf-8' } });
     const text = await response.text();
     let data: any;
     try {
       data = text ? JSON.parse(text) : null;
-    } catch {
-      data = text;
-    }
-    return data;
-  };
-
-  // Función para manejar el endpoint PUT
-  async function updatePost(id: number, updatedPost: any) {
-    const response = await fetch(`/_api/jsonPlaceholderPosts?id=${id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(updatedPost),
-    });
-    const text = await response.text();
-    let data: any;
-    try {
-      data = text ? JSON.parse(text) : null;
-    } catch {
-      data = text;
+    } catch (error) {
+      data = error instanceof Error ? error.message : text;
     }
     return data;
   };
 
   // función para manejar endpoint catch all
   async function handleCatchAll() {
-    const response = await fetch(`/_api/otroEndpoint`, {
+    const response = await fetch(`/otroEndpoint`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -112,7 +76,7 @@ export default function Mutaciones() {
 
   // Cargar el post 1 al montar el componente
   useEffect(() => {
-    getPost1(1).then(data => setPost1(data));
+    getPost1().then(data => setPost1(data));
   }, []);
 
   return (
@@ -128,7 +92,7 @@ export default function Mutaciones() {
       <button
         className="mt-4 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
         onClick={async () => {
-          const deletedPost = await deletePost(11);
+          const deletedPost = await deletePost1();
           alert(`Post eliminado: ${JSON.stringify(deletedPost)}`);
         }}
       >
@@ -145,17 +109,6 @@ export default function Mutaciones() {
         }}
       >
         Crear nuevo Post
-      </button>
-      <span>- - - - - -</span>
-      <p>Con el siguiente botón hacemos un PUT al elemento 1</p>
-      <button
-        className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-        onClick={async () => {
-          const updatedPost = await updatePost(1, { title: 'Post Actualizado', body: 'El contenido ha sido actualizado.', userId: 1 });
-          alert(`Post actualizado: ${JSON.stringify(updatedPost)}`);
-        }}
-      >
-        Actualizar Post 1
       </button>
       <span>- - - - - -</span>
       <p>Finalmente, el siguiente botón hace una petición al endpoint catch-all</p>

@@ -42,7 +42,7 @@ export default function Jotai() {
       </ul>
 
       <p className='mt-6 mb-2'>Este es Sundae de Caramelo:</p>
-      <img src="/imagenes/sundae_1.webp" alt="foto de un lindo gato rojo llamado Sundae de Caramelo" />
+      <img src="/imagenes/sundae_1.webp" alt="foto de un lindo gato rojo llamado Sundae de Caramelo" className='h-100' />
 
       <form onSubmit={agregarAmigoFelino} className="mt-6 flex flex-col justify-center items-center">
         <h3 className="text-xl font-bold mb-2">Agregar un nuevo amigo felino</h3>

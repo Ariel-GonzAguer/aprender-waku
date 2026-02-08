@@ -1,191 +1,7 @@
-
-
-// ```tsx
-
-// ```
-
-// ---
-
-// #### Layouts
-
-// Los layouts se crean con el nombre distintivo `_layout.tsx` y funcionan como "plantillas" que envuelven a las rutas y sus subrutas.
-// Aceptan un prop `children` que representa el contenido de la ruta que se está renderizando dentro del layout. Esta prop es de tipo `ReactNode`.
-// Aunque no es obligatorio tener un layout, suelen ser muy útiles para definir estructuras comunes como headers, footers, estados globales, proveedores globales, y más.
-
-// Este proyecto utiliza un layout general (`src/pages/_layout.tsx`) que envuelve todas las páginas, y otro layout específico para las rutas dentro de `src/pages/gatos` (`src/pages/gatos/_layout.tsx`).
-
-// ##### Root Layout
-
-// Este es un layout particular. Se define en `src/pages/`, es decir `src/pages/_layout.tsx`, y envuelve todas las páginas de la aplicación.
-
-// ##### Otros Layouts
-
-// Podemos crear layouts específicos para rutas o grupos de rutas específicas, creando un archivo `_layout.tsx` dentro de la carpeta de la ruta. Acá un ejemplo de la documentación oficial de un layout para una ruta de blogs:
-
-// ```tsx
-// // ./src/pages/blog/_layout.tsx
-// import { Sidebar } from "../../components/sidebar";
-
-// // Crear un layout específico para la ruta /blog
-// export default async function BlogLayout({ children }) {
-//   return (
-//     <div className="flex">
-//       <div>{children}</div>
-//       <Sidebar />
-//     </div>
-//   );
-// }
-
-// export const getConfig = async () => {
-//   return {
-//     render: "static",
-//   } as const;
-// };
-// ```
-
-// #### Elemento _Root_ / Elemeto _Raíz_
-
-// Los atributos de los elementos `<html>`, `<head>` o `<body>` se pueden personalizar con la API del elemento Raíz/Root.
-// Para esto podemos crear un archivo `src/pages/_root.tsx`. Este archivo es opcional y nos permite definir atributos globales para el documento HTML. Recibe una prop `children` que representa el contenido de la página, y es de tipo `ReactNode`.
-
-// Acá el código del elemento raíz de este proyecto (`src/pages/_root.tsx`):
-
-// ```tsx
-// import type { ReactNode } from "react";
-// import "../styles.css";
-
-// export default async function RootElement({
-//   children,
-// }: {
-//   children: ReactNode;
-// }) {
-//   return (
-//     <html lang="es" className="min-h-screen">
-//       <head>
-//         <meta charSet="utf-8" />
-//         <meta name="viewport" content="width=device-width, initial-scale=1" />
-//         <link rel="icon" href="/imagenes/waku.webp" />
-//         <meta name="description" content="Aprende Waku en en español" />
-//         <meta name="keywords" content="Waku, aprendizaje, tutorial" />
-//         <meta name="author" content="Ariel GonzAgüero" />
-//         <meta name="robots" content="index, follow" />
-//         <meta property="og:type" content="website" />
-//         <meta property="og:title" content="Waku - en español" />
-//         <meta property="og:description" content="Aprende Waku en en español" />
-//         <meta property="og:image" content="/imagenes/waku.webp" />
-//         <meta name="twitter:card" content="summary_large_image" />
-//         <meta name="twitter:title" content="Waku - en español" />
-//         <meta name="twitter:description" content="Aprende Waku en en español" />
-//         <meta name="twitter:image" content="/imagenes/waku.webp" />
-//         <meta name="publisher" content="Gato Rojo Lab" />
-//       </head>
-//       <body data-version="1.0" className="min-h-screen">
-//         {children}
-//       </body>
-//     </html>
-//   );
-// }
-
-// export const getConfig = async () => {
-//   return {
-//     render: "static",
-//   } as const;
-// };
-// ```
-
-// Este archivo se definieron metadatos globales para el sitio, muy útil para SEO y redes sociales.
-
-// #### Slices
-
-// Los slices son componentes reutilizables definidos en `src/pages/_slices`. Permiten crear páginas ensamblando componentes como componentes normales de React, a la vez que se especifican patrones de renderizado alternativos.
-// Cada _slice_ tiene un ID, que es igual al nombre del archivo sin la extensión `.tsx`.
-// Cada _slice_ exporta un componente React por defecto y una función `getConfig` para definir el renderizado (SSG o SSR).
-// Para usar un _slice_ en una página, se debe importar el componente `Slice` desde 'waku' y utilizarlo pasando el ID del _slice_ como prop `id`.
-
-// Acá el código de dos slices que se usan en la ruta `/paginaSeis` → [ver página aquí](/paginaSeis "enlace a la página que usa los slices"):
-
-// ```tsx
-// // ./src/pages/_slices/seis.tsx
-
-// export default function SliceSeis() {
-//   return (
-//     <section className="flex flex-col justify-center items-center mt-10">
-//       <p>¿Qué tal 6 slices de pizza con hongo ostra?</p>
-//       <p>🍕🍕🍕🍕🍕🍕</p>
-//       <p className="text-3xl">😸</p>
-//     </section>
-//   );
-// }
-
-// export const getConfig = () => {
-//   return {
-//     render: "static", // por default es 'static', pero igual podemos especificarlo
-//   };
-// };
-// ```
-
-// ```tsx
-// // ./src/pages/_slices/mil/seiscientos.tsx
-// export default function SliceSeiscientos() {
-//   return (
-//     <section className="flex flex-col justify-center items-center mt-10">
-//       <p>¿Qué tal 600 slices, pero de una mini pizza?</p>
-//       <p>🍕 x 600</p>
-//       <p className="text-3xl">🙀</p>
-//     </section>
-//   );
-// }
-
-// export const getConfig = () => {
-//   return {
-//     render: "static",
-//   };
-// };
-// ```
-
-// Y acá el código de la página que usa estos slices (`src/pages/paginaSeis.tsx`):
-
-// ```tsx
-// // ./src/pages/paginaSeis.tsx
-// import { Slice } from "waku";
-
-// export default function PaginaSeis() {
-//   return (
-//     <div>
-//       <Slice id="seis" />
-//       <Slice id="mil/seiscientos" />
-//     </div>
-//   );
-// }
-
-// // como usamos 'static' debemos definir los slices que usaremos
-// export const getConfig = () => {
-//   return {
-//     render: "dynamic",
-//     slices: ["seis", "mil/seiscientos"],
-//   };
-// };
-// ```
-
-// ##### ¿En qué se diferencian los _slices_ de los componentes normales de React?
-
-// - -> Los _slices_ se definen en una ubicación específica (`src/pages/_slices`) y tienen una convención de nombres. Los componentes normales de React pueden estar en cualquier parte del proyecto, normalmente en `src/components`.
-// - -> Los _slices_ se renderizan por su ID, sin necesidad de importarlos. Los componentes normales se importan y usan directamente.
-// - -> Siempre hay que definir en la página que usa los _slices_ cuáles serán estos mediante la propiedad `slices` en `getConfig`.
-
-// Según sus necesidades y preferencias, puede optar por usar _slices_ para ciertas partes de su aplicación y componentes normales para otras, o combinarlos según lo requiera su proyecto.
-
-// ##### Lazy Slices
-
-// Los lazy slices son una variante que nos permite usar _slices_ sin necesidad de definirlos en la propiedad `slices` de `getConfig`, es decir sin que se incluyan automáticamente en el HTML estático generado durante el build (SSG), sino que pueden llamarse por separado cuando se necesiten. Acá el enlace a esta sección en la documentación oficial de Waku: [Lazy Slices](https://waku.gg/#lazy-slices "Enlace a documentación oficial sobre lazy slices").
-
-// [Siguiente: 4-navegacion →](/temas/4-navegacion)
-
-// [← Volver](/temas/2-renderizado)
-
 import BotonesAvance from '../../../components/BotonesAvance';
 import CodeBlock from '../../../components/CodeBlock';
 import { Link } from 'waku';
+import RenderTemaData from "../../../components/RenderTemaData";
 
 export default function Enrutamiento() {
 
@@ -236,7 +52,7 @@ export const getConfig = async () => {
      return (
        <section aria-label='Tema no encontrado' className='flex flex-col justify-center items-center mt-25'>
          <h1 aria-live="polite">Tema no encontrado</h1>
-         <p aria-live="polite">Lo sentimos, el tema que buscas no existe.</p>
+         <p aria-live="polite">Lo sentimos, el tema que busca no existe.</p>
        </section>
      );
    }
@@ -708,17 +524,155 @@ export const getConfig = async () => {
   } as const;
 }; 
 `,
+    ejemploBlog: `// ./src/pages/blog/_layout.tsx
+import { Sidebar } from "../../components/sidebar";
+
+// Crear un layout específico para la ruta /blog
+export default async function BlogLayout({ children }) {
+  return (
+    <div className="flex">
+      <div>{children}</div>
+      <Sidebar />
+    </div>
+  );
+}
+
+export const getConfig = async () => {
+  return {
+    render: "static",
+  } as const;
+};
+`,
+
+    rootElement: `// src/pages/_root.tsx
+import type { ReactNode } from 'react';
+import '../styles.css';
+
+export default async function RootElement({ children }: { children: ReactNode }) {
+  return (
+    <html lang="es" className='min-h-screen'>
+      <head>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="icon" href="/imagenes/waku.webp" />
+        <meta name="description" content="Aprende Waku en en español" />
+        <meta name="author" content="Ariel GonzAgüero" />
+        <meta name="robots" content="index, follow" />
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content="Waku - en español" />
+        <meta property="og:description" content="Aprende Waku en en español" />
+        <meta property="og:image" content="/imagenes/waku.webp" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Waku - en español" />
+        <meta name="twitter:description" content="Aprende Waku en en español" />
+        <meta name="twitter:image" content="/imagenes/waku.webp" />
+        <meta name="publisher" content="Gato Rojo Lab" />
+      </head>
+      <body data-version="1.0" className='min-h-screen'>{children}</body>
+    </html>
+  );
+}
+
+export const getConfig = async () => {
+  return {
+    render: 'static',
+  } as const;
+};
+`,
+
+    sliceUno: `// src/pages/_slices/seis.tsx
+
+export default function SliceSeis() {
+  return (
+    <section className="flex flex-col justify-center items-center mt-10">
+      <p>¿Qué tal 6 slices de pizza con hongo ostra?</p>
+      <p>🍕🍕🍕🍕🍕🍕</p>
+      <p className="text-3xl">😸</p>
+    </section>
+  );
+}
+
+export const getConfig = () => {
+  return {
+    render: "static", // por default es 'static', pero igual podemos especificarlo
+  };
+};
+`,
+    sliceDos: `// src/pages/_slices/mil/seiscientos.tsx
+export default function SliceSeiscientos() {
+  return (
+    <section className="flex flex-col justify-center items-center mt-10">
+      <p>¿Qué tal 600 slices, pero de una mini pizza?</p>
+      <p>🍕 x 600</p>
+      <p className="text-3xl">🙀</p>
+    </section>
+  );
+}
+
+export const getConfig = () => {
+  return {
+    render: "static",
+  };
+};
+`,
+    lazySlice: `// src/pages/_slices/lazyseis.tsx
+import { getPokemonByID } from '../../lib/pokemones';
+
+export default async function LazySeis() {
+
+  const pokemon = await getPokemonByID(133); // Eevee
+  if (!pokemon) {
+    return <p>Pokémon no encontrado</p>;
+  }
+
+  return (
+    <section>
+      <p className="m-1!">Este slice carga data de un pokemon de manera asíncrona.</p>
+      <p className="m-1!">Nombre: {pokemon.nombre}</p>
+      <p className="m-1!">ID: {pokemon.id}</p>
+      <img src={pokemon.imagen} alt="imagen del pokemon Eevee." />
+    </section>
+  )
+}
+
+export const getConfig = () => {
+  return {
+    render: 'dynamic',
+  };
+};
+`,
+    paginaSeis: `// src/pages/seis.tsx
+import { Slice } from 'waku';
+
+export default function PaginaSeis() {
+
+  return (
+    <div className="flex flex-col justify-center items-center mt-10 text-2xl">
+      <h2>Esta página utiliza tres Slices.</h2>
+      <h3 className='m-1!'>Slice uno:</h3>
+      <Slice id="seis" />
+      <h3 className='mb-1!'>Slice dos:</h3>
+      <Slice id="mil/seiscientos" />
+      <h3 className='mb-1!'>Slice tres (lazy):</h3>
+      <Slice id="lazyseis" lazy fallback={<p>Cargando lazy Slice...</p>} />
+    </div>
+  );
+}
+
+// como usamos 'static' debemos definir los slices que usaremos
+export const getConfig = () => {
+  return {
+    render: 'static',
+    slices: ['seis', 'mil/seiscientos'], // el slice 'lazyseis' no se incluye acá porque es lazy, no se carga automáticamente en el HTML estático, sino que se llama por separado cuando se necesite
+  };
+}; 
+`
 
   }
 
   return (
     <>
-      <>
-        <title>{data.titulo}</title>
-        <meta name="author" content={data.autor} />
-        <meta name="keywords" content={data.tags.join(", ")} />
-        <meta name="date" content={data.fecha} />
-      </>
+      <RenderTemaData data={data} />
 
       <section className='tema'>
         <h2>{data.titulo}</h2>
@@ -874,16 +828,87 @@ export const getConfig = async () => {
 
         <p>Cualquier archivo o carpeta dentro de ellas, será excluida del enrutamiento.</p>
         <p>Veamos este ejemplo de la documentación oficial:</p>
-        <div className='m-[0_auto] self-center'>
-          <p className='text-left'>
-            pages/ <br />
-            ├── about.tsx <br />
-            ├── _components/ <br />
-            │   ├── header.tsx   // ignorada <br />
-            │   ├── footer.tsx   // ignorada <br />
-            │   ├── ...          // ignorada <br />
-          </p>
-        </div>
+        <p className='text-left w-75 m-[0_auto] '>
+          pages/ <br />
+          ├── about.tsx <br />
+          ├── _components/  // ignorada<br />
+          │   ├── index.tsx  // ignorada <br />
+        </p>
+
+        <h3>Layouts</h3>
+
+        <p>Los layouts se crean con el nombre distintivo `_layout.tsx` y funcionan como "plantillas" que envuelven a las rutas y sus subrutas.</p>
+        <p>Aceptan un prop `children` que representa el contenido de la ruta que se está renderizando dentro del layout. Esta prop es de tipo `ReactNode`.</p>
+        <p>Aunque no es obligatorio tener un layout, suelen ser muy útiles para definir estructuras comunes como headers, footers, estados globales, proveedores globales, y más.</p>
+
+        <p>Este proyecto utiliza un layout general (`src/pages/_layout.tsx`) que envuelve todas las páginas.</p>
+
+        <h4>Root Layout</h4>
+
+        <p>Este es un layout particular. Se define en `src/pages/`, es decir `src/pages/_layout.tsx`, y envuelve todas las páginas de la aplicación. Es muy útil para agregar estilos, metadata, proveedores y más de manera global.</p>
+
+        <h4>Otros Layouts</h4>
+
+        <p>Podemos crear layouts específicos para rutas o grupos de rutas específicas, creando un archivo `_layout.tsx` dentro de la carpeta de la ruta. Acá un ejemplo de la documentación oficial de un layout para una ruta de blogs:</p>
+
+        <CodeBlock>
+          {codigo.ejemploBlog}
+        </CodeBlock>
+
+        <h3>Elemento Root / Elemeto Raíz</h3>
+
+        <p>Los atributos de los elementos `{"<html>"}`, `{"<head>"}` o `{"<body>"}` se pueden personalizar con la API del elemento Raíz/Root. Para esto podemos crear un archivo `src/pages/_root.tsx`. Este archivo es opcional y nos permite definir atributos globales para el documento HTML. Recibe una prop `children` que representa el contenido de la página, y es de tipo `ReactNode`.</p>
+
+        <p>Acá el código del elemento raíz de este proyecto:</p>
+
+        <CodeBlock>
+          {codigo.rootElement}
+        </CodeBlock>
+
+        <p>En este archivo se definieron metadatos globales para el sitio, muy útil para SEO y redes sociales.</p>
+
+        <h3>Slices</h3>
+
+        <p>Los Slices son componentes reutilizables definidos en `src/pages/_slices`. Permiten crear páginas ensamblando componentes como componentes normales de React, a la vez que se especifican patrones de renderizado alternativos.</p>
+        <p>Cada slice tiene un ID único, que es igual al nombre del archivo sin la extensión `.tsx`. Por ejemplo: seis.tsx → seis</p>
+        <p>Cada slice exporta un componente React por defecto y una función `getConfig` para definir el renderizado (SSG o SSR).</p>
+        <p>Para usar un slice en una página, se debe importar el componente `Slice` desde 'waku' y utilizarlo pasando el ID del slice como prop `id`.</p>
+
+        <p>Acá el código de dos slices que se usan en la ruta `/paginaseis`.</p>
+
+
+        <CodeBlock>
+          {codigo.sliceUno}
+        </CodeBlock>
+
+        <CodeBlock>
+          {codigo.sliceDos}
+        </CodeBlock>
+
+        <h4>Lazy Slices</h4>
+        <p>Los Lazy Slices permiten montar componentes independientemente de la página en la que se utilizan, de forma similar a la función de islas de servidor de Astro. Esto es útil para componentes que se renderizarán dinámicamente en páginas que, de otro modo, serían estáticas.</p>
+
+        <p>Los Lazy Slices se marcan con la propiedad "lazy" y pueden incluir un componente "fallback"(de respaldo) para mostrar durante la carga.</p>
+
+        <p>Acá un ejemplo de un Lazy Slice:</p>
+        <CodeBlock>
+          {codigo.lazySlice}
+        </CodeBlock>
+
+        <p>Y acá el código de la ruta `/paginaseis` → <Link to='/paginaseis'>ver página</Link> que usa los 3 Slices:</p>
+        <CodeBlock>
+          {codigo.paginaSeis}
+        </CodeBlock>
+
+        <h4>¿En qué se diferencian los Slices de los componentes normales de React?</h4>
+
+        <ul>
+          <li>→ Los Slices se definen en una ubicación específica (`src/pages/_slices`) y tienen una convención de nombres. Los componentes normales de React pueden estar en cualquier parte del proyecto, normalmente en `src/components`.</li>
+          <li>→ Los Slices se renderizan por su ID, sin necesidad de importarlos. Los componentes normales se importan y usan directamente.</li>
+          <li>→ Siempre hay que definir en la página que usa los Slices cuáles serán estos mediante la propiedad `slices` en `getConfig`.</li>
+        </ul>
+
+        <p>Según sus necesidades y preferencias, puede optar por usar Slices para ciertas partes de su aplicación y componentes normales para otras, o combinarlos según lo requiera su proyecto.</p>
 
         <BotonesAvance
           rutaSiguiente="/temas/temas/navegacion"

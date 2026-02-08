@@ -1,4 +1,5 @@
 import BotonesAvance from '../../../components/BotonesAvance';
+import RenderTemaData from '../../../components/RenderTemaData';
 
 export default function Intro() {
 
@@ -11,12 +12,7 @@ export default function Intro() {
 
   return (
     <>
-      <>
-        <title>{data.titulo}</title>
-        <meta name="author" content={data.autor} />
-        <meta name="keywords" content={data.tags.join(", ")} />
-        <meta name="date" content={data.fecha} />
-      </>
+      <RenderTemaData data={data} />
 
       <section className='tema'>
         <h2>{data.titulo}</h2>
