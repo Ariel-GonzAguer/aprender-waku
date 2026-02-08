@@ -675,10 +675,7 @@ export const getConfig = () => {
       <RenderTemaData data={data} />
 
       <section className='tema'>
-        <h2>{data.titulo}</h2>
-        <p className='italic mb-3'>por {data.autor} - {data.fecha}</p>
         <p><strong>Nota: Esta es la sección más extensa de la guía.</strong></p>
-        <hr />
 
         <h3>Introducción</h3>
         <p>Lo primero: Los componentes de página deben escribirse con letra minúscula para evitar errores al generarse las URL.</p>

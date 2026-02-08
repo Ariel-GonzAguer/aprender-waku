@@ -6,7 +6,7 @@ import RenderTemaData from "../../../components/RenderTemaData";
 export default function SistemaDeArchivos() {
 
   const data = {
-    titulo: "9-sistema-de-archivos",
+    titulo: "9-Sistema de archivos",
     autor: "Ariel",
     fecha: "7-12-2025",
     tags: ["waku", "guía", "sistema de archivos"]

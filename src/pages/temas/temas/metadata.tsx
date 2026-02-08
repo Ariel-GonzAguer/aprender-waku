@@ -54,6 +54,8 @@ export default function Metadata() {
           {codigo.metadataTema}
         </CodeBlock>
 
+        <p>Nota: para agregar metadata, lo hacemos con Fragmentos de React → `{"<>"} ... {"</>"}`. </p>
+
         <BotonesAvance
           rutaSiguiente="/temas/temas/estilos"
           rutaAnterior="/temas/temas/manejodeerrores"

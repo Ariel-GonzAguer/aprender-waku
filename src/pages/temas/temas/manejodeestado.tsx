@@ -6,7 +6,7 @@ import RenderTemaData from "../../../components/RenderTemaData";
 export default function ManejoDeEstado() {
 
   const data = {
-    titulo: "12-manejo-de-estado",
+    titulo: "12-Manejo de estado",
     autor: "Ariel",
     fecha: "30-11-2025",
     tags: ["waku", "guía", "manejo de estado"]

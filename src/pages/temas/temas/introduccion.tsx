@@ -15,10 +15,6 @@ export default function Intro() {
       <RenderTemaData data={data} />
 
       <section className='tema'>
-        <h2>{data.titulo}</h2>
-        <p className='italic mb-3'>por {data.autor} - {data.fecha}</p>
-        <hr />
-
         <h3>¿Qué es y por qué Waku?</h3>
         <p> Waku <span className='italic'>( わく wah-ku )</span> es un framework minimalista para React creado por Daishi Kato, y siginifica literalmente <strong>Framework</strong> en japonés.</p>
 

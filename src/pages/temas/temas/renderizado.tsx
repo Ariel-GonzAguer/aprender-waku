@@ -142,12 +142,6 @@ export default function EjemploSharedComponent() {
       <RenderTemaData data={data} />
 
       <section className="tema">
-        <h2 className="text-4xl font-bold mb-3">{data.titulo}</h2>
-        <p className="italic mb-3">
-          por {data.autor} - {data.fecha}
-        </p>
-        <hr />
-
         <h3>
           Server Components y Client Components
         </h3>

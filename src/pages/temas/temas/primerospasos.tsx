@@ -16,10 +16,6 @@ export default function PrimerosPasos() {
       <RenderTemaData data={data} />
 
       <section className='tema'>
-        <h2>{data.titulo}</h2>
-        <p className='italic mb-3'>por {data.autor} - {data.fecha}</p>
-        <hr />
-
         <h3>Comenzar un nuevo proyecto con Waku</h3>
 
         <p>Comenzar un nuevo proyecto con Waku es sencillo. Antes de empezar, hay que asegurarse de tener Node.js en alguna de estas versiones: `^24.0.0` or `^22.12.0` or `^20.19.0`.</p>

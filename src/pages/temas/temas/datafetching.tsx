@@ -9,7 +9,7 @@ import RenderTemaData from "../../../components/RenderTemaData";
 export default function DataFetching() {
 
   const data = {
-    titulo: "10-data-fetching",
+    titulo: "10-Data Fetching",
     autor: "Ariel",
     fecha: "7-12-2025",
     tags: ["waku", "guía", "data fetching"]

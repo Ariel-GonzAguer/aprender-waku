@@ -1,10 +1,15 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Script para desplegar en Netlify
-# Ejecuta exactamente:
-# NETLIFY=1 pnpm run build
-# netlify deploy --prod
+# Usar `NETLIFY_SITE_ID` en .env.local permitirá pasar implicitamente el site id al comando de deploy.
+if [ -f ".env.local" ]; then
+  echo "Cargando variables de entorno desde .env.local"
+  # exporta todas las variables definidas en el archivo .env.local
+  set -o allexport
+  # shellcheck disable=SC1091
+  source ".env.local"
+  set +o allexport
+fi
 
 # Validaciones básicas
 if ! command -v pnpm >/dev/null 2>&1; then
@@ -20,5 +25,10 @@ fi
 echo "Ejecutando: NETLIFY=1 pnpm run build"
 NETLIFY=1 pnpm run build
 
-echo "Ejecutando: netlify deploy --prod"
-netlify deploy --prod
+if [[ -z "${NETLIFY_SITE_ID:-}" ]]; then
+  echo "Ejecutando: netlify deploy --prod"
+  netlify deploy --prod
+else
+  echo "Ejecutando: netlify deploy --prod --site $NETLIFY_SITE_ID"
+  netlify deploy --prod --site "$NETLIFY_SITE_ID"
+fi

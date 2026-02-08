@@ -10,7 +10,7 @@ import RenderTemaData from "../../../components/RenderTemaData";
 export default function VariablesDeEntorno() {
 
   const data = {
-    titulo: "13-variables-de-entorno",
+    titulo: "13-Variables de entorno",
     autor: "Ariel",
     fecha: "30-11-2025",
     tags: ["waku", "guía", "variables de entorno"],
