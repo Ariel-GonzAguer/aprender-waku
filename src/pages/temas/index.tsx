@@ -24,7 +24,7 @@ export default function () {
         <li className="my-4"><Link to='/temas/temas/manejodeestado'>12-Manejo de estado</Link></li>
         <li className="my-4"><Link to='/temas/temas/variablesdeentorno'>13-Variables de entorno</Link></li>
         <li className="my-4"><Link to='/temas/temas/despliegue'>14-Despliegue</Link></li>
-        <li className="my-4"><Link to='/temas/temas/cspdynamico'>15-CSP Dinámico</Link></li>
+        <li className="my-4"><Link to='/temas/temas/cspdinamico'>15-CSP Dinámico</Link></li>
         <li className="my-4"><Link to='/temas/temas/pwa'>16-PWA</Link></li>
       </ul>
     </section>
