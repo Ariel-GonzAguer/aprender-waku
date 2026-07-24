@@ -1,15 +1,14 @@
 import { useId } from "react"
 
 export default function SharedComponent() {
+  // useId() debe llamarse en el cuerpo del componente, nunca dentro de loops, condiciones o funciones anidadas
+  const id1 = useId();
+  const id2 = useId();
+  const id3 = useId();
+  const id4 = useId();
+  const id5 = useId();
 
-  function generarId() {
-    let ids: string[] = [];
-    for (let i = 0; i < 5; i++) {
-      ids.push(useId());
-    }
-    console.log("IDs generado con useID:", ids);
-    return ids.join(", ");
-  }
+  const ids = [id1, id2, id3, id4, id5];
 
   return (
     <section className="mt-6">
@@ -22,7 +21,7 @@ export default function SharedComponent() {
           <li>✓ No accede a funcionalidades exclusivas del servidor </li>
         </ul>
       </div>
-      <p>ID generado por React con useID: {generarId()}</p>
+      <p>ID generado por React con useID: {ids.join(", ")}</p>
     </section>
   )
 }
